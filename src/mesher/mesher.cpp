@@ -13,10 +13,10 @@
 
 #include <iostream>
 
-#define REAL double
 extern "C"
 {
-  #include "trimesh.h"
+  #include "triangle.h"
+  #include "triangulate.h"
 }
 
 Mesher::Mesher()
@@ -29,7 +29,7 @@ Mesher::~Mesher()
 
 void Mesher::createMesh(const Geometry & geometry, Mesh & mesh)
 {
-  struct triangulateio in, out;
+  triangulateio in, out;
   int index = 0;
 
   in.numberofpoints = geometry.totalVertices();

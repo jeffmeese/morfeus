@@ -1,13 +1,20 @@
 #include "cdt.h"
-#include "trimesh.h"
-#include "pool.h"
+
+#include "construct.h"
+#include "geom.h"
 #include "mem.h"
-#include "reduced.h"
+#include "meshtransform.h"
+#include "pool.h"
+#include "primitives.h"
+#include "user.h"
 
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+
+int plus1mod3[3] = {1, 2, 0};
+int minus1mod3[3] = {2, 0, 1};
 
 void tallyencs(struct mesh *m, struct behavior *b)
 {
@@ -489,8 +496,6 @@ void enforcequality(struct mesh *m, struct behavior *b)
 /*                                                                           */
 /*****************************************************************************/
 
-#ifndef CDT_ONLY
-
 void enqueuebadtriang(struct mesh *m, struct behavior *b,
                       struct badtriang *badtri)
 {
@@ -576,8 +581,6 @@ void enqueuebadtriang(struct mesh *m, struct behavior *b,
   badtri->nexttriang = (struct badtriang *) NULL;
 }
 
-#endif /* not CDT_ONLY */
-
 /*****************************************************************************/
 /*                                                                           */
 /*  enqueuebadtri()   Add a bad triangle to the end of a queue.              */
@@ -586,8 +589,6 @@ void enqueuebadtriang(struct mesh *m, struct behavior *b,
 /*  enqueuebadtriang().                                                      */
 /*                                                                           */
 /*****************************************************************************/
-
-#ifndef CDT_ONLY
 
 void enqueuebadtri(struct mesh *m, struct behavior *b, struct otri *enqtri,
                    REAL minedge, vertex enqapex, vertex enqorg, vertex enqdest)
@@ -604,15 +605,11 @@ void enqueuebadtri(struct mesh *m, struct behavior *b, struct otri *enqtri,
   enqueuebadtriang(m, b, newbad);
 }
 
-#endif /* not CDT_ONLY */
-
 /*****************************************************************************/
 /*                                                                           */
 /*  dequeuebadtriang()   Remove a triangle from the front of the queue.      */
 /*                                                                           */
 /*****************************************************************************/
-
-#ifndef CDT_ONLY
 
 struct badtriang *dequeuebadtriang(struct mesh *m)
 {
@@ -633,8 +630,6 @@ struct badtriang *dequeuebadtriang(struct mesh *m)
   }
   return result;
 }
-
-#endif /* not CDT_ONLY */
 
 /*****************************************************************************/
 /*                                                                           */
@@ -658,8 +653,6 @@ struct badtriang *dequeuebadtriang(struct mesh *m)
 /*  Returns a nonzero value if the subsegment is encroached.                 */
 /*                                                                           */
 /*****************************************************************************/
-
-#ifndef CDT_ONLY
 
 int checkseg4encroach(struct mesh *m, struct behavior *b,
                       struct osub *testsubseg)
@@ -752,8 +745,6 @@ int checkseg4encroach(struct mesh *m, struct behavior *b,
   return encroached;
 }
 
-#endif /* not CDT_ONLY */
-
 /*****************************************************************************/
 /*                                                                           */
 /*  testtriangle()   Test a triangle for quality and size.                   */
@@ -763,8 +754,6 @@ int checkseg4encroach(struct mesh *m, struct behavior *b,
 /*  to the bad triangle queue.                                               */
 /*                                                                           */
 /*****************************************************************************/
-
-#ifndef CDT_ONLY
 
 void testtriangle(struct mesh *m, struct behavior *b, struct otri *testtri)
 {
@@ -919,5 +908,3 @@ void testtriangle(struct mesh *m, struct behavior *b, struct otri *testtri)
     enqueuebadtri(m, b, testtri, minedge, tapex, torg, tdest);
   }
 }
-
-#endif /* not CDT_ONLY */

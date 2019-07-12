@@ -4,7 +4,47 @@ project(triangle C)
 
 set(TARGET_NAME trilib)
 
-add_library(${TARGET_NAME} STATIC trimesh.h trimesh.c pool.h pool.c mem.h mem.c reduced.h reduced.c cdt.c cdt.h types.h)
+set(HDR_FILES
+    pool.h
+    mem.h
+    reduced.h
+    cdt.h
+    triangle.h
+    io.h
+    debug.h
+    construct.h
+    geom.h
+    user.h
+    init.h
+    meshqual.h
+    locate.h
+    meshtransform.h
+    primitives.h
+    random.h
+    delauny.h
+    triangulate.h
+)
+
+set(SRC_FILES
+    pool.c
+    mem.c
+    reduced.c
+    cdt.c
+    io.c
+    debug.c
+    construct.c
+    geom.c
+    user.c
+    init.c
+    meshqual.c
+    locate.c
+    meshtransform.c
+    random.c
+    delauny.c
+    triangulate.c
+)
+
+add_library(${TARGET_NAME} STATIC ${HDR_FILES} ${SRC_FILES})
 target_compile_definitions(${TARGET_NAME} PUBLIC -DTRILIBRARY)
 target_compile_definitions(${TARGET_NAME} PUBLIC -DNO_TIMER)
 

@@ -1,5 +1,10 @@
-#include "trimesh.h"
+#include "triangulate.h"
+#include "primitives.h"
+#include "user.h"
 #include "pool.h"
+#include "init.h"
+#include "reduced.h"
+#include "mem.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -297,34 +302,21 @@ void readnodes(struct mesh *m, struct behavior *b, char *nodefilename, char *pol
 
 void syntax()
 {
-#ifdef CDT_ONLY
-#ifdef REDUCED
   printf("triangle [-pAcjevngBPNEIOXzo_lQVh] input_file\n");
-#else /* not REDUCED */
   printf("triangle [-pAcjevngBPNEIOXzo_iFlCQVh] input_file\n");
-#endif /* not REDUCED */
-#else /* not CDT_ONLY */
-#ifdef REDUCED
   printf("triangle [-prq__a__uAcDjevngBPNEIOXzo_YS__lQVh] input_file\n");
-#else /* not REDUCED */
   printf("triangle [-prq__a__uAcDjevngBPNEIOXzo_YS__iFlsCQVh] input_file\n");
-#endif /* not REDUCED */
-#endif /* not CDT_ONLY */
 
   printf("    -p  Triangulates a Planar Straight Line Graph (.poly file).\n");
-#ifndef CDT_ONLY
   printf("    -r  Refines a previously generated mesh.\n");
   printf(
     "    -q  Quality mesh generation.  A minimum angle may be specified.\n");
   printf("    -a  Applies a maximum triangle area constraint.\n");
   printf("    -u  Applies a user-defined triangle constraint.\n");
-#endif /* not CDT_ONLY */
   printf(
     "    -A  Applies attributes to identify triangles in certain regions.\n");
   printf("    -c  Encloses the convex hull with segments.\n");
-#ifndef CDT_ONLY
   printf("    -D  Conforming Delaunay:  all triangles are truly Delaunay.\n");
-#endif /* not CDT_ONLY */
 /*
   printf("    -w  Weighted Delaunay triangulation.\n");
   printf("    -W  Regular triangulation (lower hull of a height field).\n");
@@ -343,22 +335,14 @@ void syntax()
   printf("    -X  Suppresses use of exact arithmetic.\n");
   printf("    -z  Numbers all items starting from zero (rather than one).\n");
   printf("    -o2 Generates second-order subparametric elements.\n");
-#ifndef CDT_ONLY
   printf("    -Y  Suppresses boundary segment splitting.\n");
   printf("    -S  Specifies maximum number of added Steiner points.\n");
-#endif /* not CDT_ONLY */
-#ifndef REDUCED
   printf("    -i  Uses incremental method, rather than divide-and-conquer.\n");
   printf("    -F  Uses Fortune's sweepline algorithm, rather than d-and-c.\n");
-#endif /* not REDUCED */
   printf("    -l  Uses vertical cuts only, rather than alternating cuts.\n");
-#ifndef REDUCED
-#ifndef CDT_ONLY
   printf(
     "    -s  Force segments into mesh by splitting (instead of using CDT).\n");
-#endif /* not CDT_ONLY */
   printf("    -C  Check consistency of final mesh.\n");
-#endif /* not REDUCED */
   printf("    -Q  Quiet:  No terminal output except errors.\n");
   printf("    -V  Verbose:  Detailed information on what I'm doing.\n");
   printf("    -h  Help:  Detailed instructions for Triangle.\n");
@@ -386,11 +370,7 @@ void info()
   printf(
 "Supported in part by NSF Grant CMS-9318163 and an NSERC 1967 Scholarship.\n");
   printf("There is no warranty whatsoever.  Use at your own risk.\n");
-#ifdef SINGLE
-  printf("This executable is compiled for single precision arithmetic.\n\n\n");
-#else /* not SINGLE */
   printf("This executable is compiled for double precision arithmetic.\n\n\n");
-#endif /* not SINGLE */
   printf(
 "Triangle generates exact Delaunay triangulations, constrained Delaunay\n");
   printf(

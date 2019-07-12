@@ -27,7 +27,7 @@ set(SRC_FILES
   geometry/rectangle.cpp
   geometry/region.cpp
   geometry/segment.cpp
-  geometry/triangle.cpp
+  geometry/triangleshape.cpp
   geometry/vertex.cpp
   math/matrix3x3.cpp
   math/sparsematrix.cpp
@@ -58,7 +58,7 @@ set(HDR_FILES
   geometry/rectangle.h
   geometry/region.h
   geometry/segment.h
-  geometry/triangle.h
+  geometry/triangleshape.h
   geometry/vertex.h
   math/matrix3x3.h
   math/sparsematrix.h

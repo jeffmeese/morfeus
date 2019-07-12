@@ -1,13 +1,12 @@
 #ifndef REDUCED_H
 #define REDUCED_H
 
-#include "trimesh.h"
+#include "triangle.h"
 
 void boundingbox(struct mesh *m, struct behavior *b);
 void check4deadevent(struct otri *checktri, struct event **freeevents,
                      struct event **eventheap, int *heapsize);
-void checkdelaunay(struct mesh *m, struct behavior *b);
-void checkmesh(struct mesh *m, struct behavior *b);
+
 REAL circletop(struct mesh *m, vertex pa, vertex pb, vertex pc, REAL ccwabc);
 void createeventheap(struct mesh *m, struct event ***eventheap,
                      struct event **events, struct event **freeevents);

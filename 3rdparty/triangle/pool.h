@@ -1,7 +1,7 @@
 #ifndef POOL_H
 #define POOL_H
 
-#include "trimesh.h"
+#include "triangle.h"
 
 void poolinit(struct memorypool *pool, int bytecount, int itemcount, int firstitemcount, int alignment);
 void poolrestart(struct memorypool *pool);
