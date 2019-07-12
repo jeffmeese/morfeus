@@ -27,6 +27,7 @@ set(SRC_FILES
   geometry/rectangle.cpp
   geometry/region.cpp
   geometry/segment.cpp
+  geometry/shape.cpp
   geometry/triangleshape.cpp
   geometry/vertex.cpp
   math/matrix3x3.cpp
@@ -58,6 +59,7 @@ set(HDR_FILES
   geometry/rectangle.h
   geometry/region.h
   geometry/segment.h
+  geometry/shape.h
   geometry/triangleshape.h
   geometry/vertex.h
   math/matrix3x3.h
@@ -104,4 +106,4 @@ target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/obs
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/solver)
 
 target_link_libraries(${TARGET_NAME} loki)
-target_link_libraries(${TARGET_NAME} trilib)
+target_link_libraries(${TARGET_NAME} triangle)

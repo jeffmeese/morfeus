@@ -1,9 +1,10 @@
-#include <iostream>
+#include "application.h"
+#include "mainwindow.h"
 
-using namespace std;
-
-int main()
+int main(int argc, char ** argv)
 {
-  cout << "Hello World!" << endl;
-  return 0;
+  Application application(argc, argv);
+  MainWindow mainWindow(application);
+  mainWindow.show();
+  return application.exec();
 }

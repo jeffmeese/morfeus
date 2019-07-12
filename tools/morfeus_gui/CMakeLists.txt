@@ -18,15 +18,40 @@ find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 
 set(SRC_FILES
-    main.cpp
+  main.cpp
+  application/application.cpp
+  application/mainwindow.cpp
+  project/meshitem.cpp
+  project/rectangleitem.cpp
+  project/surfaceitem.cpp
+  workspacemodel/rectangleworkspaceitem.cpp
+  workspacemodel/workspacemodel.cpp
+  workspacemodel/workspacemodelitem.cpp
 )
 
 set(HDR_FILES
+  application/application.h
+  application/mainwindow.h
+  project/meshitem.h
+  project/rectangleitem.h
+  project/surfaceitem.h
+  workspacemodel/rectangleworkspaceitem.h
+  workspacemodel/workspacemodel.h
+  workspacemodel/workspacemodelitem.h
 )
 
-add_executable(${TARGET_NAME} ${HDR_FILES} ${SRC_FILES})
+set(UI_FILES
+  application/mainwindow.ui
+)
+
+add_executable(${TARGET_NAME} ${HDR_FILES} ${SRC_FILES} ${UI_FILES})
+
+target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/application)
+target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/project)
+target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/workspacemodel)
 
 target_link_libraries(${TARGET_NAME} morfeus)
+target_link_libraries(${TARGET_NAME} qtep)
 target_link_libraries(${TARGET_NAME} Qt5::Gui)
 target_link_libraries(${TARGET_NAME} Qt5::Widgets)
 target_link_libraries(${TARGET_NAME} ${VTK_LIBRARIES})

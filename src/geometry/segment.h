@@ -2,8 +2,10 @@
 #define SEGMENT_H
 
 #include "morfeus.h"
+#include "shape.h"
 
 class Segment
+    : public Shape
 {
 public:
   MORFEUS_LIB_DECL Segment(int32_t id);

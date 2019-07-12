@@ -2,5 +2,5 @@
 
 Rectangle::Rectangle()
 {
-
+  setName("Rect1");
 }
