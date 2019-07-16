@@ -1,6 +1,9 @@
 #include "application.h"
 #include "mainwindow.h"
 
+//#include <QSurfaceFormat>
+//#include <QVTKOpenGLWidget.h>
+
 int main(int argc, char ** argv)
 {
   Application application(argc, argv);

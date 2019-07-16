@@ -21,6 +21,7 @@ set(SRC_FILES
   main.cpp
   application/application.cpp
   application/mainwindow.cpp
+  commands/addrectanglecommand.cpp
   project/meshitem.cpp
   project/rectangleitem.cpp
   project/surfaceitem.cpp
@@ -32,6 +33,7 @@ set(SRC_FILES
 set(HDR_FILES
   application/application.h
   application/mainwindow.h
+  commands/addrectanglecommand.h
   project/meshitem.h
   project/rectangleitem.h
   project/surfaceitem.h
@@ -47,8 +49,10 @@ set(UI_FILES
 add_executable(${TARGET_NAME} ${HDR_FILES} ${SRC_FILES} ${UI_FILES})
 
 target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/application)
+target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/commands)
 target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/project)
 target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/workspacemodel)
+target_include_directories(${TARGET_NAME} PRIVATE ${VTK_INCLUDE_DIRS})
 
 target_link_libraries(${TARGET_NAME} morfeus)
 target_link_libraries(${TARGET_NAME} qtep)
