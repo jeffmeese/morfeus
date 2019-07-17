@@ -2,17 +2,10 @@
 
 #include <mesh.h>
 
-MeshItem::MeshItem()
-  : ProjectItem("Mesh")
-  , mMesh(nullptr)
-{
-}
-
-MeshItem::MeshItem(Mesh * mesh)
+MeshItem::MeshItem(std::unique_ptr<Mesh> mesh)
   : ProjectItem ("Mesh")
-  , mMesh(nullptr)
+  , mMesh(std::move(mesh))
 {
-  setMesh(mesh);
 }
 
 bool MeshItem::loadAttributes(QXmlStreamReader & reader)
@@ -25,7 +18,3 @@ bool MeshItem::saveAttributes(QXmlStreamWriter & writer) const
   return !writer.hasError();
 }
 
-void MeshItem::setMesh(Mesh *mesh)
-{
-  mMesh = mesh;
-}

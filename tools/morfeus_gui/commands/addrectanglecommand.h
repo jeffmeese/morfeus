@@ -3,21 +3,22 @@
 
 #include <command.h>
 
+#include <memory>
+
 #include <QStandardItem>
 
-class Project;
+class GuiProject;
 class Rectangle;
+class ProjectItem;
 
 class AddRectangleCommand
     : public Command
 {
 public:
-  AddRectangleCommand();
+  AddRectangleCommand(GuiProject * project, std::unique_ptr<Rectangle> rectangle);
 
 public:
-  void setProject(Project * project);
-  void setRectangle(Rectangle * rectangle);
-  void setWorkspaceParent(QStandardItem * parentItem);
+  static QString commandId();
 
 protected:
   void execute() override;
@@ -25,9 +26,9 @@ protected:
 
 private:
   bool mProjectModified;
-  Project * mProject;
-  Rectangle * mRectangle;
-  QStandardItem * mParentItem;
+  GuiProject * mProject;
+  QString mItemId;
+  std::unique_ptr<ProjectItem> mItem;
 };
 
 #endif // ADDRECTANGLECOMMAND_H

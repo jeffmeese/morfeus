@@ -11,11 +11,12 @@ class RectangleItem
   Q_OBJECT
 
 public:
-  RectangleItem();
-  RectangleItem(Rectangle * rectangle);
+  RectangleItem(std::unique_ptr<Rectangle> rectangle);
 
 public:
-  void setRectangle(Rectangle * rectangle);
+  const Rectangle * rectangle() const;
+  Rectangle * rectangle();
+  std::unique_ptr<Rectangle> removeRectangle();
 
 protected:
   bool loadAttributes(QXmlStreamReader & reader) override;
@@ -25,7 +26,17 @@ protected slots:
   void handleItemChanged();
 
 private:
-  Rectangle * mRectangle;
+  std::unique_ptr<Rectangle> mRectangle;
 };
+
+inline const Rectangle * RectangleItem::rectangle() const
+{
+  return mRectangle.get();
+}
+
+inline Rectangle * RectangleItem::rectangle()
+{
+  return mRectangle.get();
+}
 
 #endif // RECTANGLEITEM_H

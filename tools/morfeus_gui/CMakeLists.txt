@@ -22,24 +22,38 @@ set(SRC_FILES
   application/application.cpp
   application/mainwindow.cpp
   commands/addrectanglecommand.cpp
+  commands/renamecommand.cpp
+  project/guiproject.cpp
   project/meshitem.cpp
   project/rectangleitem.cpp
   project/surfaceitem.cpp
+  workspacemodel/excitationsworkspaceitem.cpp
+  workspacemodel/geometryworkspaceitem.cpp
+  workspacemodel/meshworkspaceitem.cpp
+  workspacemodel/observationsworkspaceitem.cpp
   workspacemodel/rectangleworkspaceitem.cpp
   workspacemodel/workspacemodel.cpp
   workspacemodel/workspacemodelitem.cpp
+  workspaceview/workspaceview.cpp
 )
 
 set(HDR_FILES
   application/application.h
   application/mainwindow.h
   commands/addrectanglecommand.h
+  commands/renamecommand.h
+  project/guiproject.h
   project/meshitem.h
   project/rectangleitem.h
   project/surfaceitem.h
+  workspacemodel/excitationsworkspaceitem.h
+  workspacemodel/geometryworkspaceitem.h
+  workspacemodel/meshworkspaceitem.h
+  workspacemodel/observationsworkspaceitem.h
   workspacemodel/rectangleworkspaceitem.h
   workspacemodel/workspacemodel.h
   workspacemodel/workspacemodelitem.h
+  workspaceview/workspaceview.h
 )
 
 set(UI_FILES
@@ -52,6 +66,7 @@ target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ap
 target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/commands)
 target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/project)
 target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/workspacemodel)
+target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/workspaceview)
 target_include_directories(${TARGET_NAME} PRIVATE ${VTK_INCLUDE_DIRS})
 
 target_link_libraries(${TARGET_NAME} morfeus)

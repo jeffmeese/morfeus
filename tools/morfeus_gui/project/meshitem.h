@@ -9,18 +9,14 @@ class MeshItem
     : public ProjectItem
 {
 public:
-  MeshItem();
-  MeshItem(Mesh * mesh);
-
-public:
-  void setMesh(Mesh * mesh);
+  MeshItem(std::unique_ptr<Mesh> mesh);
 
 protected:
   bool loadAttributes(QXmlStreamReader & reader) override;
   bool saveAttributes(QXmlStreamWriter & writer) const override;
 
 private:
-  Mesh * mMesh;
+  std::unique_ptr<Mesh> mMesh;
 };
 
 #endif // MESHITEM_H

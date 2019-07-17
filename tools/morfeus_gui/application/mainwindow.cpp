@@ -3,10 +3,12 @@
 
 #include "application.h"
 #include "addrectanglecommand.h"
+#include "guiproject.h"
 #include "rectangle.h"
 #include "workspacemodel.h"
 
-#include <project.h>
+#include <action.h>
+#include <actionmanager.h>
 
 #include <QCloseEvent>
 
@@ -45,11 +47,9 @@ void MainWindow::exitProgram()
 
 void MainWindow::handleAddRectangle()
 {
-  mWorkspaceModel->setCurrentParent(mWorkspaceModel->geometryItem());
-  Rectangle * rectangle = new Rectangle;
-  AddRectangleCommand * command = new AddRectangleCommand;
-  command->setRectangle(rectangle);
-  command->setProject(mApplication.project());
+  GuiProject * project = mApplication.project();
+  std::unique_ptr<Rectangle> rectangle(new Rectangle);
+  AddRectangleCommand * command = new AddRectangleCommand(project, std::move(rectangle));
   mApplication.commandStack().push(command);
   updateWindowTitle();
 }
@@ -77,6 +77,11 @@ void MainWindow::handleOpenProject()
 {
   if (!promptSave())
     return;
+}
+
+void MainWindow::handleProjectModified()
+{
+  updateWindowTitle();
 }
 
 void MainWindow::handleRedo()
@@ -162,8 +167,11 @@ bool MainWindow::promptSave()
 
 void MainWindow::resetModels()
 {
-  mWorkspaceModel->setProject(mApplication.project());
+  GuiProject * project = mApplication.project();
+  mWorkspaceModel->setProject(project);
+  mUi->cWorkspaceView->setProject(project);
   mUi->cWorkspaceView->setModel(mWorkspaceModel.get());
+  connect(project, SIGNAL(modified(bool)), SLOT(handleProjectModified()));
 }
 
 void MainWindow::saveProject(const QString & fileName)

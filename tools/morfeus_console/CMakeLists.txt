@@ -9,12 +9,16 @@ cmake_policy(SET CMP0020 NEW)
 
 set(SRC_FILES
   application.cpp
+  commandline.cpp
+  consoleproject.cpp
   inputdata.cpp
   main.cpp
 )
 
 set(HDR_FILES
   application.h
+  commandline.h
+  consoleproject.h
   inputdata.h
 )
 

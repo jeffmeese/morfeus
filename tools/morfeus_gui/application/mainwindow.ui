@@ -77,7 +77,10 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QTreeView" name="cWorkspaceView">
+      <widget class="WorkspaceView" name="cWorkspaceView">
+       <property name="editTriggers">
+        <set>QAbstractItemView::EditKeyPressed</set>
+       </property>
        <attribute name="headerVisible">
         <bool>false</bool>
        </attribute>
@@ -132,6 +135,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>WorkspaceView</class>
+   <extends>QTreeView</extends>
+   <header>workspaceview/workspaceview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

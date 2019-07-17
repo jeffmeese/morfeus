@@ -29,6 +29,7 @@ private slots:
   void handleExit();
   void handleNewProject();
   void handleOpenProject();
+  void handleProjectModified();
   void handleRedo();
   void handleSaveProject();
   void handleSaveProjectAs();

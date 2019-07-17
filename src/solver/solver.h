@@ -3,13 +3,12 @@
 
 #include "morfeus.h"
 
-class Solver
+#include <boost/noncopyable.hpp>
+
+class Solver : private boost::noncopyable
 {
 public:
-  MORFEUS_LIB_DECL virtual ~Solver();
-
-protected:
-  Solver();
+  MORFEUS_LIB_DECL void runSolver();
 };
 
 #endif // SOLVER_H

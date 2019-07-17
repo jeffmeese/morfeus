@@ -87,28 +87,6 @@ bool Project::loadXml(QXmlStreamReader & reader)
   return !reader.hasError();
 }
 
-void Project::newProject()
-{
-  mName = QString();
-  mFileName = QString();
-  mItems.clear();
-  setModified(false);
-}
-
-bool Project::removeItem(const QString & itemId)
-{
-  for (std::vector<ProjectItemPtr>::iterator itr = mItems.begin(); itr != mItems.end(); ++itr) {
-    if (itr->get()->id() == itemId) {
-      emit itemAboutToBeRemoved(itr->get());
-      mItems.erase(itr);
-      emit itemRemoved();
-      setModified();
-      return true;
-    }
-  }
-  return false;
-}
-
 bool Project::save(const QString & fileName)
 {
   mFileName = QString();
@@ -156,26 +134,19 @@ void Project::setName(const QString & name)
   setModified();
 }
 
-const ProjectItem * Project::takeItem(const QString & itemId) const
+std::unique_ptr<ProjectItem> Project::removeItem(const QString & itemId)
 {
-  for (std::vector<ProjectItemPtr>::const_iterator itr = mItems.begin(); itr != mItems.end(); ++itr) {
-    if (itr->get()->id() == itemId) {
-      const ProjectItem * item = itr->get();
-      return item;
-    }
-  }
-  return nullptr;
-}
-
-ProjectItem * Project::takeItem(const QString & itemId)
-{
+  std::unique_ptr<ProjectItem> item;
   for (std::vector<ProjectItemPtr>::iterator itr = mItems.begin(); itr != mItems.end(); ++itr) {
     if (itr->get()->id() == itemId) {
-      ProjectItem * item = itr->get();
+      emit itemAboutToBeRemoved(itr->get());
+      item.reset(itr->release());
+      mItems.erase(itr);
+      emit itemRemoved();
       return item;
     }
   }
-  return nullptr;
+  return item;
 }
 
 std::size_t Project::totalItems() const

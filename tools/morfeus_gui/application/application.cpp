@@ -1,6 +1,6 @@
 #include "application.h"
 
-#include <project.h>
+#include "guiproject.h"
 
 Application::Application(int & argc, char ** argv)
   : QApplication (argc, argv)
@@ -21,5 +21,5 @@ QUndoStack & Application::commandStack()
 
 void Application::newProject()
 {
-  mProject.reset(new Project);
+  mProject.reset(new GuiProject);
 }

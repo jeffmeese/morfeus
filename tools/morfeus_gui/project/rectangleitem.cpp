@@ -2,17 +2,12 @@
 
 #include "rectangle.h"
 
-RectangleItem::RectangleItem()
+RectangleItem::RectangleItem(std::unique_ptr<Rectangle> rectangle)
   : ProjectItem ("Rectangle")
-  , mRectangle(nullptr)
+  , mRectangle(std::move(rectangle))
 {
-}
-
-RectangleItem::RectangleItem(Rectangle * rectangle)
-  : ProjectItem ("Rectangle")
-  , mRectangle(nullptr)
-{
-  setRectangle(rectangle);
+  setName(QString::fromStdString(mRectangle->name()));
+  connect(this, SIGNAL(itemChanged()), SLOT(handleItemChanged()));
 }
 
 void RectangleItem::handleItemChanged()
@@ -25,20 +20,19 @@ bool RectangleItem::loadAttributes(QXmlStreamReader & reader)
   return !reader.hasError();
 }
 
-bool RectangleItem::saveAttributes(QXmlStreamWriter & writer) const
+std::unique_ptr<Rectangle> RectangleItem::removeRectangle()
 {
-  return !writer.hasError();
+  return std::move(mRectangle);
 }
 
-void RectangleItem::setRectangle(Rectangle *rectangle)
+bool RectangleItem::saveAttributes(QXmlStreamWriter & writer) const
 {
-  if (mRectangle != nullptr) {
-    disconnect(nullptr, nullptr, this, nullptr);
+  if (mRectangle.get() != nullptr) {
+    writer.writeAttribute("x", QString::number(mRectangle->center().x()));
+    writer.writeAttribute("y", QString::number(mRectangle->center().y()));
+    writer.writeAttribute("width", QString::number(mRectangle->width()));
+    writer.writeAttribute("height", QString::number(mRectangle->height()));
   }
 
-  mRectangle = rectangle;
-  if (mRectangle != nullptr) {
-    setName(QString::fromStdString(mRectangle->name()));
-    connect(this, SIGNAL(itemChanged()), SLOT(handleItemChanged()));
-  }
+  return !writer.hasError();
 }

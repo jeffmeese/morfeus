@@ -3,8 +3,14 @@
 
 #include <QStandardItemModel>
 
-class Project;
+class ActionManager;
+class ExcitationsWorkspaceItem;
+class GeometryWorkspaceItem;
+class MeshWorkspaceItem;
+class ObservationsWorkspaceItem;
+class GuiProject;
 class ProjectItem;
+class RectangleItem;
 
 class WorkspaceModel
     : public QStandardItemModel
@@ -15,24 +21,23 @@ public:
   WorkspaceModel();
 
 public:
-  QStandardItem * geometryItem();
-  void setCurrentParent(QStandardItem * item);
-  void setProject(Project * project);
+  GeometryWorkspaceItem * geometryItem();
+  void setProject(GuiProject * project);
 
 private slots:
-  void handleAddItem(ProjectItem * projectItem);
+  void handleAddRectangle(ProjectItem * rectItem);
+  void handleAboutToRemoveItem(ProjectItem * projectItem);
 
 private:
   void createDefaultItems();
   void loadProject();
 
 private:
-  Project * mProject;
-  QStandardItem * mGeometryItem;
-  QStandardItem * mMeshItem;
-  QStandardItem * mExcitationsItems;
-  QStandardItem * mObservationsItem;
-  QStandardItem * mCurrentParent;
+  GuiProject * mProject;
+  ExcitationsWorkspaceItem * mExcitationsItems;
+  GeometryWorkspaceItem * mGeometryItem;
+  MeshWorkspaceItem * mMeshItem;
+  ObservationsWorkspaceItem * mObservationsItem;
 };
 
 #endif // WORKSPACEMODEL_H

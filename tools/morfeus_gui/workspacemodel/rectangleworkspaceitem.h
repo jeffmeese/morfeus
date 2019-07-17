@@ -15,6 +15,9 @@ public:
   QVariant data(int role = Qt::DisplayRole) const override;
   void setData(const QVariant & data, int role = Qt::UserRole+1) override;
 
+protected:
+  QList<Action*> doGetActionList() const override;
+
 private:
   RectangleItem * mItem;
 };

@@ -17,6 +17,10 @@ if (MORFEUS_BUILD_SHARED)
   set(BUILD_TYPE SHARED)
 endif()
 
+
+find_package(Boost REQUIRED)
+message(STATUS "Libs: " ${Boost_LIBRARIES})
+
 set(SRC_FILES
   excitations/excitation.cpp
   geometry/circle.cpp
@@ -44,6 +48,9 @@ set(SRC_FILES
   mesher/mesher.cpp
   mesher/meshrefinement.cpp
   observations/observation.cpp
+  solver/bicgsolver.cpp
+  solver/iterativesolver.cpp
+  solver/iterativesolution.cpp
   solver/solution.cpp
   solver/solver.cpp
 )
@@ -76,6 +83,9 @@ set(HDR_FILES
   mesher/mesher.h
   mesher/meshrefinement.h
   observations/observation.h
+  solver/bicgsolver.h
+  solver/iterativesolver.h
+  solver/iterativesolution.h
   solver/solution.h
   solver/solver.h
 )
@@ -88,6 +98,7 @@ target_compile_definitions(${TARGET_NAME} PUBLIC -DTRILIBRARY)
 target_compile_definitions(${TARGET_NAME} PUBLIC -DNO_TIMER)
 target_compile_definitions(${TARGET_NAME} PUBLIC -DANSI_DECLARATORS)
 if (MSVC)
+  target_compile_definitions(${TARGET_NAME} PUBLIC -DBOOST_ALL_NO_LIB)
   target_compile_definitions(${TARGET_NAME} PRIVATE -D_CRT_SECURE_NO_WARNINGS)
   target_compile_definitions(${TARGET_NAME} PUBLIC -D_USE_MATH_DEFINES)
   target_compile_options(${TARGET_NAME} PRIVATE /wd4311 /wd4312 /wd4244 /wd4477)
@@ -104,6 +115,8 @@ target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/mes
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/mesher)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/observations)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/solver)
+target_include_directories(${TARGET_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
 
 target_link_libraries(${TARGET_NAME} loki)
 target_link_libraries(${TARGET_NAME} triangle)
+target_link_libraries(${TARGET_NAME} ${BOOST_LIBRARIES})

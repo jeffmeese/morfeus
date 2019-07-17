@@ -6,7 +6,7 @@
 
 #include <memory>
 
-class Project;
+class GuiProject;
 
 class Application
     : public QApplication
@@ -16,8 +16,8 @@ public:
   ~Application();
 
 public:
-  const Project * project() const;
-  Project * project();
+  const GuiProject * project() const;
+  GuiProject * project();
 
 public:
   void newProject();
@@ -26,15 +26,15 @@ public:
   static QUndoStack & commandStack();
 
 private:
-  std::unique_ptr<Project> mProject;
+  std::unique_ptr<GuiProject> mProject;
 };
 
-inline const Project * Application::project() const
+inline const GuiProject * Application::project() const
 {
   return mProject.get();
 }
 
-inline Project * Application::project()
+inline GuiProject * Application::project()
 {
   return mProject.get();
 }

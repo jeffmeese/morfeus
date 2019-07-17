@@ -36,12 +36,9 @@ public:
   const ProjectItem * itemAt(std::size_t index) const;
   bool load(const QString & fileName);
   bool loadXml(QXmlStreamReader & reader);
-  void newProject();
-  bool removeItem(const QString & itemId);
+  std::unique_ptr<ProjectItem> removeItem(const QString & itemId);
   bool save(const QString & fileName);
   bool saveXml(QXmlStreamWriter & writer) const;
-  const ProjectItem * takeItem(const QString & itemId) const;
-  ProjectItem * takeItem(const QString & itemId);
   std::size_t totalItems() const;
 
 signals:

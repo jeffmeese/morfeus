@@ -1,42 +1,33 @@
 #include "addrectanglecommand.h"
 
-#include "project.h"
+#include "guiproject.h"
+#include "rectangle.h"
 #include "rectangleitem.h"
 
-AddRectangleCommand::AddRectangleCommand()
-  : Command("Project.Add.Rectangle")
+#include <QDebug>
+
+static const QString commandIdentifier("Project.AddRectangle");
+
+AddRectangleCommand::AddRectangleCommand(GuiProject * project, std::unique_ptr<Rectangle> rectangle)
+  : Command(commandIdentifier)
   , mProjectModified(false)
-  , mProject(nullptr)
-  , mRectangle(nullptr)
-  , mParentItem(nullptr)
+  , mProject(project)
 {
-  setText("Add Rectangle");
+  mItem.reset(new RectangleItem(std::move(rectangle)));
+  mItemId = mItem->id();
 }
 
-void AddRectangleCommand::setProject(Project * project)
+QString AddRectangleCommand::commandId()
 {
-  mProject = project;
-}
-
-void AddRectangleCommand::setRectangle(Rectangle * rectangle)
-{
-  mRectangle = rectangle;
-}
-
-void AddRectangleCommand::setWorkspaceParent(QStandardItem * parentItem)
-{
-  mParentItem = parentItem;
+  return commandIdentifier;
 }
 
 void AddRectangleCommand::execute()
 {
-  mProjectModified = mProject->modified();
-  std::unique_ptr<RectangleItem> rectangleItem(new RectangleItem(mRectangle));
-  mProject->addItem(std::move(rectangleItem));
-  mProject->setModified();
+  mProject->addRectangle(std::move(mItem));
 }
 
 void AddRectangleCommand::unexecute()
 {
-  mProject->setModified(mProjectModified);
+  mItem = mProject->removeItem(mItemId);
 }

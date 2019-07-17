@@ -2,15 +2,11 @@
 
 #include "excitation.h"
 #include "observation.h"
+#include "solver.h"
 
 Solution::Solution(const Mesh & mesh)
   : mMesh(mesh)
 {
-}
-
-Solution::~Solution()
-{
-
 }
 
 void Solution::addExcitation(std::unique_ptr<Excitation> excitation)
@@ -21,4 +17,9 @@ void Solution::addExcitation(std::unique_ptr<Excitation> excitation)
 void Solution::addObservation(std::unique_ptr<Observation> observation)
 {
   mObservations.push_back(std::move(observation));
+}
+
+void Solution::setSolver(std::unique_ptr<Solver> solver)
+{
+  mSolver = std::move(solver);
 }

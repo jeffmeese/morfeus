@@ -3,10 +3,13 @@
 
 #include "morfeus.h"
 
+template <typename T>
 class SparseMatrix
 {
 public:
-  MORFEUS_LIB_DECL SparseMatrix();
+  SparseMatrix();
+
+private:
 };
 
 #endif // SPARSEMATRIX_H
