@@ -1,15 +1,13 @@
 #include "segment.h"
 
-Segment::Segment(int32_t id)
-  : mId(id)
+Segment::Segment()
 {
   mNode1 = mNode2 = -1;
   setBoundary(false);
 }
 
-Segment::Segment(int32_t id, int32_t node1, int32_t node2)
-  : mId(id)
-  , mNode1(node1)
+Segment::Segment(int32_t node1, int32_t node2)
+  : mNode1(node1)
   , mNode2(node2)
 {
   setBoundary(false);
@@ -20,9 +18,13 @@ bool Segment::boundary() const
   return mBoundary;
 }
 
-int32_t Segment::id() const
+void Segment::doReadFromXml(ptree &tree)
 {
-  return mId;
+
+}
+
+void Segment::doWriteToXml(ptree &tree) const
+{
 }
 
 int32_t Segment::node1() const

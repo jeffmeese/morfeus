@@ -12,11 +12,13 @@ public:
   RectangleFace(int32_t id);
 
 public:
-  MORFEUS_LIB_DECL dcomplex computeEntry(const RectangleFace * otherFace, const Mesh & mesh, int32_t localEdge) const;
-  MORFEUS_LIB_DECL dcomplex computeEntry(const TriangleFace * otherFace, const Mesh & mesh, int32_t localEdge) const;
+  //MORFEUS_LIB_DECL dcomplex computeEntry(const RectangleFace * otherFace, const Mesh & mesh, std::size_t localEdge) const;
+  //MORFEUS_LIB_DECL dcomplex computeEntry(const TriangleFace * otherFace, const Mesh & mesh, std::size_t localEdge) const;
 
 protected:
-  double doComputeArea(const Mesh & mesh) const override;
+  double doComputeArea(const Mesh * mesh) const override;
+  dcomplex doComputeMomEntry(const Face * otherFace, const Mesh * mesh, std::size_t localEdge) const override;
+  bool doIntersects(const Face * face) const override;
 };
 
 #endif // RECTANGLEFACE_H

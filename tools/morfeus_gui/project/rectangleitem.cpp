@@ -28,10 +28,10 @@ std::unique_ptr<Rectangle> RectangleItem::removeRectangle()
 bool RectangleItem::saveAttributes(QXmlStreamWriter & writer) const
 {
   if (mRectangle.get() != nullptr) {
-    writer.writeAttribute("x", QString::number(mRectangle->center().x()));
-    writer.writeAttribute("y", QString::number(mRectangle->center().y()));
-    writer.writeAttribute("width", QString::number(mRectangle->width()));
-    writer.writeAttribute("height", QString::number(mRectangle->height()));
+    //writer.writeAttribute("x", QString::number(mRectangle->center().x()));
+    //writer.writeAttribute("y", QString::number(mRectangle->center().y()));
+    //writer.writeAttribute("width", QString::number(mRectangle->width()));
+    //writer.writeAttribute("height", QString::number(mRectangle->height()));
   }
 
   return !writer.hasError();

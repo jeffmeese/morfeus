@@ -1,15 +1,13 @@
 #include "region.h"
 
-Region::Region(int32_t id)
-  : mId(id)
+Region::Region()
 {
   setPosition(0.0, 0.0);
   setAttribute(0.0);
   setMaxArea(-1.0);
 }
 
-Region::Region(int32_t id, double x, double y)
-  : mId(id)
+Region::Region(double x, double y)
 {
   setPosition(x, y);
   setAttribute(0.0);
@@ -21,9 +19,23 @@ double Region::attribute() const
   return mAttribute;
 }
 
-int32_t Region::id() const
+void Region::doReadFromXml(ptree &tree)
 {
-  return mId;
+
+}
+
+void Region::doWriteToXml(ptree & parentTree) const
+{
+  ptree itemTree;
+
+  itemTree.put("<xmlattr>.name", name());
+  itemTree.put("<xmlattr>.number", number());
+  itemTree.put("<xmlattr>.x", mX);
+  itemTree.put("<xmlattr>.y", mY);
+  itemTree.put("<xmlattr>.attribute", mAttribute);
+  itemTree.put("<xmlattr>.max-area", mMaxArea);
+
+  parentTree.push_back(std::make_pair("Region", itemTree));
 }
 
 double Region::maxArea() const

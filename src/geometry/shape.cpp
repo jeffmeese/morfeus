@@ -4,12 +4,8 @@ Shape::Shape()
 {
 }
 
-std::string Shape::name() const
+void Shape::addToGeometry(Geometry * geometry) const
 {
-  return mName;
+  doAddToGeometry(geometry);
 }
 
-void Shape::setName(const std::string &name)
-{
-  mName = name;
-}

@@ -19,6 +19,11 @@ public:
   MORFEUS_LIB_DECL void setCenter(double x, double y);
   MORFEUS_LIB_DECL void setRadius(double radius);
 
+protected:
+  void doAddToGeometry(Geometry * geometry) const override;
+  void doReadFromXml(ptree & tree) override;
+  void doWriteToXml(ptree & tree) const override;
+
 private:
   Point2D mCenter;
   double mRadius;

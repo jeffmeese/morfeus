@@ -17,12 +17,13 @@ if (MORFEUS_BUILD_SHARED)
   set(BUILD_TYPE SHARED)
 endif()
 
-
-find_package(Boost REQUIRED)
-message(STATUS "Libs: " ${Boost_LIBRARIES})
+# Find boost components
+find_package(Boost COMPONENTS system thread REQUIRED)
 
 set(SRC_FILES
+  core/morfeusobject.cpp
   excitations/excitation.cpp
+  excitations/planewave.cpp
   geometry/circle.cpp
   geometry/geometry.cpp
   geometry/hole.cpp
@@ -34,8 +35,9 @@ set(SRC_FILES
   geometry/shape.cpp
   geometry/triangleshape.cpp
   geometry/vertex.cpp
-  math/matrix3x3.cpp
-  math/sparsematrix.cpp
+  material/isotropicmaterial.cpp
+  material/material.cpp
+  math/functions.cpp
   mesh/edge.cpp
   mesh/element.cpp
   mesh/face.cpp
@@ -47,17 +49,20 @@ set(SRC_FILES
   mesh/triangleface.cpp
   mesher/mesher.cpp
   mesher/meshrefinement.cpp
+  observations/farfield.cpp
   observations/observation.cpp
-  solver/bicgsolver.cpp
-  solver/iterativesolver.cpp
-  solver/iterativesolution.cpp
   solver/solution.cpp
+  solver/directsolver.cpp
+  solver/iterativesolver.cpp
+  solver/meshinformation.cpp
   solver/solver.cpp
 )
 
 set(HDR_FILES
   morfeus.h
+  core/morfeusobject.h
   excitations/excitation.h
+  excitations/planewave.h
   geometry/circle.h
   geometry/geometry.h
   geometry/hole.h
@@ -69,8 +74,10 @@ set(HDR_FILES
   geometry/shape.h
   geometry/triangleshape.h
   geometry/vertex.h
-  math/matrix3x3.h
-  math/sparsematrix.h
+  material/isotropicmaterial.h
+  material/material.h
+  math/constants.h
+  math/functions.h
   mesh/edge.h
   mesh/element.h
   mesh/face.h
@@ -82,11 +89,17 @@ set(HDR_FILES
   mesh/triangleface.h
   mesher/mesher.h
   mesher/meshrefinement.h
+  observations/farfield.h
   observations/observation.h
-  solver/bicgsolver.h
-  solver/iterativesolver.h
-  solver/iterativesolution.h
+  rapidxml/rapidxml.hpp
+  rapidxml/rapidxml_iterators.hpp
+  rapidxml/rapidxml_print.hpp
+  rapidxml/rapidxml_utils.hpp
+  rapidxml/xmlutils.h
   solver/solution.h
+  solver/directsolver.h
+  solver/iterativesolver.h
+  solver/meshinformation.h
   solver/solver.h
 )
 
@@ -94,9 +107,6 @@ set(HDR_FILES
 add_library(${TARGET_NAME} ${BUILD_TYPE} ${HDR_FILES} ${SRC_FILES})
 
 # Set target compile options and definitions
-target_compile_definitions(${TARGET_NAME} PUBLIC -DTRILIBRARY)
-target_compile_definitions(${TARGET_NAME} PUBLIC -DNO_TIMER)
-target_compile_definitions(${TARGET_NAME} PUBLIC -DANSI_DECLARATORS)
 if (MSVC)
   target_compile_definitions(${TARGET_NAME} PUBLIC -DBOOST_ALL_NO_LIB)
   target_compile_definitions(${TARGET_NAME} PRIVATE -D_CRT_SECURE_NO_WARNINGS)
@@ -108,15 +118,19 @@ if (MORFEUS_BUILD_SHARED)
 endif()
 
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/core)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/excitations)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/geometry)
+target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/material)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/math)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/mesh)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/mesher)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/observations)
+target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/rapidxml)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/solver)
 target_include_directories(${TARGET_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
 
 target_link_libraries(${TARGET_NAME} loki)
 target_link_libraries(${TARGET_NAME} triangle)
+target_link_libraries(${TARGET_NAME} bcrypt)
 target_link_libraries(${TARGET_NAME} ${BOOST_LIBRARIES})

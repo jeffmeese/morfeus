@@ -1,20 +1,34 @@
 #include "hole.h"
+#include "geometry.h"
 
-Hole::Hole(int32_t id)
-  : mId(id)
+Hole::Hole()
 {
   setPosition(0.0, 0.0);
 }
 
-Hole::Hole(int32_t id, double x, double y)
-  : mId(id)
+Hole::Hole( double x, double y)
 {
   setPosition(x, y);
 }
 
-int32_t Hole::id() const
+void Hole::doAddToGeometry(Geometry *geometry) const
 {
-  return mId;
+//  std::size_t totalHoles = geometry->totalShapes();
+
+//  int32_t id = static_cast<int32_t>(totalHoles);
+//  std::unique_ptr<Hole> hole(new Hole(id));
+//  hole->setPosition(mX, mY);
+//  hole->setName(name());
+//  geometry->addShape(std::move(hole));
+}
+
+void Hole::doReadFromXml(ptree &tree)
+{
+
+}
+
+void Hole::doWriteToXml(ptree &tree) const
+{
 }
 
 double Hole::x() const

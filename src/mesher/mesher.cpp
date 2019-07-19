@@ -26,16 +26,32 @@ Mesher::~Mesher()
 {
 }
 
-void Mesher::createMesh(const Geometry & geometry, Mesh & mesh)
+void Mesher::createMesh(const Geometry * geometry, Mesh * mesh)
+{
+  std::unique_ptr<Mesh> surfaceMesh(new Mesh);
+
+  createSurfaceMesh(geometry, surfaceMesh.get());
+  extrudeVolumeMesh(surfaceMesh.get(), mesh);
+}
+
+void Mesher::createSurfaceMesh(const Geometry *geometry, Mesh *mesh)
 {
   triangulateio in, out;
   int index = 0;
 
-  in.numberofpoints = geometry.totalVertices();
+  in.numberofpoints = static_cast<int32_t>(geometry->totalVertices());
   in.numberofpointattributes = 1;
-  in.numberofregions = geometry.totalRegions();
-  in.numberofsegments = geometry.totalSegments();
-  in.numberofholes = geometry.totalHoles();
+  in.numberofregions = static_cast<int32_t>(geometry->totalRegions());
+  in.numberofsegments = static_cast<int32_t>(geometry->totalSegments());
+
+  in.numberofholes = 0;
+  for (std::size_t i = 0; i < geometry->totalShapes(); i++) {
+    const Shape * shape = geometry->shape(i);
+    const Hole * hole = dynamic_cast<const Hole*>(shape);
+    if (hole != nullptr) {
+      in.numberofholes++;
+    }
+  }
 
   uint64_t numPoints = static_cast<uint64_t>(in.numberofpoints);
   uint64_t numPointAttrs = static_cast<uint64_t>(in.numberofpointattributes);
@@ -43,16 +59,27 @@ void Mesher::createMesh(const Geometry & geometry, Mesh & mesh)
   uint64_t numHoles = static_cast<uint64_t>(in.numberofholes);
   uint64_t numRegions = static_cast<uint64_t>(in.numberofregions);
 
-  in.pointlist = new double[static_cast<uint64_t>(numPoints*2)];
-  in.pointattributelist = new double[numPoints*numPointAttrs];
-  in.pointmarkerlist = new int[numPoints];
-  in.segmentlist = new int[numSeqments*2];
-  in.segmentmarkerlist = new int[numSeqments];
-  in.regionlist = new double[numRegions*4];
-  in.holelist = new double[numHoles*2];
+  if (numPoints > 0) {
+    in.pointlist = new double[static_cast<uint64_t>(numPoints*2)];
+    in.pointattributelist = new double[numPoints*numPointAttrs];
+    in.pointmarkerlist = new int[numPoints];
+  }
+
+  if (numSeqments > 0) {
+    in.segmentlist = new int[numSeqments*2];
+    in.segmentmarkerlist = new int[numSeqments];
+  }
+
+  if (numRegions > 0) {
+    in.regionlist = new double[numRegions*4];
+  }
+
+  if (numHoles > 0) {
+    in.holelist = new double[numHoles*2];
+  }
 
   for (int32_t i = 0; i < in.numberofpoints; i++) {
-    const Vertex * v = geometry.vertex(i);
+    const Vertex * v = geometry->vertex(i);
     in.pointlist[index] = v->x();
     in.pointlist[index+1] = v->y();
     in.pointattributelist[i] = 0.0;
@@ -62,7 +89,7 @@ void Mesher::createMesh(const Geometry & geometry, Mesh & mesh)
 
   index = 0;
   for (int32_t i = 0; i < in.numberofsegments; i++) {
-    const Segment * segment = geometry.segment(i);
+    const Segment * segment = geometry->segment(i);
     in.segmentlist[index] = segment->node1();
     in.segmentlist[index+1] = segment->node2();
     in.segmentmarkerlist[i] = segment->boundary();
@@ -70,16 +97,19 @@ void Mesher::createMesh(const Geometry & geometry, Mesh & mesh)
   }
 
   index = 0;
-  for (int32_t i = 0; i < in.numberofholes; i++) {
-    const Hole * hole = geometry.hole(i);
-    in.holelist[index] = hole->x();
-    in.holelist[index+1] = hole->y();
-    index += 2;
+  for (std::size_t i = 0; i < geometry->totalShapes(); i++) {
+    const Shape * shape = geometry->shape(i);
+    const Hole * hole = dynamic_cast<const Hole*>(shape);
+    if (hole != nullptr) {
+      in.holelist[index] = hole->x();
+      in.holelist[index+1] = hole->y();
+      index += 2;
+    }
   }
 
   index = 0;
   for (int32_t i = 0; i < in.numberofregions; i++) {
-    const Region * region = geometry.region(i);
+    const Region * region = geometry->region(i);
     in.regionlist[index] = region->x();
     in.regionlist[index+1] = region->y();
     in.regionlist[index+2] = region->attribute();
@@ -109,11 +139,11 @@ void Mesher::createMesh(const Geometry & geometry, Mesh & mesh)
     int32_t boundary = out.pointmarkerlist[i];
     index += 2;
 
-    std::unique_ptr<Node> node(new Node(i+1, x, y, 0.0));
+    std::unique_ptr<Node> node(new Node(i, x, y, 0.0));
     node->setBoundary(boundary);
     node->setAttribute(attribute);
 
-    mesh.addNode(std::move(node));
+    mesh->addNode(std::move(node));
   }
 
   index = 0;
@@ -123,10 +153,10 @@ void Mesher::createMesh(const Geometry & geometry, Mesh & mesh)
     int32_t node2 = out.trianglelist[index+1] + 1;
     int32_t node3 = out.trianglelist[index+2] + 1;
 
-    std::unique_ptr<TriangleElement> triangle(new TriangleElement(i+1));
-    triangle->setNode(1, node1);
-    triangle->setNode(2, node2);
-    triangle->setNode(3, node3);
+    std::unique_ptr<TriangleElement> triangle(new TriangleElement(i));
+    triangle->setNode(0, node1);
+    triangle->setNode(1, node2);
+    triangle->setNode(2, node3);
 
     for (int32_t j = 0; j < out.numberoftriangleattributes; j++) {
       double attribute = out.triangleattributelist[attrIndex];
@@ -134,17 +164,26 @@ void Mesher::createMesh(const Geometry & geometry, Mesh & mesh)
       triangle->addAttribute(attribute);
     }
 
-    mesh.addElement(std::move(triangle));
+    mesh->addElement(std::move(triangle));
     index += 3;
   }
 
-  delete [] in.holelist;
-  delete [] in.regionlist;
-  delete [] in.pointlist;
-  delete [] in.pointmarkerlist;
-  delete [] in.pointattributelist;
-  delete [] in.segmentlist;
-  delete [] in.segmentmarkerlist;
+  if (numHoles > 0)
+    delete [] in.holelist;
+
+  if (numRegions > 0)
+    delete [] in.regionlist;
+
+  if (numPoints > 0) {
+    delete [] in.pointlist;
+    delete [] in.pointmarkerlist;
+    delete [] in.pointattributelist;
+  }
+
+  if (numSeqments > 0) {
+    delete [] in.segmentlist;
+    delete [] in.segmentmarkerlist;
+  }
 
   if (out.edgelist != nullptr) free(out.edgelist);
   if (out.edgemarkerlist != nullptr) free(out.edgemarkerlist);
@@ -159,7 +198,12 @@ void Mesher::createMesh(const Geometry & geometry, Mesh & mesh)
   if (out.triangleattributelist != nullptr) free(out.triangleattributelist);
 }
 
-void Mesher::refineMesh(const Mesh &oldMesh, const MeshRefinement &refinement, Mesh &mesh)
+void Mesher::extrudeVolumeMesh(const Mesh *surfaceMesh, const Mesh *volumeMesh)
+{
+
+}
+
+void Mesher::refineMesh(const Mesh * oldMesh, const MeshRefinement * refinement, Mesh * mesh)
 {
 
 }

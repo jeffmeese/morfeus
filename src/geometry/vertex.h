@@ -2,17 +2,19 @@
 #define VERTEX_H
 
 #include "morfeus.h"
-#include "types.h"
+#include "morfeusobject.h"
+
+#include <vector>
 
 class Vertex
+    : public MorfeusObject
 {
 public:
-  MORFEUS_LIB_DECL Vertex(int32_t id);
-  MORFEUS_LIB_DECL Vertex(int32_t id, double x, double y);
+  MORFEUS_LIB_DECL Vertex();
+  MORFEUS_LIB_DECL Vertex(double x, double y);
 
 public:
   MORFEUS_LIB_DECL bool boundary() const;
-  MORFEUS_LIB_DECL int32_t id() const;
   MORFEUS_LIB_DECL double x() const;
   MORFEUS_LIB_DECL double y() const;
   MORFEUS_LIB_DECL void setBoundary(bool value);
@@ -23,9 +25,12 @@ public:
 public:
   MORFEUS_LIB_DECL void addAttribute(double value);
 
+protected:
+  void doReadFromXml(ptree & tree) override;
+  void doWriteToXml(ptree & tree) const override;
+
 private:
   bool mBoundary;
-  int32_t mId;
   double mX;
   double mY;
   std::vector<double> mAttributes;

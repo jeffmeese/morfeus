@@ -23,6 +23,16 @@ Point2D Circle::center() const
   return mCenter;
 }
 
+void Circle::doReadFromXml(ptree &tree)
+{
+
+}
+
+void Circle::doWriteToXml(ptree &tree) const
+{
+
+}
+
 double Circle::radius() const
 {
   return mRadius;

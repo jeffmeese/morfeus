@@ -1,17 +1,20 @@
 #include "vertex.h"
 
-Vertex::Vertex(int32_t id)
-  : mId(id)
+Vertex::Vertex()
 {
   setPosition(0.0, 0.0);
   setBoundary(false);
 }
 
-Vertex::Vertex(int32_t id, double x, double y)
-  : mId(id)
+Vertex::Vertex(double x, double y)
 {
   setPosition(x, y);
   setBoundary(false);
+}
+
+void Vertex::addAttribute(double value)
+{
+  mAttributes.push_back(value);
 }
 
 bool Vertex::boundary() const
@@ -19,19 +22,13 @@ bool Vertex::boundary() const
   return mBoundary;
 }
 
-int32_t Vertex::id() const
+void Vertex::doReadFromXml(ptree &tree)
 {
-  return mId;
+
 }
 
-double Vertex::x() const
+void Vertex::doWriteToXml(ptree &tree) const
 {
-  return mX;
-}
-
-double Vertex::y() const
-{
-  return mY;
 }
 
 void Vertex::setBoundary(bool value)
@@ -55,7 +52,12 @@ void Vertex::setY(double value)
   mY = value;
 }
 
-void Vertex::addAttribute(double value)
+double Vertex::x() const
 {
-  mAttributes.push_back(value);
+  return mX;
+}
+
+double Vertex::y() const
+{
+  return mY;
 }

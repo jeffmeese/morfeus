@@ -1,39 +1,38 @@
 #include "edge.h"
 
+#include "mesh.h"
+#include "node.h"
+
+#include <cmath>
+
 Edge::Edge(int32_t id)
   : mId(id)
+  , mNode1(-1)
+  , mNode2(-1)
+  , mUnknown(-1)
 {
-  mNode1 = mNode2 = -1;
 }
 
 Edge::Edge(int32_t id, int32_t node1, int32_t node2)
   : mId(id)
   , mNode1(node1)
   , mNode2(node2)
+  , mUnknown(-1)
 {
 }
 
-int32_t Edge::id() const
+double Edge::computeLength(const Mesh *mesh) const
 {
-  return mId;
-}
+  const Node * node1 = mesh->node(mNode1);
+  const Node * node2 = mesh->node(mNode2);
 
-int32_t Edge::node1() const
-{
-  return mNode1;
-}
+  double x1 = node1->x();
+  double y1 = node1->y();
+  double z1 = node1->z();
 
-int32_t Edge::node2() const
-{
-  return mNode2;
-}
+  double x2 = node2->x();
+  double y2 = node2->y();
+  double z2 = node2->z();
 
-void Edge::setNode1(int32_t value)
-{
-  mNode1 = value;
-}
-
-void Edge::setNode2(int32_t value)
-{
-  mNode2 = value;
+  return sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) );
 }

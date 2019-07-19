@@ -1,6 +1,7 @@
 #include "mesh.h"
 #include "edge.h"
 #include "element.h"
+#include "material.h"
 #include "node.h"
 
 #include <fstream>
@@ -27,6 +28,11 @@ void Mesh::addElement(std::unique_ptr<Element> element)
   mElements.push_back(std::move(element));
 }
 
+void Mesh::addMaterial(std::unique_ptr<Material> material)
+{
+  mMaterials.push_back(std::move(material));
+}
+
 void Mesh::addNode(std::unique_ptr<Node> node)
 {
   mNodes.push_back(std::move(node));
@@ -36,7 +42,7 @@ void Mesh::createEdges(Element *element)
 {
   for (int32_t i = 0; i < element->totalEdges(); i++) {
     int32_t edgeNode1 = -1, edgeNode2 = -1;
-    element->edgeNodes(static_cast<int32_t>(i), edgeNode1, edgeNode2);
+    element->edgeNodes(i, edgeNode1, edgeNode2);
     int node1 = element->edge(edgeNode1);
     int node2 = element->edge(edgeNode2);
 
@@ -58,56 +64,99 @@ void Mesh::createEdges(Element *element)
     }
 
     if (edgeNumber == -1) {
-      edgeNumber = static_cast<int32_t>(mEdges.size() + 1);
+      edgeNumber = static_cast<int32_t>(mEdges.size());
       EdgePtr edge(new Edge(edgeNumber, node1, node2));
       addEdge(std::move(edge));
     }
   }
 }
 
-Edge * Mesh::edge(int index)
+Edge * Mesh::edge(std::size_t index)
 {
-  return mEdges.at(static_cast<std::size_t>(index-1)).get();
+  return mEdges.at(index).get();
 }
 
-const Edge * Mesh::edge(int index) const
+const Edge * Mesh::edge(std::size_t index) const
 {
-  return mEdges.at(static_cast<std::size_t>(index-1)).get();
+  return mEdges.at(index).get();
 }
 
-Element * Mesh::element(int index)
+Element * Mesh::element(std::size_t index)
 {
-  return mElements.at(static_cast<std::size_t>(index-1)).get();
+  return mElements.at(index).get();
 }
 
-const Element * Mesh::element(int index) const
+const Element * Mesh::element(std::size_t index) const
 {
-  return mElements.at(static_cast<std::size_t>(index-1)).get();
+  return mElements.at(index).get();
 }
 
-Node * Mesh::node(int index)
+Material * Mesh::material(std::size_t index)
 {
-  return mNodes.at(static_cast<std::size_t>(index-1)).get();
+  return mMaterials.at(index).get();
 }
 
-const Node * Mesh::node(int index) const
+const Material * Mesh::material(std::size_t index) const
 {
-  return mNodes.at(static_cast<std::size_t>(index-1)).get();
+  return mMaterials.at(index).get();
 }
 
-int32_t Mesh::totalEdges() const
+Node * Mesh::node(std::size_t index)
 {
-  return static_cast<int32_t>(mEdges.size());
+  return mNodes.at(index).get();
 }
 
-int32_t Mesh::totalElements() const
+const Node * Mesh::node(std::size_t index) const
 {
-  return static_cast<int32_t>(mElements.size());
+  return mNodes.at(index).get();
 }
 
-int32_t Mesh::totalNodes() const
+std::unique_ptr<Edge> Mesh::takeEdge(std::size_t index)
 {
-  return static_cast<int32_t>(mNodes.size());
+  std::unique_ptr<Edge> edge(mEdges.at(index).get());
+  mEdges.erase(mEdges.begin() + index);
+  return edge;
+}
+
+std::unique_ptr<Element> Mesh::takeElement(std::size_t index)
+{
+  std::unique_ptr<Element> element(mElements.at(index).get());
+  mElements.erase(mElements.begin() + index);
+  return element;
+}
+
+std::unique_ptr<Material> Mesh::takeMaterial(std::size_t index)
+{
+  std::unique_ptr<Material> material(mMaterials.at(index).get());
+  mMaterials.erase(mMaterials.begin() + index);
+  return material;
+}
+
+std::unique_ptr<Node> Mesh::takeNode(std::size_t index)
+{
+  std::unique_ptr<Node> node(mNodes.at(index).get());
+  mNodes.erase(mNodes.begin() + index);
+  return node;
+}
+
+std::size_t Mesh::totalEdges() const
+{
+  return mEdges.size();
+}
+
+std::size_t Mesh::totalElements() const
+{
+  return mElements.size();
+}
+
+std::size_t Mesh::totalMaterials() const
+{
+  return mMaterials.size();
+}
+
+std::size_t Mesh::totalNodes() const
+{
+  return mNodes.size();
 }
 
 void Mesh::writeGeomFile(const std::string &fileName) const
@@ -120,15 +169,15 @@ void Mesh::writeGeomFile(const std::string &fileName) const
   }
 
   output << this->totalNodes() << "\n";
-  for (int i = 1; i <= this->totalNodes(); i++) {
+  for (int i = 0; i < this->totalNodes(); i++) {
     const Node * node = this->node(i);
     output << node->x() << " " << node->y() << " " << node->z() << "\n";
   }
 
   output << this->totalElements() << " 0\n";
-  for (int i = 1; i <= this->totalElements(); i++) {
+  for (int i = 0; i < this->totalElements(); i++) {
     const Element * element = this->element(i);
-    for (int j = 1; j <= element->totalNodes(); j++) {
+    for (int j = 0; j < element->totalNodes(); j++) {
       output << element->node(j) << " ";
     }
     output << "\n";

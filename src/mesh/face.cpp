@@ -2,24 +2,32 @@
 
 #include "mesh.h"
 
-Face::Face(int32_t id, int32_t totalNodes, int32_t totalEdges)
+Face::Face(int32_t id, std::size_t totalNodes, std::size_t totalEdges)
   : mId(id)
-  , mNumEdges(totalEdges)
-  , mNumNodes(totalNodes)
 {
-  mNodes = new int32_t[mNumEdges];
-  mEdges = new int32_t[mNumNodes];
+  mNodes.resize(totalNodes);
+  mEdges.resize(totalEdges);
+
+  for (std::size_t i = 0; i < totalNodes; i++) {
+    mNodes[i] = -1;
+  }
+  for (std::size_t i = 0; i < totalEdges; i++) {
+    mEdges[i] = -1;
+  }
 }
 
 Face::~Face()
 {
-  delete [] mNodes;
-  delete [] mEdges;
 }
 
-double Face::computeArea(const Mesh & mesh) const
+double Face::computeArea(const Mesh * mesh) const
 {
   return doComputeArea(mesh);
+}
+
+dcomplex Face::computeMomEntry(const Face * otherFace, const Mesh * mesh, std::size_t localEdge) const
+{
+  return doComputeMomEntry(otherFace, mesh, localEdge);
 }
 
 int32_t Face::id() const
@@ -29,35 +37,40 @@ int32_t Face::id() const
 
 bool Face::intersects(const Face *face) const
 {
-  return false;
+  // We assume faces with different numbers of nodes or edges can't intersect
+  if (face->totalEdges() != this->totalEdges() || face->totalNodes() != this->totalNodes()) {
+    return false;
+  }
+
+  return doIntersects(face);
 }
 
-int32_t Face::edge(int32_t index) const
+int32_t Face::edge(std::size_t index) const
 {
-  return mEdges[index-1];
+  return mEdges[index];
 }
 
-int32_t Face::node(int32_t index) const
+int32_t Face::node(std::size_t index) const
 {
-  return mNodes[index-1];
+  return mNodes[index];
 }
 
-void Face::setEdge(int32_t index, int32_t value)
+void Face::setEdge(std::size_t index, int32_t value)
 {
-  mEdges[index-1] = value;
+  mEdges[index] = value;
 }
 
-void Face::setNode(int32_t index, int32_t value)
+void Face::setNode(std::size_t index, int32_t value)
 {
-  mNodes[index-1] = value;
+  mNodes[index] = value;
 }
 
-int32_t Face::totalEdges() const
+std::size_t Face::totalEdges() const
 {
-  return mNumEdges;
+  return mEdges.size();
 }
 
-int32_t Face::totalNodes() const
+std::size_t Face::totalNodes() const
 {
-  return mNumNodes;
+  return mNodes.size();
 }

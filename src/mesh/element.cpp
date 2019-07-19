@@ -1,15 +1,19 @@
 #include "element.h"
 
-Element::Element(int32_t id, int32_t nodes, int32_t edges, int32_t faces)
+Element::Element(int32_t id, std::size_t nodes, std::size_t edges, std::size_t faces)
   : mId(id)
   , mFaces(faces)
+  , mEpsilonId(-1)
+  , mMuId(-1)
 {
-  mEdges.resize(static_cast<std::size_t>(edges));
-  mNodes.resize(static_cast<std::size_t>(nodes));
-  for (std::size_t i = 0; i < static_cast<std::size_t>(edges); i++) {
+  mEdges.resize(edges);
+  mNodes.resize(nodes);
+  mEdgeSigns.resize(edges);
+  for (std::size_t i = 0; i < edges; i++) {
     mEdges[i] = -1;
+    mEdgeSigns[i] = 1;
   }
-  for (std::size_t i = 0; i < static_cast<std::size_t>(nodes); i++) {
+  for (std::size_t i = 0; i < nodes; i++) {
     mNodes[i] = -1;
   }
 }
@@ -23,63 +27,17 @@ void Element::addAttribute(double value)
   mAttributes.push_back(value);
 }
 
-double Element::attribute(int32_t index) const
-{
-  return mAttributes[static_cast<std::size_t>(index)];
-}
-
-int32_t Element::edge(int32_t index) const
-{
-  return mEdges[std::size_t(index-1)];
-}
-
-void Element::edgeNodes(int32_t index, int32_t &node1, int32_t &node2) const
-{
-  doEdgeNodes(index, node1, node2);
-}
-
-Face * Element::constructFace(int32_t index) const
+Face * Element::constructFace(std::size_t index) const
 {
   return doConstructFace(index);
 }
 
-int32_t Element::id() const
+void Element::computeFeEntry(const Mesh * mesh, std::size_t localEdge1, std::size_t localEdge2, dcomplex & i1, dcomplex & i2) const
 {
-  return mId;
+  doComputeFeEntry(mesh, localEdge1, localEdge2, i1, i2);
 }
 
-int32_t Element::node(int32_t index) const
+void Element::edgeNodes(std::size_t index, int32_t &node1, int32_t &node2) const
 {
-  return mNodes[std::size_t(index-1)];
+  doEdgeNodes(index, node1, node2);
 }
-
-void Element::setEdge(int32_t index, int32_t value)
-{
-  mEdges[std::size_t(index-1)] = value;
-}
-
-void Element::setNode(int32_t index, int32_t value)
-{
-  mNodes[std::size_t(index-1)] = value;
-}
-
-int32_t Element::totalAttributes() const
-{
-  return static_cast<int32_t>(mAttributes.size());
-}
-
-int32_t Element::totalEdges() const
-{
-  return static_cast<int32_t>(mEdges.size());
-}
-
-int32_t Element::totalFaces() const
-{
-  return mFaces;
-}
-
-int32_t Element::totalNodes() const
-{
-  return static_cast<int32_t>(mNodes.size());
-}
-

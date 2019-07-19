@@ -5,8 +5,9 @@
 #include "mesh.h"
 #include "node.h"
 #include "region.h"
+#include "shape.h"
 #include "segment.h"
-#include "triangle.h"
+#include "triangleshape.h"
 #include "vertex.h"
 
 #include <fstream>
@@ -14,6 +15,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <iostream>
 
 Geometry::Geometry()
 {
@@ -21,11 +23,6 @@ Geometry::Geometry()
 
 Geometry::~Geometry()
 {
-}
-
-void Geometry::addHole(std::unique_ptr<Hole> hole)
-{
-  mHoles.push_back(std::move(hole));
 }
 
 void Geometry::addRegion(std::unique_ptr<Region> region)
@@ -38,9 +35,33 @@ void Geometry::addSegment(std::unique_ptr<Segment> segment)
   mSegments.push_back(std::move(segment));
 }
 
+void Geometry::addShape(std::unique_ptr<Shape> shape)
+{
+  mShapes.push_back(std::move(shape));
+}
+
 void Geometry::addVertex(std::unique_ptr<Vertex> vertex)
 {
   mVertices.push_back(std::move(vertex));
+}
+
+void Geometry::doReadFromXml(ptree &tree)
+{
+
+}
+
+void Geometry::doWriteToXml(ptree &item) const
+{
+  ptree geometryTree;
+  for (std::size_t i = 0; i < mShapes.size(); i++) {
+    const Shape * shape = mShapes.at(i).get();
+    shape->writeToXml(geometryTree);
+  }
+  for (std::size_t i = 0; i < mRegions.size(); i++) {
+    const Region * region = mRegions.at(i).get();
+    region->writeToXml(geometryTree);
+  }
+  item.add_child("Geometry", geometryTree);
 }
 
 void Geometry::readPolyFile(const std::string & fileName)
@@ -76,8 +97,9 @@ void Geometry::readPolyHoles(std::ifstream & inputFile)
     std::istringstream iss(inputLine);
     iss >> id >> x >> y;
 
-    HolePtr hole(new Hole(id, x, y));
-    addHole(std::move(hole));
+    std::unique_ptr<Hole> hole(new Hole(x, y));
+    hole->setNumber(id);
+    addShape(std::move(hole));
   }
 }
 
@@ -92,7 +114,8 @@ void Geometry::readPolyRegions(std::ifstream & inputFile, int32_t numRegions)
     std::istringstream iss(inputLine);
     iss >> id >> x >> y >> attribute >> maxArea;
 
-    RegionPtr region(new Region(id, x, y));
+    RegionPtr region(new Region(x, y));
+    region->setNumber(id);
     region->setAttribute(attribute);
     region->setMaxArea(maxArea);
 
@@ -117,7 +140,8 @@ void Geometry::readPolySegments(std::ifstream & inputFile)
     std::istringstream iss(inputLine);
     iss >> id >> node1 >> node2;
 
-    SegmentPtr segment(new Segment(id, node1, node2));
+    SegmentPtr segment(new Segment(node1, node2));
+    segment->setNumber(id);
     int32_t boundary;
     iss >> boundary;
     if (!iss.fail()) {
@@ -145,7 +169,8 @@ int32_t Geometry::readPolyVertices(std::ifstream & inputFile)
     std::istringstream iss(inputLine);
     iss >> id >> x >> y;
 
-    VertexPtr vertex(new Vertex(id, x, y));
+    VertexPtr vertex(new Vertex(x, y));
+    vertex->setNumber(id);
     if (numAttrs > 0) {
       for (int32_t j = 0; j < numAttrs; j++) {
         double value;
@@ -159,9 +184,9 @@ int32_t Geometry::readPolyVertices(std::ifstream & inputFile)
       iss >> value;
       vertex->setBoundary(value == 1);
     }
-
     addVertex(std::move(vertex));
   }
 
   return numAttrs;
 }
+

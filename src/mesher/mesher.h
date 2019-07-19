@@ -14,8 +14,12 @@ public:
   MORFEUS_LIB_DECL virtual ~Mesher();
 
 public:
-  MORFEUS_LIB_DECL void createMesh(const Geometry & geometry, Mesh & mesh);
-  MORFEUS_LIB_DECL void refineMesh(const Mesh & oldMesh, const MeshRefinement & refinement, Mesh & mesh);
+  MORFEUS_LIB_DECL void createMesh(const Geometry * geometry, Mesh * mesh);
+  MORFEUS_LIB_DECL void refineMesh(const Mesh * oldMesh, const MeshRefinement * refinement, Mesh * mesh);
+
+private:
+  void createSurfaceMesh(const Geometry * geometry, Mesh * mesh);
+  void extrudeVolumeMesh(const Mesh * surfaceMesh, const Mesh * volumeMesh);
 
 private:
   double mMaxArea;

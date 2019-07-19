@@ -7,13 +7,18 @@ TriangleFace::TriangleFace(int32_t id)
 {
 }
 
-double TriangleFace::doComputeArea(const Mesh & mesh) const
+double TriangleFace::doComputeArea(const Mesh * mesh) const
 {
   return 0.0;
 }
 
-dcomplex TriangleFace::doComputeMomEntry(const Face *otherFace, const Mesh & mesh, int32_t localEdge) const
+dcomplex TriangleFace::doComputeMomEntry(const Face *otherFace, const Mesh * mesh, std::size_t localEdge) const
 {
-  return dcomplex(0.0,0.0);
-  //return otherFace->computeEntry(this, mesh, localEdge);
+  dcomplex value(0.0,0.0);
+  return value;
+}
+
+bool TriangleFace::doIntersects(const Face *face) const
+{
+  return false;
 }
