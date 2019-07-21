@@ -18,6 +18,7 @@ public:
 
 public:
   MORFEUS_LIB_DECL void move(double dx, double dy);
+  MORFEUS_LIB_DECL friend std::ostream & operator<<(std::ostream & output, const Point2D & point);
 
 private:
   double mX;

@@ -3,16 +3,15 @@
 
 #include "morfeus.h"
 #include "rapidxml.hpp"
+#include "xmlutils.h"
 
 #include <cstdint>
 #include <string>
 
-#include <boost/property_tree/ptree.hpp>
-
 class MorfeusObject
 {
-protected:
-  typedef boost::property_tree::ptree ptree;
+public:
+  virtual ~MorfeusObject();
 
 public:
   MORFEUS_LIB_DECL std::string id() const;
@@ -22,11 +21,15 @@ public:
   MORFEUS_LIB_DECL void setNumber(int32_t value);
 
 public:
-  MORFEUS_LIB_DECL void readFromXml(ptree & tree);
-  MORFEUS_LIB_DECL void writeToXml(ptree & tree) const;
+  MORFEUS_LIB_DECL void print(std::ostream & output, int tabPos = 0) const;
+  MORFEUS_LIB_DECL void print(int tabPos = 0) const;
+  MORFEUS_LIB_DECL void readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node);
+  MORFEUS_LIB_DECL void writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const;
+  MORFEUS_LIB_DECL friend std::ostream & operator<<(std::ostream & output, const MorfeusObject & object);
 
 protected:
   MorfeusObject();
+  MorfeusObject(int32_t number);
   MorfeusObject(const std::string & name);
   MorfeusObject(const std::string & name, int32_t number);
   MorfeusObject(std::string id);
@@ -34,8 +37,9 @@ protected:
   MorfeusObject(std::string id, const std::string & name, int32_t number);
 
 protected:
-  virtual void doReadFromXml(ptree & tree) = 0;
-  virtual void doWriteToXml(ptree & tree) const = 0;
+  virtual void doPrint(std::ostream & output, int tabPos = 0) const = 0;
+  virtual void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) = 0;
+  virtual void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const = 0;
 
 private:
   std::string createId();

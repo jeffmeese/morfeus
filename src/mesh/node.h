@@ -6,13 +6,13 @@
 class Node
 {
 public:
-  MORFEUS_LIB_DECL Node(int32_t id);
-  MORFEUS_LIB_DECL Node(int32_t id, double x, double y, double z);
+  MORFEUS_LIB_DECL Node(int32_t number);
+  MORFEUS_LIB_DECL Node(int32_t number, double x, double y, double z);
 
 public:
   MORFEUS_LIB_DECL double attribute() const;
   MORFEUS_LIB_DECL bool boundary() const;
-  MORFEUS_LIB_DECL int32_t id() const;
+  MORFEUS_LIB_DECL int32_t number() const;
   MORFEUS_LIB_DECL double scaleX() const;
   MORFEUS_LIB_DECL double scaleY() const;
   MORFEUS_LIB_DECL double scaleZ() const;
@@ -40,7 +40,7 @@ public:
   MORFEUS_LIB_DECL void setZ(double value);
 
 private:
-  int32_t mId;
+  int32_t mNumber;
   bool mBoundary;
   double mAttriubute;
   double mScaleX;

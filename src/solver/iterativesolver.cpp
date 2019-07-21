@@ -5,18 +5,22 @@
 #include "mesh.h"
 #include "meshinformation.h"
 
+#include "xmlutils.h"
+
+static const std::string OBJECT_ID("IterativeSolver");
+
 IterativeSolver::IterativeSolver()
   : mAlgorithm(BiCG)
-  , mMinIterations(1)
   , mMaxIterations(100)
+  , mMinIterations(1)
   , mTolerance(0.001)
 {
 }
 
 IterativeSolver::IterativeSolver(Algorithm algorithm, std::size_t minIterations, std::size_t maxIterations, double tolerance)
   : mAlgorithm(algorithm)
-  , mMinIterations(minIterations)
   , mMaxIterations(maxIterations)
+  , mMinIterations(minIterations)
   , mTolerance(tolerance)
 {
 }
@@ -75,6 +79,62 @@ void IterativeSolver::clearMatrices(const Mesh *mesh, const MeshInformation *mes
       mBiMatrix(i, j) = dcomplex(0.0,0.0);
     }
   }
+}
+
+void IterativeSolver::doPrint(std::ostream & output, int tabPos) const
+{
+  std::string algoString = formatAlgoString(mAlgorithm);
+
+  xmlutils::printHeader(output, tabPos, "Iterative Solver");
+  xmlutils::printValue(output, tabPos+2, "Name: ", name());
+  xmlutils::printValue(output, tabPos+2, "Number: ", number());
+  xmlutils::printValue(output, tabPos+2, "Algorithm: ", algoString);
+  xmlutils::printValue(output, tabPos+2, "Min Iterations: ", mMinIterations);
+  xmlutils::printValue(output, tabPos+2, "Max Iterations: ", mMaxIterations);
+  xmlutils::printValue(output, tabPos+2, "Tolerance: ", mTolerance);
+}
+
+void IterativeSolver::doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
+{
+  std::string algoString = xmlutils::readAttribute<std::string>(node, "algorithm");
+
+  Algorithm algorithm = BiCG;
+  if (algoString == "cgs")
+    algorithm = CGS;
+  else if (algoString == "bicg-stab")
+    algorithm = BiCGStab;
+
+  setName(xmlutils::readAttribute<std::string>(node, "name"));
+  setNumber(std::stoi(xmlutils::readAttribute<std::string>(node, "number")));
+  setAlgorithm(algorithm);
+  setMinIterations(std::stoul(xmlutils::readAttribute<std::string>(node, "min-iterations")));
+  setMaxIterations(std::stoul(xmlutils::readAttribute<std::string>(node, "max-iterations")));
+  setTolerance(std::stod(xmlutils::readAttribute<std::string>(node, "tolerance")));
+}
+
+void IterativeSolver::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+{
+  std::string algoString = formatAlgoString(mAlgorithm);
+
+  xmlutils::writeAttribute(document, node, "name", name());
+  xmlutils::writeAttribute(document, node, "number", number());
+  xmlutils::writeAttribute(document, node, "type", OBJECT_ID);
+  xmlutils::writeAttribute(document, node, "algorithm", algoString);
+  xmlutils::writeAttribute(document, node, "min-iterations", mMinIterations);
+  xmlutils::writeAttribute(document, node, "max-iterations", mMaxIterations);
+  xmlutils::writeAttribute(document, node, "tolerance", mTolerance);
+}
+
+std::string IterativeSolver::formatAlgoString(Algorithm algorithm) const
+{
+  if (algorithm == BiCG)
+    return "bicg";
+  else if (algorithm == CGS)
+    return "cgs";
+  else if (algorithm == BiCGStab)
+    return "bicg-stab";
+
+  return "Unknown";
 }
 
 void IterativeSolver::updateBoundaryIntegralMatrix(std::size_t row, std::size_t col, const dcomplex & i1, const dcomplex & i2)

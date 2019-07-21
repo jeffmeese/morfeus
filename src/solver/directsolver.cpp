@@ -18,6 +18,21 @@ void DirectSolver::clearMatrices(const Mesh *mesh, const MeshInformation *meshIn
 
 }
 
+void DirectSolver::doPrint(std::ostream & output, int tabPos) const
+{
+
+}
+
+void DirectSolver::doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
+{
+
+}
+
+void DirectSolver::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+{
+
+}
+
 Solver::vector DirectSolver::solveSystem(const vector & rhs)
 {
   vector efield;

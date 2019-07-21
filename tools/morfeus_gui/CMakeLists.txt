@@ -13,6 +13,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 
+add_subdirectory(lib)
+
 # Find VTK and automatically initialize modules
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})

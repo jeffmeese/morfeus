@@ -41,3 +41,9 @@ double Point2D::y() const
 {
   return mY;
 }
+
+std::ostream & operator<<(std::ostream & output, const Point2D & point)
+{
+  output << "(" << point.x() << "," << point.y();
+  return output;
+}

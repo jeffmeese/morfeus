@@ -16,8 +16,8 @@ void PrismElement::doComputeFeEntry(const Mesh * mesh, std::size_t localEdge1, s
   const Edge * testEdge = mesh->edge(edge(localEdge2));
 
   // Get the edge signs
-  int testSign = edgeSign(localEdge1);
-  int sourceSign = edgeSign(localEdge2);
+  int32_t testSign = edgeSign(localEdge1);
+  int32_t sourceSign = edgeSign(localEdge2);
 
   double testLength = testEdge->computeLength(mesh);
   double sourceLength = sourceEdge->computeLength(mesh);
@@ -42,205 +42,205 @@ void PrismElement::doComputeFeEntry(const Mesh * mesh, std::size_t localEdge1, s
 
   if (localEdge1 < 3) {
 
-      // Top-Top
-      if (localEdge2 < 3) {
-        double xi = x[localEdge1];
-        double xj = x[localEdge2];
-        double yi = y[localEdge1];
-        double yj = y[localEdge2];
+    // Top-Top
+    if (localEdge2 < 3) {
+      double xi = x[localEdge1];
+      double xj = x[localEdge2];
+      double yi = y[localEdge1];
+      double yj = y[localEdge2];
 
-        double num = testLength * sourceLength;
-        double den = 4.0 * height * height * area * area;
-        double mu_coeff = num / den;
+      double num = testLength * sourceLength;
+      double den = 4.0 * height * height * area * area;
+      double mu_coeff = num / den;
 
-        double t1 = ixxs(xi, xj, x, y);
-        double t2 = iyys(yi, yj, x, y);
-        double t3 = izzl(zl, zu, zl, zl);
+      double t1 = ixxs(xi, xj, x, y);
+      double t2 = iyys(yi, yj, x, y);
+      double t3 = izzl(zl, zu, zl, zl);
 
-        i1 = height * t1 + height * t2 + 4.0 * area * t3;
-        i1 *= mu_coeff;
+      i1 = height * t1 + height * t2 + 4.0 * area * t3;
+      i1 *= mu_coeff;
 
-        i2 = t3 * t1 + t3 * t2;
-        i2 *= mu_coeff;
-      }
-
-      // Top-Bottom
-      if (localEdge2 >= 3 && localEdge2 < 6) {
-        double xi = x[localEdge1];
-        double xj = x[localEdge2];
-        double yi = y[localEdge1];
-        double yj = y[localEdge2];
-
-        double num = testLength * sourceLength;
-        double den = 4.0 * height * height * area * area;
-        double mu_coeff = -(num / den);
-
-        double t1 = ixxs(xi, xj, x, y);
-        double t2 = iyys(yi, yj, x, y);
-        double t3 = izzl(zl, zu, zl, zu);
-
-        i1 = height * t1 + height * t2 + 4.0 * area * t3;
-        i1 *= mu_coeff;
-
-        i2 = t3 * t1 +  t3 * t2;
-        i2 *= mu_coeff;
-      }
-
-      // Top-Side
-      if (localEdge2 >= 6) {
-        double xi = x[localEdge1];
-        double yi = y[localEdge1];
-
-        double num = testLength;
-        double den = 4.0 * area * area;
-        double mu_coeff = -(num / den);
-        double t1 = ixs(xi, x, y);
-        double t2 = iys(yi, x, y);
-        std::size_t k1_s = 0, k2_s = 0;
-        edgeConstants(localEdge2, k1_s, k2_s);
-
-        i1 = (x[k2_s] - x[k1_s]) * t1 + (y[k2_s] - y[k1_s]) * t2;
-        i1 *= mu_coeff;
-      }
+      i2 = t3 * t1 + t3 * t2;
+      i2 *= mu_coeff;
     }
 
-    if (localEdge1 >= 3 && localEdge1 < 6) {
+    // Top-Bottom
+    if (localEdge2 >= 3 && localEdge2 < 6) {
+      double xi = x[localEdge1];
+      double xj = x[localEdge2];
+      double yi = y[localEdge1];
+      double yj = y[localEdge2];
 
-      // Bottom-Top
-      if (localEdge2 < 3) {
-        double xi = x[localEdge1];
-        double xj = x[localEdge2];
-        double yi = y[localEdge1];
-        double yj = y[localEdge2];
+      double num = testLength * sourceLength;
+      double den = 4.0 * height * height * area * area;
+      double mu_coeff = -(num / den);
 
-        double num = testLength * sourceLength;
-        double den = 4.0 * height * height * area * area;
-        double mu_coeff = -(num / den);
+      double t1 = ixxs(xi, xj, x, y);
+      double t2 = iyys(yi, yj, x, y);
+      double t3 = izzl(zl, zu, zl, zu);
 
-        double t1 = ixxs(xi, xj, x, y);
-        double t2 = iyys(yi, yj, x, y);
-        double t3 = izzl(zl, zu, zl, zu);
+      i1 = height * t1 + height * t2 + 4.0 * area * t3;
+      i1 *= mu_coeff;
 
-        i1 = height * t1 + height * t2 + 4.0 * area * t3;
-        i1 *= mu_coeff;
-
-        i2 = t3 * t1 + t3 * t2;
-        i2 *= mu_coeff;
-      }
-
-      // Bottom-Bottom
-      if (localEdge2 >= 3 && localEdge2 < 6) {
-        double xi = x[localEdge1];
-        double xj = x[localEdge2];
-        double yi = y[localEdge1];
-        double yj = y[localEdge2];
-
-        double num = testLength * sourceLength;
-        double den = 4.0 * height * height * area * area;
-        double mu_coeff = (num / den);
-
-        double t1 = ixxs(xi, xj, x, y);
-        double t2 = iyys(yi, yj, x, y);
-        double t3 = izzl(zl, zu, zu, zu);
-
-        i1 = height * t1 + height * t2 + 4.0 * area * t3;
-        i1 *= mu_coeff;
-
-        i2 = t3 * t1 + t3 * t2;
-        i2 *= mu_coeff;
-      }
-
-      // Bottom-Side
-      if (localEdge2 >= 6) {
-        double xi = x[localEdge1];
-        double yi = y[localEdge1];
-
-        double num = testLength;
-        double den = 4.0 * area * area;
-        double mu_coeff = (num / den);
-
-        double t1 = ixs(xi, x, y);
-        double t2 = iys(yi, x, y);
-
-        size_t k1_s = 0, k2_s = 0;
-        edgeConstants(localEdge2, k1_s, k2_s);
-
-        i1 = (x[k2_s] - x[k1_s]) * t1 + (y[k2_s] - y[k1_s]) * t2;
-        i1 *= mu_coeff;
-      }
+      i2 = t3 * t1 +  t3 * t2;
+      i2 *= mu_coeff;
     }
 
-    if (localEdge1 >= 6) {
+    // Top-Side
+    if (localEdge2 >= 6) {
+      double xi = x[localEdge1];
+      double yi = y[localEdge1];
 
-      // Side-Top
-      if (localEdge2 < 3) {
-        double xj = x[localEdge2];
-        double yj = y[localEdge2];
+      double num = testLength;
+      double den = 4.0 * area * area;
+      double mu_coeff = -(num / den);
+      double t1 = ixs(xi, x, y);
+      double t2 = iys(yi, x, y);
+      std::size_t k1_s = 0, k2_s = 0;
+      edgeConstants(localEdge2, k1_s, k2_s);
 
-        double num = sourceLength;
-        double den = 4.0 * area * area;
-        double mu_coeff = -(num / den);
-
-        double t1 = ixs(xj, x, y);
-        double t2 = iys(yj, x, y);
-
-        std::size_t k1_t = 0, k2_t = 0;
-        edgeConstants(localEdge1, k1_t, k2_t);
-
-        i1 = (x[k2_t] - x[k1_t]) * t1 + (y[k2_t] - y[k1_t]) * t2;
-        i1 *= mu_coeff;
-      }
-
-      // Side-Bottom
-      if (localEdge2 >= 3 && localEdge2 < 6) {
-        double xj = x[localEdge2];
-        double yj = y[localEdge2];
-
-        double num = sourceLength;
-        double den = 4.0 * area * area;
-        double mu_coeff = (num / den);
-
-        double t1 = ixs(xj, x, y);
-        double t2 = iys(yj, x, y);
-
-        std::size_t k1_t = 0, k2_t = 0;
-        edgeConstants(localEdge1, k1_t, k2_t);
-
-        i1 = (x[k2_t] - x[k1_t]) * t1 + (y[k2_t] - y[k1_t]) * t2;
-        i1 *= mu_coeff;
-      }
-
-      // Side-Side
-      if (localEdge2 >= 6) {
-
-        std::size_t k1_t = 0, k2_t = 0, k1_s = 0, k2_s = 0;
-        edgeConstants(localEdge1, k1_t, k2_t);
-        edgeConstants(localEdge2, k1_s, k2_s);
-
-        double Ci = (x[k1_t]*y[k2_t] - x[k2_t] * y[k1_t]);
-        double Cj = (x[k1_s]*y[k2_s] - x[k2_s] * y[k1_s]);
-        double Xi = (x[k2_t] - x[k1_t]);
-        double Xj = (x[k2_s] - x[k1_s]);
-        double Yi = (y[k1_t] - y[k2_t]);
-        double Yj = (y[k1_s] - y[k2_s]);
-
-        double mu_coeff = height / (4.0 * area);
-
-        double t1 = (x[k2_t] - x[k1_t]) * (x[k2_s] - x[k1_s]);
-        double t2 = (y[k2_t] - y[k1_t]) * (y[k2_s] - y[k1_s]);
-
-        i1 = t1 + t2;
-        i1 *= mu_coeff;
-
-        double t3 = Ci*Cj*area;
-        double t4 = (Xi*Yj+Yi*Xj) * sxy(x,y);
-        double t5 = (Yi*Yj) * sxx(x,y);
-        double t6 = (Xi*Xj) * syy(x,y);
-
-        i2 = (t3 + t4 + t5 + t6);
-        i2 *= mu_coeff / area;
-      }
+      i1 = (x[k2_s] - x[k1_s]) * t1 + (y[k2_s] - y[k1_s]) * t2;
+      i1 *= mu_coeff;
     }
+  }
+
+  if (localEdge1 >= 3 && localEdge1 < 6) {
+
+    // Bottom-Top
+    if (localEdge2 < 3) {
+      double xi = x[localEdge1];
+      double xj = x[localEdge2];
+      double yi = y[localEdge1];
+      double yj = y[localEdge2];
+
+      double num = testLength * sourceLength;
+      double den = 4.0 * height * height * area * area;
+      double mu_coeff = -(num / den);
+
+      double t1 = ixxs(xi, xj, x, y);
+      double t2 = iyys(yi, yj, x, y);
+      double t3 = izzl(zl, zu, zl, zu);
+
+      i1 = height * t1 + height * t2 + 4.0 * area * t3;
+      i1 *= mu_coeff;
+
+      i2 = t3 * t1 + t3 * t2;
+      i2 *= mu_coeff;
+    }
+
+    // Bottom-Bottom
+    if (localEdge2 >= 3 && localEdge2 < 6) {
+      double xi = x[localEdge1];
+      double xj = x[localEdge2];
+      double yi = y[localEdge1];
+      double yj = y[localEdge2];
+
+      double num = testLength * sourceLength;
+      double den = 4.0 * height * height * area * area;
+      double mu_coeff = (num / den);
+
+      double t1 = ixxs(xi, xj, x, y);
+      double t2 = iyys(yi, yj, x, y);
+      double t3 = izzl(zl, zu, zu, zu);
+
+      i1 = height * t1 + height * t2 + 4.0 * area * t3;
+      i1 *= mu_coeff;
+
+      i2 = t3 * t1 + t3 * t2;
+      i2 *= mu_coeff;
+    }
+
+    // Bottom-Side
+    if (localEdge2 >= 6) {
+      double xi = x[localEdge1];
+      double yi = y[localEdge1];
+
+      double num = testLength;
+      double den = 4.0 * area * area;
+      double mu_coeff = (num / den);
+
+      double t1 = ixs(xi, x, y);
+      double t2 = iys(yi, x, y);
+
+      size_t k1_s = 0, k2_s = 0;
+      edgeConstants(localEdge2, k1_s, k2_s);
+
+      i1 = (x[k2_s] - x[k1_s]) * t1 + (y[k2_s] - y[k1_s]) * t2;
+      i1 *= mu_coeff;
+    }
+  }
+
+  if (localEdge1 >= 6) {
+
+    // Side-Top
+    if (localEdge2 < 3) {
+      double xj = x[localEdge2];
+      double yj = y[localEdge2];
+
+      double num = sourceLength;
+      double den = 4.0 * area * area;
+      double mu_coeff = -(num / den);
+
+      double t1 = ixs(xj, x, y);
+      double t2 = iys(yj, x, y);
+
+      std::size_t k1_t = 0, k2_t = 0;
+      edgeConstants(localEdge1, k1_t, k2_t);
+
+      i1 = (x[k2_t] - x[k1_t]) * t1 + (y[k2_t] - y[k1_t]) * t2;
+      i1 *= mu_coeff;
+    }
+
+    // Side-Bottom
+    if (localEdge2 >= 3 && localEdge2 < 6) {
+      double xj = x[localEdge2];
+      double yj = y[localEdge2];
+
+      double num = sourceLength;
+      double den = 4.0 * area * area;
+      double mu_coeff = (num / den);
+
+      double t1 = ixs(xj, x, y);
+      double t2 = iys(yj, x, y);
+
+      std::size_t k1_t = 0, k2_t = 0;
+      edgeConstants(localEdge1, k1_t, k2_t);
+
+      i1 = (x[k2_t] - x[k1_t]) * t1 + (y[k2_t] - y[k1_t]) * t2;
+      i1 *= mu_coeff;
+    }
+
+    // Side-Side
+    if (localEdge2 >= 6) {
+
+      std::size_t k1_t = 0, k2_t = 0, k1_s = 0, k2_s = 0;
+      edgeConstants(localEdge1, k1_t, k2_t);
+      edgeConstants(localEdge2, k1_s, k2_s);
+
+      double Ci = (x[k1_t]*y[k2_t] - x[k2_t] * y[k1_t]);
+      double Cj = (x[k1_s]*y[k2_s] - x[k2_s] * y[k1_s]);
+      double Xi = (x[k2_t] - x[k1_t]);
+      double Xj = (x[k2_s] - x[k1_s]);
+      double Yi = (y[k1_t] - y[k2_t]);
+      double Yj = (y[k1_s] - y[k2_s]);
+
+      double mu_coeff = height / (4.0 * area);
+
+      double t1 = (x[k2_t] - x[k1_t]) * (x[k2_s] - x[k1_s]);
+      double t2 = (y[k2_t] - y[k1_t]) * (y[k2_s] - y[k1_s]);
+
+      i1 = t1 + t2;
+      i1 *= mu_coeff;
+
+      double t3 = Ci*Cj*area;
+      double t4 = (Xi*Yj+Yi*Xj) * sxy(x,y);
+      double t5 = (Yi*Yj) * sxx(x,y);
+      double t6 = (Xi*Xj) * syy(x,y);
+
+      i2 = (t3 + t4 + t5 + t6);
+      i2 *= mu_coeff / area;
+    }
+  }
 }
 
 Face * PrismElement::doConstructFace(std::size_t index) const

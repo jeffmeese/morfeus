@@ -17,6 +17,9 @@ if (MORFEUS_BUILD_SHARED)
   set(BUILD_TYPE SHARED)
 endif()
 
+# Add the 3rd party libraries
+add_subdirectory(3rdparty)
+
 # Find boost components
 find_package(Boost COMPONENTS system thread REQUIRED)
 
@@ -24,6 +27,7 @@ set(SRC_FILES
   core/morfeusobject.cpp
   excitations/excitation.cpp
   excitations/planewave.cpp
+  excitations/probefeed.cpp
   geometry/circle.cpp
   geometry/geometry.cpp
   geometry/hole.cpp
@@ -37,6 +41,7 @@ set(SRC_FILES
   geometry/vertex.cpp
   material/isotropicmaterial.cpp
   material/material.cpp
+  material/materialdatabase.cpp
   math/functions.cpp
   mesh/edge.cpp
   mesh/element.cpp
@@ -63,6 +68,7 @@ set(HDR_FILES
   core/morfeusobject.h
   excitations/excitation.h
   excitations/planewave.h
+  excitations/probefeed.h
   geometry/circle.h
   geometry/geometry.h
   geometry/hole.h
@@ -76,6 +82,7 @@ set(HDR_FILES
   geometry/vertex.h
   material/isotropicmaterial.h
   material/material.h
+  material/materialdatabase.h
   math/constants.h
   math/functions.h
   mesh/edge.h
@@ -91,11 +98,11 @@ set(HDR_FILES
   mesher/meshrefinement.h
   observations/farfield.h
   observations/observation.h
-  rapidxml/rapidxml.hpp
-  rapidxml/rapidxml_iterators.hpp
-  rapidxml/rapidxml_print.hpp
-  rapidxml/rapidxml_utils.hpp
-  rapidxml/xmlutils.h
+  xml/rapidxml.hpp
+  xml/rapidxml_iterators.hpp
+  xml/rapidxml_print.hpp
+  xml/rapidxml_utils.hpp
+  xml/xmlutils.h
   solver/solution.h
   solver/directsolver.h
   solver/iterativesolver.h
@@ -110,6 +117,7 @@ add_library(${TARGET_NAME} ${BUILD_TYPE} ${HDR_FILES} ${SRC_FILES})
 if (MSVC)
   target_compile_definitions(${TARGET_NAME} PUBLIC -DBOOST_ALL_NO_LIB)
   target_compile_definitions(${TARGET_NAME} PRIVATE -D_CRT_SECURE_NO_WARNINGS)
+  target_compile_definitions(${TARGET_NAME} PRIVATE -D_SCL_SECURE_NO_WARNINGS)
   target_compile_definitions(${TARGET_NAME} PUBLIC -D_USE_MATH_DEFINES)
   target_compile_options(${TARGET_NAME} PRIVATE /wd4311 /wd4312 /wd4244 /wd4477)
 endif()
@@ -126,8 +134,8 @@ target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/mat
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/mesh)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/mesher)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/observations)
-target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/rapidxml)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/solver)
+target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/xml)
 target_include_directories(${TARGET_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
 
 target_link_libraries(${TARGET_NAME} loki)

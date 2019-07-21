@@ -19,7 +19,6 @@ public:
   void execute();
 
 private:
-  void buildGeometry();
   void createMesh();
   void parseCommandLine(int argc, char ** argv);
   void readInput();
@@ -28,7 +27,6 @@ private:
 private:
   std::string mFileName;
   std::unique_ptr<CommandLine> mCommandLine;
-  std::unique_ptr<Geometry> mGeometry;
   std::unique_ptr<InputData> mInputData;
   std::unique_ptr<Mesh> mMesh;
 };

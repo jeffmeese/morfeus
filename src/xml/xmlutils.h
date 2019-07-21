@@ -20,6 +20,9 @@ namespace xmlutils
   T parseValue(const rapidxml::xml_node<> * node);
 
   template <typename T>
+  T readAttribute(rapidxml::xml_node<> * node, const std::string & name);
+
+  template <typename T>
   void writeAttribute(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node, const std::string & name, const T & value);
 
   template <typename T>
@@ -132,6 +135,11 @@ namespace xmlutils
     return (node != nullptr) ? std::stold(node->value()) : 0.0;
   }
 
+  inline void printHeader(std::ostream & output, int tabPos, const std::string & name)
+  {
+    output << std::setfill(' ') << std::setw(tabPos) << " " << name << std::endl;
+  }
+
   template <typename T>
   inline void printValue(std::ostream & output, int tabPos, const std::string & name, const T & value)
   {
@@ -143,6 +151,17 @@ namespace xmlutils
   {
     std::string valueStr = (value) ? "true" : "false";
     output << std::setfill(' ') << std::setw(tabPos) << " " << name << " " << valueStr << std::endl;
+  }
+
+  template <>
+  inline std::string readAttribute<std::string>(rapidxml::xml_node<> * node, const std::string & name)
+  {
+    std::string s;
+    rapidxml::xml_attribute<> * attr = node->first_attribute(name.c_str(), 0, false);
+    if (attr != nullptr) {
+      s = attr->value();
+    }
+    return s;
   }
 
   //! Writes an attribute to a rapidxml node with the specified value.

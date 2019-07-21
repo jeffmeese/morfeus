@@ -14,7 +14,5 @@ if (NOT DEFINED CMAKE_BUILD_TYPE AND NOT MSVC_IDE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-add_subdirectory(3rdparty)
-add_subdirectory(lib)
 add_subdirectory(src)
 add_subdirectory(tools)

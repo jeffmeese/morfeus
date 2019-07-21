@@ -1,7 +1,7 @@
 #include "node.h"
 
-Node::Node(int32_t id)
-  : mId(id)
+Node::Node(int32_t number)
+  : mNumber(number)
 {
   setPosition(0.0, 0.0, 0.0);
   setBoundary(false);
@@ -10,8 +10,8 @@ Node::Node(int32_t id)
   setTranslation(0.0, 0.0, 0.0);
 }
 
-Node::Node(int32_t id, double x, double y, double z)
-  : mId(id)
+Node::Node(int32_t number, double x, double y, double z)
+  : mNumber(number)
 {
   setPosition(x, y, z);
   setBoundary(false);
@@ -30,9 +30,9 @@ bool Node::boundary() const
   return mBoundary;
 }
 
-int32_t Node::id() const
+int32_t Node::number() const
 {
-  return mId;
+  return mNumber;
 }
 
 double Node::scaleX() const

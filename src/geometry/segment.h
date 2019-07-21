@@ -10,6 +10,7 @@ class Segment
 public:
   MORFEUS_LIB_DECL Segment();
   MORFEUS_LIB_DECL Segment(int32_t node1, int32_t node2);
+  MORFEUS_LIB_DECL Segment(int32_t number, int32_t node1, int32_t node2);
 
 public:
   MORFEUS_LIB_DECL bool boundary() const;
@@ -21,8 +22,9 @@ public:
   MORFEUS_LIB_DECL void setNodes(int32_t node1, int32_t node2);
 
 protected:
-  void doReadFromXml(ptree & tree) override;
-  void doWriteToXml(ptree & tree) const override;
+  void doPrint(std::ostream & output, int tabPos) const override;
+  void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
+  void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
 
 private:
   bool mBoundary;

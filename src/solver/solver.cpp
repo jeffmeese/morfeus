@@ -7,6 +7,7 @@
 #include "functions.h"
 #include "isotropicmaterial.h"
 #include "material.h"
+#include "materialdatabase.h"
 #include "mesh.h"
 #include "meshinformation.h"
 #include "observation.h"
@@ -47,6 +48,7 @@ void Solver::buildBiMatrix(double freqGHz, const Mesh *mesh, const MeshInformati
 
 void Solver::buildFeMatrix(double freqGHz, const Mesh *mesh, const MeshInformation *meshInfo)
 {
+  const MaterialDatabase * materialDatabase = mesh->materialDatabase();
   double k0 = math::frequencyToWavenumber(freqGHz);
 
   // Default material if one is not specified for an element
@@ -61,12 +63,12 @@ void Solver::buildFeMatrix(double freqGHz, const Mesh *mesh, const MeshInformati
 
     const Material * eps = &air;
     if (epsId >= 0) {
-      eps = mesh->material(epsId);
+      eps = materialDatabase->material(epsId);
     }
 
     const Material * mu = &air;
     if (muId >= 0) {
-      mu = mesh->material(muId);
+      mu = materialDatabase->material(muId);
     }
 
     for (std::size_t j = 1; j <= element->totalEdges(); j++) {

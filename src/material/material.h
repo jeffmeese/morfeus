@@ -2,10 +2,15 @@
 #define MATERIAL_H
 
 #include "morfeus.h"
+#include "morfeusobject.h"
 
 #include <map>
 
+#include <Factory.h>
+#include <Singleton.h>
+
 class Material
+    : public MorfeusObject
 {
 public:
   enum Direction
@@ -22,22 +27,23 @@ public:
   };
 
 public:
-  MORFEUS_LIB_DECL Material(int32_t id);
+  MORFEUS_LIB_DECL Material();
+  MORFEUS_LIB_DECL Material(int32_t number);
+  MORFEUS_LIB_DECL Material(const std::string & name, int32_t number);
 
 public:
-  MORFEUS_LIB_DECL int32_t id() const;
   MORFEUS_LIB_DECL dcomplex value(Direction direction) const;
   MORFEUS_LIB_DECL void setValue(Direction direction, dcomplex value);
 
+public:
+  typedef Loki::SingletonHolder<Loki::Factory<Material, std::string> > Factory;
+
 private:
-  int32_t mId;
+  void init();
+
+private:
   dcomplex mValues[9];
 };
-
-inline int32_t Material::id() const
-{
-  return mId;
-}
 
 inline void Material::setValue(Direction direction, dcomplex value)
 {

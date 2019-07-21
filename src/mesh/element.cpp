@@ -2,9 +2,9 @@
 
 Element::Element(int32_t id, std::size_t nodes, std::size_t edges, std::size_t faces)
   : mId(id)
-  , mFaces(faces)
   , mEpsilonId(-1)
   , mMuId(-1)
+  , mFaces(faces)
 {
   mEdges.resize(edges);
   mNodes.resize(nodes);

@@ -6,7 +6,7 @@
 #include "shape.h"
 
 class Hole
-    : public Shape
+    : public MorfeusObject
 {
 public:
   MORFEUS_LIB_DECL Hole();
@@ -20,9 +20,9 @@ public:
   MORFEUS_LIB_DECL void setY(double value);
 
 protected:
-  void doReadFromXml(ptree & tree) override;
-  void doWriteToXml(ptree & tree) const override;
-  void doAddToGeometry(Geometry * geometry) const override;
+  void doPrint(std::ostream & output, int tabPos) const override;
+  void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
+  void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
 
 private:
   double mX;

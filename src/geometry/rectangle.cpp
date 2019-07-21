@@ -4,89 +4,95 @@
 #include "segment.h"
 #include "vertex.h"
 
+static const std::string OBJECT_ID("Rectangle");
+
 Rectangle::Rectangle()
 {
 }
 
-void Rectangle::doAddToGeometry(Geometry *geometry) const
+std::vector<Segment> Rectangle::doGetSegmentList() const
 {
-//  std::size_t totalVertices = geometry->totalVertices();
-//  std::size_t totalSegments = geometry->totalSegments();
+  std::vector<Segment> segmentList;
 
-//  int32_t node1 = static_cast<int32_t>(totalVertices + 1);
-//  int32_t node2 = node1 + 1;
-//  int32_t node3 = node2 + 1;
-//  int32_t node4 = node3 + 1;
+  segmentList.push_back(Segment(0, 1, 2));
+  segmentList.push_back(Segment(1, 2, 3));
+  segmentList.push_back(Segment(2, 3, 4));
+  segmentList.push_back(Segment(3, 4, 1));
 
-//  double x1 = mCenter.x() - mWidth / 2;
-//  double x2 = mCenter.x() + mWidth / 2;
-//  double y1 = mCenter.y() - mHeight / 2;
-//  double y2 = mCenter.y() + mHeight / 2;
-
-//  std::unique_ptr<Vertex> v1(new Vertex(x1, y1));
-//  std::unique_ptr<Vertex> v2(new Vertex(x2, y1));
-//  std::unique_ptr<Vertex> v3(new Vertex(x2, y2));
-//  std::unique_ptr<Vertex> v4(new Vertex(x1, y2));
-
-//  v1->setNumber(node1);
-//  v2->setNumber(node2);
-//  v3->setNumber(node3);
-//  v4->setNumber(node4);
-
-//  geometry->addVertex(std::move(v1));
-//  geometry->addVertex(std::move(v2));
-//  geometry->addVertex(std::move(v3));
-//  geometry->addVertex(std::move(v4));
-
-//  int32_t segment1 = static_cast<int32_t>(totalSegments);
-//  std::unique_ptr<Segment> s1(new Segment(node1, node2));
-//  std::unique_ptr<Segment> s2(new Segment(node2, node3));
-//  std::unique_ptr<Segment> s3(new Segment(node3, node4));
-//  std::unique_ptr<Segment> s4(new Segment(node4, node1));
-
-//  s1->setNumber(segment1);
-//  s2->setNumber(segment1+1);
-//  s3->setNumber(segment1+2);
-//  s4->setNumber(segment1+3);
-
-//  geometry->addSegment(std::move(s1));
-//  geometry->addSegment(std::move(s2));
-//  geometry->addSegment(std::move(s3));
-//  geometry->addSegment(std::move(s4));
+  return segmentList;
 }
 
-void Rectangle::doReadFromXml(ptree &tree)
+std::vector<Vertex> Rectangle::doGetVertexList() const
 {
-
+  std::vector<Vertex> vertexList;
+  vertexList.push_back(Vertex(0, mXl, mYl));
+  vertexList.push_back(Vertex(1, mXu, mYl));
+  vertexList.push_back(Vertex(2, mXu, mYu));
+  vertexList.push_back(Vertex(3, mXl, mYu));
+  return vertexList;
 }
 
-void Rectangle::doWriteToXml(ptree &tree) const
+void Rectangle::doPrint(std::ostream &output, int tabPos) const
 {
-  ptree itemTree;
-  itemTree.put("<xmlattr>.type", "Rectangle");
-  itemTree.put("<xmlattr>.name", name());
-  itemTree.put("<xmlattr>.number", number());
-  itemTree.put("<xmlattr>.left", mLeft);
-  itemTree.put("<xmlattr>.right", mRight);
-  itemTree.put("<xmlattr>.top", mTop);
-  itemTree.put("<xmlattr>.bottom", mBottom);
-  tree.push_back(std::make_pair("Shape", itemTree));
+  xmlutils::printHeader(output, tabPos, "Rectangle");
+  xmlutils::printValue(output, tabPos+2, "Name: ", name());
+  xmlutils::printValue(output, tabPos+2, "Number: ", number());
+  xmlutils::printValue(output, tabPos+2, "xl: ", mXl);
+  xmlutils::printValue(output, tabPos+2, "xu: ", mXu);
+  xmlutils::printValue(output, tabPos+2, "yl: ", mYl);
+  xmlutils::printValue(output, tabPos+2, "yu: ", mYu);
+}
+
+void Rectangle::doXmlRead(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
+{
+  setName(xmlutils::readAttribute<std::string>(node, "name"));
+  setNumber(std::stoi(xmlutils::readAttribute<std::string>(node, "number")));
+  setXl(std::stod(xmlutils::readAttribute<std::string>(node, "xl")));
+  setXu(std::stod(xmlutils::readAttribute<std::string>(node, "xu")));
+  setYl(std::stod(xmlutils::readAttribute<std::string>(node, "yl")));
+  setYu(std::stod(xmlutils::readAttribute<std::string>(node, "yu")));
+}
+
+void Rectangle::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+{
+  xmlutils::writeAttribute(document, node, "name", name());
+  xmlutils::writeAttribute(document, node, "type", OBJECT_ID);
+  xmlutils::writeAttribute(document, node, "number", number());
+  xmlutils::writeAttribute(document, node, "xl", mXl);
+  xmlutils::writeAttribute(document, node, "xu", mXu);
+  xmlutils::writeAttribute(document, node, "yl", mYl);
+  xmlutils::writeAttribute(document, node, "yu", mYu);
 }
 
 double Rectangle::height() const
 {
-  return fabs(mTop-mBottom);
+  return fabs(mYu-mYl);
 }
 
 double Rectangle::width() const
 {
-  return fabs(mRight-mLeft);
+  return fabs(mXu-mXl);
 }
 
-void Rectangle::setPosition(double left, double right, double top, double bottom)
+void Rectangle::setPosition(double xl, double xu, double yl, double yu)
 {
-  mLeft = left;
-  mRight = right;
-  mTop = top;
-  mBottom = bottom;
+  mXl = xl;
+  mXu = xu;
+  mYl = yl;
+  mYu = yu;
+}
+
+void Rectangle::setPosition(Point2D lowerLeft, Point2D upperRight)
+{
+  setLowerLeft(lowerLeft);
+  setUpperRight(upperRight);
+}
+
+namespace  {
+  Shape * createFunc()
+  {
+    return new Rectangle;
+  }
+
+  const bool registered = Shape::Factory::Instance().Register(OBJECT_ID, createFunc);
 }

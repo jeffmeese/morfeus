@@ -2,6 +2,7 @@
 #define SOLUTION_H
 
 #include "morfeus.h"
+#include "morfeusobject.h"
 
 #include <boost/noncopyable.hpp>
 
@@ -9,16 +10,18 @@
 #include <vector>
 
 class Excitation;
+class MaterialDatabase;
 class Mesh;
 class Observation;
 class Solver;
 
 class Solution
     : private boost::noncopyable
+    , public MorfeusObject
 {
 public:
-  MORFEUS_LIB_DECL Solution(const Mesh * mesh);
-  MORFEUS_LIB_DECL virtual ~Solution();
+  MORFEUS_LIB_DECL Solution();
+  MORFEUS_LIB_DECL virtual ~Solution() override;
 
 public:
   MORFEUS_LIB_DECL void addExcitation(std::unique_ptr<Excitation> excitation);
@@ -27,10 +30,15 @@ public:
   MORFEUS_LIB_DECL const Excitation * getExcitation(std::size_t index) const;
   MORFEUS_LIB_DECL Observation * getObservation(std::size_t index);
   MORFEUS_LIB_DECL const Observation * getObservation(std::size_t index) const;
-  MORFEUS_LIB_DECL void runSolution(double freqGHz);
+  MORFEUS_LIB_DECL void runSolution(double freqGHz, const Mesh * mesh);
   MORFEUS_LIB_DECL void setSolver(std::unique_ptr<Solver> solver);
   MORFEUS_LIB_DECL std::size_t totalExcitations() const;
   MORFEUS_LIB_DECL std::size_t totalObservations() const;
+
+protected:
+  void doPrint(std::ostream & output, int tabPos) const override;
+  void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
+  void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
 
 private:
   typedef std::unique_ptr<Excitation> ExcitationPtr;

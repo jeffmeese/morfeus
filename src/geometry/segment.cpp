@@ -1,8 +1,9 @@
 #include "segment.h"
 
 Segment::Segment()
+  : mNode1(-1)
+  , mNode2(-1)
 {
-  mNode1 = mNode2 = -1;
   setBoundary(false);
 }
 
@@ -13,17 +14,30 @@ Segment::Segment(int32_t node1, int32_t node2)
   setBoundary(false);
 }
 
+Segment::Segment(int32_t number, int32_t node1, int32_t node2)
+  : mNode1(node1)
+  , mNode2(node2)
+{
+  setNumber(number);
+  setBoundary(false);
+}
+
 bool Segment::boundary() const
 {
   return mBoundary;
 }
 
-void Segment::doReadFromXml(ptree &tree)
+void Segment::doPrint(std::ostream &output, int tabPos) const
 {
 
 }
 
-void Segment::doWriteToXml(ptree &tree) const
+void Segment::doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
+{
+
+}
+
+void Segment::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
 }
 

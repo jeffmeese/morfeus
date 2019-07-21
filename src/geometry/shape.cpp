@@ -4,8 +4,25 @@ Shape::Shape()
 {
 }
 
-void Shape::addToGeometry(Geometry * geometry) const
+Shape::Shape(int32_t number)
+  : MorfeusObject (number)
 {
-  doAddToGeometry(geometry);
+
+}
+
+Shape::Shape(const std::string & name, int32_t number)
+  : MorfeusObject (name, number)
+{
+
+}
+
+std::vector<Segment> Shape::getSegmentList() const
+{
+  return doGetSegmentList();
+}
+
+std::vector<Vertex> Shape::getVertexList() const
+{
+  return doGetVertexList();
 }
 

@@ -11,70 +11,99 @@ public:
   MORFEUS_LIB_DECL Rectangle();
 
 public:
-  MORFEUS_LIB_DECL double bottom() const;
-  MORFEUS_LIB_DECL double left() const;
-  MORFEUS_LIB_DECL double right() const;
-  MORFEUS_LIB_DECL double top() const;
-  MORFEUS_LIB_DECL void setBottom(double value);
-  MORFEUS_LIB_DECL void setLeft(double value);
-  MORFEUS_LIB_DECL void setPosition(double left, double right, double top, double bottom);
-  MORFEUS_LIB_DECL void setRight(double value);
-  MORFEUS_LIB_DECL void setTop(double value);
+  MORFEUS_LIB_DECL Point2D lowerLeft() const;
+  MORFEUS_LIB_DECL Point2D upperRight() const;
+  MORFEUS_LIB_DECL double xl() const;
+  MORFEUS_LIB_DECL double xu() const;
+  MORFEUS_LIB_DECL double yl() const;
+  MORFEUS_LIB_DECL double yu() const;
+  MORFEUS_LIB_DECL void setLowerLeft(Point2D value);
+  MORFEUS_LIB_DECL void setUpperRight(Point2D value);
+  MORFEUS_LIB_DECL void setPosition(double xl, double xu, double yl, double yu);
+  MORFEUS_LIB_DECL void setPosition(Point2D lowerLeft, Point2D upperRight);
+  MORFEUS_LIB_DECL void setXl(double value);
+  MORFEUS_LIB_DECL void setXu(double value);
+  MORFEUS_LIB_DECL void setYl(double value);
+  MORFEUS_LIB_DECL void setYu(double value);
 
 public:
   MORFEUS_LIB_DECL double height() const;
   MORFEUS_LIB_DECL double width() const;
 
 protected:
-  void doAddToGeometry(Geometry * geometry) const override;
-  void doReadFromXml(ptree & tree) override;
-  void doWriteToXml(ptree & tree) const override;
+  std::vector<Segment> doGetSegmentList() const override;
+  std::vector<Vertex> doGetVertexList() const override;
+  void doPrint(std::ostream & output, int tabPos) const override;
+  void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
+  void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
 
 private:
-  double mBottom;
-  double mLeft;
-  double mRight;
-  double mTop;
+  double mXl;
+  double mXu;
+  double mYl;
+  double mYu;
 };
 
-inline double Rectangle::bottom() const
+inline Point2D Rectangle::lowerLeft() const
 {
-  return mBottom;
+  return Point2D(mXl, mYl);
 }
 
-inline double Rectangle::left() const
+inline Point2D Rectangle::upperRight() const
 {
-  return mLeft;
+  return Point2D(mXu, mYu);
 }
 
-inline double Rectangle::right() const
+inline double Rectangle::xl() const
 {
-  return mRight;
+  return mXl;
 }
 
-inline double Rectangle::top() const
+inline double Rectangle::xu() const
 {
-  return mTop;
+  return mXu;
 }
 
-inline void Rectangle::setBottom(double value)
+inline double Rectangle::yl() const
 {
-  mBottom = value;
+  return mYl;
 }
 
-inline void Rectangle::setLeft(double value)
+inline double Rectangle::yu() const
 {
-  mLeft = value;
+  return mYu;
 }
 
-inline void Rectangle::setRight(double value)
+inline void Rectangle::setLowerLeft(Point2D value)
 {
-  mRight = value;
+  mXl = value.x();
+  mYl = value.y();
 }
 
-inline void Rectangle::setTop(double value)
+inline void Rectangle::setUpperRight(Point2D value)
 {
-  mTop = value;
+  mXu = value.x();
+  mYu = value.y();
+}
+
+inline void Rectangle::setXl(double value)
+{
+  mXl = value;
+}
+
+inline void Rectangle::setXu(double value)
+{
+  mXu = value;
+}
+
+inline void Rectangle::setYl(double value)
+{
+  mYl = value;
+}
+
+inline void Rectangle::setYu(double value)
+{
+  mYu = value;
 }
 
 #endif // RECTANGLE_H

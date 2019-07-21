@@ -8,7 +8,9 @@
 #include <sstream>
 
 Mesh::Mesh()
+  : mMaterialDatabase(nullptr)
 {
+  mNodeTolerance = 1e-6;
 }
 
 Mesh::~Mesh()
@@ -26,11 +28,6 @@ void Mesh::addElement(std::unique_ptr<Element> element)
 {
   createEdges(element.get());
   mElements.push_back(std::move(element));
-}
-
-void Mesh::addMaterial(std::unique_ptr<Material> material)
-{
-  mMaterials.push_back(std::move(material));
 }
 
 void Mesh::addNode(std::unique_ptr<Node> node)
@@ -91,14 +88,58 @@ const Element * Mesh::element(std::size_t index) const
   return mElements.at(index).get();
 }
 
-Material * Mesh::material(std::size_t index)
+Edge * Mesh::findEdge(std::size_t node1, std::size_t node2) const
 {
-  return mMaterials.at(index).get();
+	typedef EdgeList::const_iterator Itr;
+	typedef EdgeTable::const_iterator MapItr;
+
+	// Look in node 1 list
+	MapItr itr1 = mEdgeTable.find(node1);
+	if (itr1 != mEdgeTable.end())
+	{
+		const std::list<EdgePair> & l1 = itr1->second;
+		for (Itr itr = l1.begin(); itr != l1.end(); ++itr) {
+			if (itr->first == node2) {
+				return mEdges.at(itr->second).get();
+			}
+		}
+	}
+
+	// Look in node 2 list
+	MapItr itr2 = mEdgeTable.find(node2);
+	if (itr2 != mEdgeTable.end())
+	{
+		const std::list<EdgePair>& l2 = itr2->second;
+		for (Itr itr = l2.begin(); itr != l2.end(); ++itr) {
+			if (itr->first == node1) {
+				return mEdges.at(itr->second).get();
+			}
+		}
+	}
+
+	return nullptr;
 }
 
-const Material * Mesh::material(std::size_t index) const
+int32_t Mesh::findNearestNode(double x, double y, double z) const
 {
-  return mMaterials.at(index).get();
+	int32_t nearestNode = -1;
+
+	double minR = 0.0;
+	for (std::size_t i = 0; i < totalNodes(); i++) {
+
+		const Node * node = mNodes.at(i).get();
+		double x2 = node->x(), y2 = node->y(), z2 = node->z();
+		double R = sqrt( (x-x2)*(x-x2) + (y-y2)*(y-y2) + (z-z2)*(z-z2));
+		if (R <= mNodeTolerance)
+			return node->number();
+
+		if (i == 1 || R < minR) {
+			nearestNode = node->number();
+			minR = R;
+		}
+	}
+
+	return nearestNode;
 }
 
 Node * Mesh::node(std::size_t index)
@@ -125,13 +166,6 @@ std::unique_ptr<Element> Mesh::takeElement(std::size_t index)
   return element;
 }
 
-std::unique_ptr<Material> Mesh::takeMaterial(std::size_t index)
-{
-  std::unique_ptr<Material> material(mMaterials.at(index).get());
-  mMaterials.erase(mMaterials.begin() + index);
-  return material;
-}
-
 std::unique_ptr<Node> Mesh::takeNode(std::size_t index)
 {
   std::unique_ptr<Node> node(mNodes.at(index).get());
@@ -147,11 +181,6 @@ std::size_t Mesh::totalEdges() const
 std::size_t Mesh::totalElements() const
 {
   return mElements.size();
-}
-
-std::size_t Mesh::totalMaterials() const
-{
-  return mMaterials.size();
 }
 
 std::size_t Mesh::totalNodes() const

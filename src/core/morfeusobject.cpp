@@ -4,9 +4,17 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
+#include <iostream>
+
 MorfeusObject::MorfeusObject()
   : mId(createId())
   , mNumber(-1)
+{
+}
+
+MorfeusObject::MorfeusObject(int32_t number)
+  : mId(createId())
+  , mNumber(number)
 {
 }
 
@@ -44,6 +52,10 @@ MorfeusObject::MorfeusObject(std::string id, const std::string & name, int32_t n
 {
 }
 
+MorfeusObject::~MorfeusObject()
+{
+}
+
 std::string MorfeusObject::createId()
 {
   boost::uuids::random_generator gen;
@@ -51,12 +63,28 @@ std::string MorfeusObject::createId()
   return boost::uuids::to_string(uuid);
 }
 
-void MorfeusObject::readFromXml(ptree & tree)
+void MorfeusObject::print(int tabPos) const
 {
-  doReadFromXml(tree);
+  print(std::cout, tabPos);
 }
 
-void MorfeusObject::writeToXml(ptree & tree) const
+std::ostream & operator<<(std::ostream & output, const MorfeusObject & object)
 {
-  doWriteToXml(tree);
+  object.print(output);
+  return output;
+}
+
+void MorfeusObject::print(std::ostream & output, int tabPos) const
+{
+  doPrint(output, tabPos);
+}
+
+void MorfeusObject::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
+{
+  doXmlRead(document, node);
+}
+
+void MorfeusObject::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+{
+  doXmlWrite(document, node);
 }

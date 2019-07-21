@@ -19,38 +19,33 @@ double Region::attribute() const
   return mAttribute;
 }
 
-void Region::doReadFromXml(ptree &tree)
+void Region::doPrint(std::ostream &output, int tabPos) const
+{
+  xmlutils::printHeader(output, tabPos, "Region");
+  xmlutils::printValue(output, tabPos+2, "Name: ", name());
+  xmlutils::printValue(output, tabPos+2, "Number: ", number());
+  xmlutils::printValue(output, tabPos+2, "x: ", mX);
+  xmlutils::printValue(output, tabPos+2, "y: ", mY);
+}
+
+void Region::doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
 {
 
 }
 
-void Region::doWriteToXml(ptree & parentTree) const
+void Region::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
-  ptree itemTree;
-
-  itemTree.put("<xmlattr>.name", name());
-  itemTree.put("<xmlattr>.number", number());
-  itemTree.put("<xmlattr>.x", mX);
-  itemTree.put("<xmlattr>.y", mY);
-  itemTree.put("<xmlattr>.attribute", mAttribute);
-  itemTree.put("<xmlattr>.max-area", mMaxArea);
-
-  parentTree.push_back(std::make_pair("Region", itemTree));
+  xmlutils::writeAttribute(document, node, "name", name());
+  xmlutils::writeAttribute(document, node, "number", number());
+  xmlutils::writeAttribute(document, node, "maxArea", mMaxArea);
+  xmlutils::writeAttribute(document, node, "attribute", mAttribute);
+  xmlutils::writeAttribute(document, node, "x", mX);
+  xmlutils::writeAttribute(document, node, "y", mY);
 }
 
 double Region::maxArea() const
 {
   return mMaxArea;
-}
-
-double Region::x() const
-{
-  return mX;
-}
-
-double Region::y() const
-{
-  return mY;
 }
 
 void Region::setAttribute(double value)
@@ -78,4 +73,15 @@ void Region::setY(double value)
 {
   mY = value;
 }
+
+double Region::x() const
+{
+  return mX;
+}
+
+double Region::y() const
+{
+  return mY;
+}
+
 

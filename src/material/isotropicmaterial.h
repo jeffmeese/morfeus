@@ -7,14 +7,19 @@ class IsotropicMaterial
     : public Material
 {
 public:
-  MORFEUS_LIB_DECL IsotropicMaterial(int32_t id);
-  MORFEUS_LIB_DECL IsotropicMaterial(int32_t id, const dcomplex & permittivity, const dcomplex & permeability);
+  MORFEUS_LIB_DECL IsotropicMaterial();
+  MORFEUS_LIB_DECL IsotropicMaterial(int32_t number, const dcomplex & permittivity, const dcomplex & permeability);
 
 public:
   MORFEUS_LIB_DECL dcomplex permeability() const;
   MORFEUS_LIB_DECL dcomplex permittivity() const;
   MORFEUS_LIB_DECL void setPermeability(dcomplex value);
   MORFEUS_LIB_DECL void setPermittivity(dcomplex value);
+
+protected:
+  void doPrint(std::ostream & output, int tabPos) const override;
+  void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
+  void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
 
 private:
   dcomplex mPermeability;

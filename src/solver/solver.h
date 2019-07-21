@@ -2,11 +2,15 @@
 #define SOLVER_H
 
 #include "morfeus.h"
+#include "morfeusobject.h"
 
 #include <boost/noncopyable.hpp>
 #include <boost/numeric/ublas/matrix_sparse.hpp>
 #include <boost/numeric/ublas/triangular.hpp>
 #include <boost/numeric/ublas/vector.hpp>
+
+#include <Factory.h>
+#include <Singleton.h>
 
 class Excitation;
 class Mesh;
@@ -16,6 +20,7 @@ class Solution;
 
 class Solver
     : private boost::noncopyable
+    , public MorfeusObject
 {
 public:
   MORFEUS_LIB_DECL Solver();
@@ -23,6 +28,9 @@ public:
 
 public:
   MORFEUS_LIB_DECL void runSolver(double freqGhz, const Mesh * mesh, Solution * solution);
+
+public:
+  typedef Loki::SingletonHolder<Loki::Factory<Solver, std::string> > Factory;
 
 protected:
   typedef boost::numeric::ublas::mapped_matrix<dcomplex> sparse_matrix;

@@ -12,52 +12,41 @@ Vertex::Vertex(double x, double y)
   setBoundary(false);
 }
 
+Vertex::Vertex(int32_t number, double x, double y)
+{
+  setNumber(number);
+  setPosition(x, y);
+  setBoundary(false);
+}
+
 void Vertex::addAttribute(double value)
 {
   mAttributes.push_back(value);
 }
 
-bool Vertex::boundary() const
+void Vertex::doPrint(std::ostream &output, int tabPos) const
 {
-  return mBoundary;
+  xmlutils::printHeader(output, tabPos, "Vertex");
+  xmlutils::printValue(output, tabPos+2, "Name: ", name());
+  xmlutils::printValue(output, tabPos+2, "Number: ", number());
+  xmlutils::printValue(output, tabPos+2, "x", mX);
+  xmlutils::printValue(output, tabPos+2, "y", mY);
 }
 
-void Vertex::doReadFromXml(ptree &tree)
+void Vertex::doXmlRead(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
 {
-
+  setName(xmlutils::readAttribute<std::string>(node, "name"));
+  setNumber(std::stoi(xmlutils::readAttribute<std::string>(node, "number")));
+  setX(std::stod(xmlutils::readAttribute<std::string>(node, "x")));
+  setY(std::stod(xmlutils::readAttribute<std::string>(node, "y")));
 }
 
-void Vertex::doWriteToXml(ptree &tree) const
+void Vertex::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
+  xmlutils::writeAttribute(document, node, "name", name());
+  xmlutils::writeAttribute(document, node, "number", number());
+  xmlutils::writeAttribute(document, node, "type", "Vertex");
+  xmlutils::writeAttribute(document, node, "x", mX);
+  xmlutils::writeAttribute(document, node, "y", mY);
 }
 
-void Vertex::setBoundary(bool value)
-{
-  mBoundary = value;
-}
-
-void Vertex::setPosition(double x, double y)
-{
-  setX(x);
-  setY(y);
-}
-
-void Vertex::setX(double value)
-{
-  mX = value;
-}
-
-void Vertex::setY(double value)
-{
-  mY = value;
-}
-
-double Vertex::x() const
-{
-  return mX;
-}
-
-double Vertex::y() const
-{
-  return mY;
-}
