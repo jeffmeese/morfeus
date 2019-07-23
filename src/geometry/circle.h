@@ -1,16 +1,19 @@
 #ifndef CIRCLE_H
 #define CIRCLE_H
 
-#include "polygon.h"
+#include "shape.h"
 #include "point2d.h"
 
 class Circle
-    : public Polygon
+    : public Shape
 {
 public:
   MORFEUS_LIB_DECL Circle();
-  MORFEUS_LIB_DECL Circle(const Point2D & center, double radius);
+  MORFEUS_LIB_DECL Circle(const std::string & name);
+  MORFEUS_LIB_DECL Circle(const std::string & id, const std::string & name);
   MORFEUS_LIB_DECL Circle(double x, double y, double radius);
+  MORFEUS_LIB_DECL Circle(const std::string & name, double x, double y, double radius);
+  MORFEUS_LIB_DECL Circle(const std::string & id, const std::string & name, double x, double y, double radius);
 
 public:
   MORFEUS_LIB_DECL Point2D center() const;

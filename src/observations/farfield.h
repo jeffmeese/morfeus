@@ -8,7 +8,8 @@ class FarField
 {
 public:
   MORFEUS_LIB_DECL FarField();
-  MORFEUS_LIB_DECL FarField(int32_t number);
+  MORFEUS_LIB_DECL FarField(const std::string & name);
+  MORFEUS_LIB_DECL FarField(const std::string & id, const std::string & name);
 
 public:
   MORFEUS_LIB_DECL double phiIncr() const;

@@ -4,10 +4,45 @@
 #include "segment.h"
 #include "vertex.h"
 
+#include <boost/bind.hpp>
+#include <boost/functional/factory.hpp>
+
 static const std::string OBJECT_ID("Rectangle");
 
 Rectangle::Rectangle()
+  : Shape (OBJECT_ID)
 {
+  setPosition(0.0,0.0,0.0,0.0);
+}
+
+Rectangle::Rectangle(const std::string & name)
+  : Shape (OBJECT_ID, name)
+{
+  setPosition(0.0,0.0,0.0,0.0);
+}
+
+Rectangle::Rectangle(const std::string & id, const std::string & name)
+  : Shape (OBJECT_ID, id, name)
+{
+  setPosition(0.0,0.0,0.0,0.0);
+}
+
+Rectangle::Rectangle(double xl, double xu, double yl, double yu)
+  : Shape (OBJECT_ID)
+{
+  setPosition(xl, xu, yl, yu);
+}
+
+Rectangle::Rectangle(const std::string & name, double xl, double xu, double yl, double yu)
+  : Shape (OBJECT_ID, name)
+{
+  setPosition(xl, xu, yl, yu);
+}
+
+Rectangle::Rectangle(const std::string & id, const std::string & name, double xl, double xu, double yl, double yu)
+  : Shape (OBJECT_ID, id, name)
+{
+  setPosition(xl, xu, yl, yu);
 }
 
 std::vector<Segment> Rectangle::doGetSegmentList() const
@@ -34,30 +69,24 @@ std::vector<Vertex> Rectangle::doGetVertexList() const
 
 void Rectangle::doPrint(std::ostream &output, int tabPos) const
 {
-  xmlutils::printHeader(output, tabPos, "Rectangle");
-  xmlutils::printValue(output, tabPos+2, "Name: ", name());
-  xmlutils::printValue(output, tabPos+2, "Number: ", number());
-  xmlutils::printValue(output, tabPos+2, "xl: ", mXl);
-  xmlutils::printValue(output, tabPos+2, "xu: ", mXu);
-  xmlutils::printValue(output, tabPos+2, "yl: ", mYl);
-  xmlutils::printValue(output, tabPos+2, "yu: ", mYu);
+  xmlutils::printHeader(output, tabPos, OBJECT_ID);
+  xmlutils::printValue(output, tabPos, "xl: ", mXl);
+  xmlutils::printValue(output, tabPos, "xu: ", mXu);
+  xmlutils::printValue(output, tabPos, "yl: ", mYl);
+  xmlutils::printValue(output, tabPos, "yu: ", mYu);
 }
 
 void Rectangle::doXmlRead(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
 {
-  setName(xmlutils::readAttribute<std::string>(node, "name"));
-  setNumber(std::stoi(xmlutils::readAttribute<std::string>(node, "number")));
-  setXl(std::stod(xmlutils::readAttribute<std::string>(node, "xl")));
-  setXu(std::stod(xmlutils::readAttribute<std::string>(node, "xu")));
-  setYl(std::stod(xmlutils::readAttribute<std::string>(node, "yl")));
-  setYu(std::stod(xmlutils::readAttribute<std::string>(node, "yu")));
+  setXl(xmlutils::readAttribute<double>(node, "xl"));
+  setXu(xmlutils::readAttribute<double>(node, "xu"));
+  setYl(xmlutils::readAttribute<double>(node, "yl"));
+  setYu(xmlutils::readAttribute<double>(node, "yu"));
 }
 
 void Rectangle::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
-  xmlutils::writeAttribute(document, node, "name", name());
   xmlutils::writeAttribute(document, node, "type", OBJECT_ID);
-  xmlutils::writeAttribute(document, node, "number", number());
   xmlutils::writeAttribute(document, node, "xl", mXl);
   xmlutils::writeAttribute(document, node, "xu", mXu);
   xmlutils::writeAttribute(document, node, "yl", mYl);
@@ -89,10 +118,5 @@ void Rectangle::setPosition(Point2D lowerLeft, Point2D upperRight)
 }
 
 namespace  {
-  Shape * createFunc()
-  {
-    return new Rectangle;
-  }
-
-  const bool registered = Shape::Factory::Instance().Register(OBJECT_ID, createFunc);
+  const bool r = Shape::factory().registerType(OBJECT_ID, boost::bind(boost::factory<Rectangle*>()));
 }

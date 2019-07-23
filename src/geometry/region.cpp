@@ -1,6 +1,27 @@
 #include "region.h"
 
+static const std::string OBJECT_ID("Region");
+
 Region::Region()
+  : MorfeusObject (OBJECT_ID)
+{
+  setPosition(0.0, 0.0);
+  setAttribute(0.0);
+  setMaxArea(-1.0);
+}
+
+Region::Region(const std::string & name)
+  : MorfeusObject (OBJECT_ID)
+  , mName(name)
+{
+  setPosition(0.0, 0.0);
+  setAttribute(0.0);
+  setMaxArea(-1.0);
+}
+
+Region::Region(const std::string & id, const std::string & name)
+  : MorfeusObject (OBJECT_ID, id)
+  , mName(name)
 {
   setPosition(0.0, 0.0);
   setAttribute(0.0);
@@ -8,6 +29,26 @@ Region::Region()
 }
 
 Region::Region(double x, double y)
+  : MorfeusObject (OBJECT_ID)
+{
+  setPosition(x, y);
+  setAttribute(0.0);
+  setMaxArea(-1.0);
+}
+
+Region::Region(const std::string & name, double x, double y)
+  : MorfeusObject (OBJECT_ID)
+  , mName(name)
+{
+  setPosition(x, y);
+  setAttribute(0.0);
+  setMaxArea(-1.0);
+}
+
+
+Region::Region(const std::string & id, const std::string & name, double x, double y)
+  : MorfeusObject (OBJECT_ID, id)
+  , mName(name)
 {
   setPosition(x, y);
   setAttribute(0.0);
@@ -19,43 +60,26 @@ double Region::attribute() const
   return mAttribute;
 }
 
-void Region::doPrint(std::ostream &output, int tabPos) const
+void Region::print(std::ostream &output, int tabPos) const
 {
-  xmlutils::printHeader(output, tabPos, "Region");
-  xmlutils::printValue(output, tabPos+2, "Name: ", name());
-  xmlutils::printValue(output, tabPos+2, "Number: ", number());
-  xmlutils::printValue(output, tabPos+2, "x: ", mX);
-  xmlutils::printValue(output, tabPos+2, "y: ", mY);
+  xmlutils::printHeader(output, tabPos, OBJECT_ID);
+  xmlutils::printValue(output, tabPos, "Name: ", mName);
+  xmlutils::printValue(output, tabPos, "x: ", mX);
+  xmlutils::printValue(output, tabPos, "y: ", mY);
 }
 
-void Region::doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
+void Region::print(int tabPos) const
 {
-
+  print(std::cout, tabPos);
 }
 
-void Region::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+void Region::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
 {
-  xmlutils::writeAttribute(document, node, "name", name());
-  xmlutils::writeAttribute(document, node, "number", number());
-  xmlutils::writeAttribute(document, node, "maxArea", mMaxArea);
-  xmlutils::writeAttribute(document, node, "attribute", mAttribute);
-  xmlutils::writeAttribute(document, node, "x", mX);
-  xmlutils::writeAttribute(document, node, "y", mY);
-}
-
-double Region::maxArea() const
-{
-  return mMaxArea;
-}
-
-void Region::setAttribute(double value)
-{
-  mAttribute = value;
-}
-
-void Region::setMaxArea(double value)
-{
-  mMaxArea = value;
+  setName(xmlutils::readAttribute<std::string>(node, "name"));
+  setAttribute(xmlutils::readAttribute<double>(node, "attribute"));
+  setMaxArea(xmlutils::readAttribute<double>(node, "max-area"));
+  setX(xmlutils::readAttribute<double>(node, "x"));
+  setY(xmlutils::readAttribute<double>(node, "y"));
 }
 
 void Region::setPosition(double x, double y)
@@ -64,24 +88,14 @@ void Region::setPosition(double x, double y)
   setY(y);
 }
 
-void Region::setX(double value)
+void Region::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
-  mX = value;
+  rapidxml::xml_node<> * childNode = xmlutils::createNode(document, "Region");
+  xmlutils::writeAttribute(document, childNode, "type", OBJECT_ID);
+  xmlutils::writeAttribute(document, childNode, "name", mName);
+  xmlutils::writeAttribute(document, childNode, "max-area", mMaxArea);
+  xmlutils::writeAttribute(document, childNode, "attribute", mAttribute);
+  xmlutils::writeAttribute(document, childNode, "x", mX);
+  xmlutils::writeAttribute(document, childNode, "y", mY);
+  node->append_node(childNode);
 }
-
-void Region::setY(double value)
-{
-  mY = value;
-}
-
-double Region::x() const
-{
-  return mX;
-}
-
-double Region::y() const
-{
-  return mY;
-}
-
-

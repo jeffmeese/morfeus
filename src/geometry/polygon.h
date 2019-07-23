@@ -12,8 +12,8 @@ class Polygon
 {
 public:
   MORFEUS_LIB_DECL Polygon();
-  MORFEUS_LIB_DECL Polygon(int32_t number);
-  MORFEUS_LIB_DECL Polygon(const std::string & name, int32_t number);
+  MORFEUS_LIB_DECL Polygon(const std::string & name);
+  MORFEUS_LIB_DECL Polygon(const std::string & id, const std::string & name);
 
 public:
   MORFEUS_LIB_DECL void addPoint(double x, double y);

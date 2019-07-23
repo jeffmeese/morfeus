@@ -2,9 +2,14 @@
 
 #include "meshinformation.h"
 
-DirectSolver::DirectSolver()
-{
+#include <boost/bind.hpp>
+#include <boost/functional/factory.hpp>
 
+static const std::string OBJECT_ID("Direct Solver");
+
+DirectSolver::DirectSolver()
+  : Solver (OBJECT_ID)
+{
 }
 
 void DirectSolver::allocateMatrices(const MeshInformation * meshInfo)
@@ -20,7 +25,7 @@ void DirectSolver::clearMatrices(const Mesh *mesh, const MeshInformation *meshIn
 
 void DirectSolver::doPrint(std::ostream & output, int tabPos) const
 {
-
+  xmlutils::printHeader(output, tabPos, OBJECT_ID);
 }
 
 void DirectSolver::doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
@@ -49,3 +54,6 @@ void DirectSolver::updateFiniteElementMatrix(std::size_t row, std::size_t col, c
 
 }
 
+namespace  {
+  const bool r = Solver::factory().registerType(OBJECT_ID, boost::bind(boost::factory<DirectSolver*>()));
+}

@@ -22,9 +22,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
-# Find Loki
-set(LOKI_LIBS loki)
-
 # Source files
 set(SRC_FILES
   core/project.cpp
@@ -58,7 +55,6 @@ target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cor
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/gui)
 
 # Specify target link libraries
-target_link_libraries(${TARGET_NAME} ${LOKI_LIBS})
 target_link_libraries(${TARGET_NAME} Qt5::Core)
 target_link_libraries(${TARGET_NAME} Qt5::Gui)
 target_link_libraries(${TARGET_NAME} Qt5::Widgets)

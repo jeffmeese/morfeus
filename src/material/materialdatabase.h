@@ -14,6 +14,7 @@ class MaterialDatabase
 {
 public:
   MORFEUS_LIB_DECL MaterialDatabase();
+  MORFEUS_LIB_DECL MaterialDatabase(const std::string & id);
 
 public:
   MORFEUS_LIB_DECL std::size_t totalMaterials() const;
@@ -22,12 +23,12 @@ public:
   MORFEUS_LIB_DECL void addMaterial(std::unique_ptr<Material> material);
   MORFEUS_LIB_DECL Material * material(std::size_t index);
   MORFEUS_LIB_DECL const Material * material(std::size_t index) const;
+  MORFEUS_LIB_DECL void print(std::ostream & output, int tabPos = 0) const;
+  MORFEUS_LIB_DECL void print(int tabPos = 0) const;
+  MORFEUS_LIB_DECL void readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node);
+  MORFEUS_LIB_DECL void writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const;
   MORFEUS_LIB_DECL std::unique_ptr<Material> takeMaterial(std::size_t index);
-
-protected:
-  void doPrint(std::ostream & output, int tabPos) const override;
-  void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
-  void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
+  MORFEUS_LIB_DECL friend std::ostream & operator<<(std::ostream & output, const Material & object);
 
 private:
   typedef std::unique_ptr<Material> MaterialPtr;

@@ -1,25 +1,65 @@
 #include "segment.h"
 
+static const std::string OBJECT_ID("Segment");
+
 Segment::Segment()
-  : mNode1(-1)
-  , mNode2(-1)
+  : MorfeusObject (OBJECT_ID)
 {
-  setBoundary(false);
+  mNumber = -1;
+  mNode1 = mNode2 = 0;
+}
+
+Segment::Segment(const std::string & id)
+  : MorfeusObject (OBJECT_ID, id)
+{
+  mNumber = -1;
+  mNode1 = mNode2 = 0;
+}
+
+Segment::Segment(int32_t number)
+  : MorfeusObject (OBJECT_ID)
+  , mNumber(number)
+{
+  mNode1 = mNode2 = 0;
+}
+
+Segment::Segment(const std::string & id, int32_t number)
+  : MorfeusObject (OBJECT_ID, id)
+  , mNumber(number)
+{
+  mNode1 = mNode2 = 0;
 }
 
 Segment::Segment(int32_t node1, int32_t node2)
-  : mNode1(node1)
-  , mNode2(node2)
+  : MorfeusObject (OBJECT_ID)
 {
-  setBoundary(false);
+  mNumber = -1;
+  mNode1 = node1;
+  mNode2 = node2;
+}
+
+Segment::Segment(const std::string & id, int32_t node1, int32_t node2)
+  : MorfeusObject (OBJECT_ID, id)
+{
+  mNumber = -1;
+  mNode1 = node1;
+  mNode2 = node2;
 }
 
 Segment::Segment(int32_t number, int32_t node1, int32_t node2)
-  : mNode1(node1)
-  , mNode2(node2)
+  : MorfeusObject (OBJECT_ID)
+  , mNumber(number)
 {
-  setNumber(number);
-  setBoundary(false);
+  mNode1 = node1;
+  mNode2 = node2;
+}
+
+Segment::Segment(const std::string & id, int32_t number, int32_t node1, int32_t node2)
+  : MorfeusObject (OBJECT_ID, id)
+  , mNumber(number)
+{
+  mNode1 = node1;
+  mNode2 = node2;
 }
 
 bool Segment::boundary() const
@@ -27,43 +67,32 @@ bool Segment::boundary() const
   return mBoundary;
 }
 
-void Segment::doPrint(std::ostream &output, int tabPos) const
+void Segment::print(std::ostream &output, int tabPos) const
 {
-
+  xmlutils::printHeader(output, tabPos, OBJECT_ID);
+  xmlutils::printValue(output, tabPos, "Number: ", mNumber);
+  xmlutils::printValue(output, tabPos, "Node 1: ", mNode1);
+  xmlutils::printValue(output, tabPos, "Node 2: ", mNode2);
 }
 
-void Segment::doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
+void Segment::print(int tabPos) const
 {
-
+  print(std::cout, tabPos);
 }
 
-void Segment::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+void Segment::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
 {
+  setNumber(xmlutils::readAttribute<int32_t>(node, "number"));
+  setNode1(xmlutils::readAttribute<int32_t>(node, "node1"));
+  setNode2(xmlutils::readAttribute<int32_t>(node, "node2"));
 }
 
-int32_t Segment::node1() const
+void Segment::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
-  return mNode1;
-}
-
-int32_t Segment::node2() const
-{
-  return mNode2;
-}
-
-void Segment::setBoundary(bool value)
-{
-  mBoundary = value;
-}
-
-void Segment::setNode1(int32_t node1)
-{
-  mNode1 = node1;
-}
-
-void Segment::setNode2(int32_t node2)
-{
-  mNode2 = node2;
+  xmlutils::writeAttribute(document, node, "type", OBJECT_ID);
+  xmlutils::writeAttribute(document, node, "number", mNumber);
+  xmlutils::writeAttribute(document, node, "node1", mNode1);
+  xmlutils::writeAttribute(document, node, "node2", mNode1);
 }
 
 void Segment::setNodes(int32_t node1, int32_t node2)

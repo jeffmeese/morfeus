@@ -2,22 +2,49 @@
 
 #include "xmlutils.h"
 
+#include <boost/bind.hpp>
+#include <boost/functional/factory.hpp>
+
 static const std::string OBJECT_ID("Circle");
 
 Circle::Circle()
-  : mCenter(0.0, 0.0)
+  : Shape(OBJECT_ID)
+  , mCenter(0.0, 0.0)
   , mRadius(1.0)
 {
 }
 
-Circle::Circle(const Point2D & center, double radius)
-  : mCenter(center)
-  , mRadius(radius)
+Circle::Circle(const std::string & name)
+  : Shape(OBJECT_ID, name)
+  , mCenter(0.0, 0.0)
+  , mRadius(1.0)
+{
+}
+
+Circle::Circle(const std::string & id, const std::string & name)
+  : Shape(OBJECT_ID, id, name)
+  , mCenter(0.0, 0.0)
+  , mRadius(1.0)
 {
 }
 
 Circle::Circle(double x, double y, double radius)
-  : mCenter(x, y)
+  : Shape(OBJECT_ID)
+  , mCenter(x, y)
+  , mRadius(radius)
+{
+}
+
+Circle::Circle(const std::string & name, double x, double y, double radius)
+  : Shape(OBJECT_ID, name)
+  , mCenter(x, y)
+  , mRadius(radius)
+{
+}
+
+Circle::Circle(const std::string & id, const std::string & name, double x, double y, double radius)
+  : Shape(OBJECT_ID, id, name)
+  , mCenter(x, y)
   , mRadius(radius)
 {
 }
@@ -41,26 +68,20 @@ std::vector<Vertex> Circle::doGetVertexList() const
 
 void Circle::doPrint(std::ostream &output, int tabPos) const
 {
-  xmlutils::printHeader(output, tabPos, "Circle");
-  xmlutils::printValue(output, tabPos+2, "Name: ", name());
-  xmlutils::printValue(output, tabPos+2, "Number: ", number());
-  xmlutils::printValue(output, tabPos+2, "Center: ", mCenter);
-  xmlutils::printValue(output, tabPos+2, "Radius: ", mRadius);
+  xmlutils::printHeader(output, tabPos, OBJECT_ID);
+  xmlutils::printValue(output, tabPos, "Center: ", mCenter);
+  xmlutils::printValue(output, tabPos, "Radius: ", mRadius);
 }
 
 void Circle::doXmlRead(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
 {
-  setName(xmlutils::readAttribute<std::string>(node, "name"));
-  setNumber(std::stoi(xmlutils::readAttribute<std::string>(node, "number")));
-  setRadius(std::stod(xmlutils::readAttribute<std::string>(node, "radius")));
-  mCenter.setX(std::stod(xmlutils::readAttribute<std::string>(node, "x")));
-  mCenter.setY(std::stod(xmlutils::readAttribute<std::string>(node, "y")));
+  setRadius(xmlutils::readAttribute<double>(node, "radius"));
+  mCenter.setX(xmlutils::readAttribute<double>(node, "x"));
+  mCenter.setY(xmlutils::readAttribute<double>(node, "y"));
 }
 
 void Circle::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
-  xmlutils::writeAttribute(document, node, "name", name());
-  xmlutils::writeAttribute(document, node, "number", number());
   xmlutils::writeAttribute(document, node, "type", OBJECT_ID);
   xmlutils::writeAttribute(document, node, "x", mCenter.x());
   xmlutils::writeAttribute(document, node, "y", mCenter.y());
@@ -88,10 +109,5 @@ void Circle::setRadius(double value)
 }
 
 namespace  {
-  Shape * createFunc()
-  {
-    return new Circle;
-  }
-
-  const bool registered = Shape::Factory::Instance().Register(OBJECT_ID, createFunc);
+  const bool r = Shape::factory().registerType(OBJECT_ID, boost::bind(boost::factory<Circle*>()));
 }

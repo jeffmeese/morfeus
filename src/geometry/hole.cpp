@@ -1,64 +1,78 @@
 #include "hole.h"
 #include "geometry.h"
 
+static const std::string OBJECT_ID("Hole");
+
 Hole::Hole()
+  : MorfeusObject (OBJECT_ID)
 {
   setPosition(0.0, 0.0);
 }
 
-Hole::Hole( double x, double y)
+Hole::Hole(const std::string & name)
+  : MorfeusObject (OBJECT_ID)
+  , mName(name)
+{
+  setPosition(0.0, 0.0);
+}
+
+Hole::Hole(const std::string & id, const std::string & name)
+  : MorfeusObject (OBJECT_ID, id)
+  , mName(name)
+{
+  setPosition(0.0, 0.0);
+}
+
+Hole::Hole(double x, double y)
+  : MorfeusObject (OBJECT_ID)
 {
   setPosition(x, y);
 }
 
-void Hole::doPrint(std::ostream &output, int tabPos) const
+Hole::Hole(const std::string & name, double x, double y)
+  : MorfeusObject (OBJECT_ID)
+  , mName(name)
 {
-  xmlutils::printHeader(output, tabPos, "Hole");
-  xmlutils::printValue(output, tabPos+2, "Name: ", name());
-  xmlutils::printValue(output, tabPos+2, "Number: ", number());
-  xmlutils::printValue(output, tabPos+2, "x: ", mX);
-  xmlutils::printValue(output, tabPos+2, "y: ", mY);
+  setPosition(x, y);
 }
 
-void Hole::doXmlRead(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
+Hole::Hole(const std::string & id, const std::string & name, double x, double y)
+  : MorfeusObject (OBJECT_ID, id)
+  , mName(name)
 {
-  setName(xmlutils::readAttribute<std::string>(node, "name"));
-  setNumber(std::stoi(xmlutils::readAttribute<std::string>(node, "number")));
-  setX(std::stod(xmlutils::readAttribute<std::string>(node, "x")));
-  setY(std::stod(xmlutils::readAttribute<std::string>(node, "y")));
+  setPosition(x, y);
 }
 
-void Hole::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+void Hole::print(std::ostream &output, int tabPos) const
 {
-  xmlutils::writeAttribute(document, node, "name", name());
-  xmlutils::writeAttribute(document, node, "type", "Hole");
-  xmlutils::writeAttribute(document, node, "number", number());
-  xmlutils::writeAttribute(document, node, "x", mX);
-  xmlutils::writeAttribute(document, node, "y", mY);
+  xmlutils::printHeader(output, tabPos, OBJECT_ID);
+  xmlutils::printValue(output, tabPos, "Name: ", mName);
+  xmlutils::printValue(output, tabPos, "x: ", mX);
+  xmlutils::printValue(output, tabPos, "y: ", mY);
+}
+
+void Hole::print(int tabPos) const
+{
+  print(std::cout, tabPos);
+}
+
+void Hole::readFromXml(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
+{
+  setX(xmlutils::readAttribute<double>(node, "x"));
+  setY(xmlutils::readAttribute<double>(node, "y"));
+}
+
+void Hole::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+{
+  rapidxml::xml_node<> * childNode = xmlutils::createNode(document, "Hole");
+  xmlutils::writeAttribute(document, childNode, "type", OBJECT_ID);
+  xmlutils::writeAttribute(document, childNode, "x", mX);
+  xmlutils::writeAttribute(document, childNode, "y", mY);
+  node->append_node(childNode);
 }
 
 void Hole::setPosition(double x, double y)
 {
   setX(x);
   setY(y);
-}
-
-void Hole::setX(double value)
-{
-  mX = value;
-}
-
-void Hole::setY(double value)
-{
-  mY = value;
-}
-
-double Hole::x() const
-{
-  return mX;
-}
-
-double Hole::y() const
-{
-  return mY;
 }

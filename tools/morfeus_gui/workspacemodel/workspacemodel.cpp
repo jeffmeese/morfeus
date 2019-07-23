@@ -60,17 +60,17 @@ void WorkspaceModel::handleAddRectangle(ProjectItem *projectItem)
 {
   qDebug() << QObject::tr(__FUNCTION__);
 
-  typedef WorkspaceModelItem::Factory Factory;
+  //typedef WorkspaceModelItem::Factory Factory;
 
-  try {
-    WorkspaceModelItem * item = Factory::Instance().CreateObject(projectItem->typeId(), projectItem);
-    mGeometryItem->appendRow(item);
-  }
-  catch (Loki::DefaultFactoryError<QString, WorkspaceModelItem>::Exception &) {
-    std::ostringstream oss;
-    oss << "Could not create port attribute with type " << projectItem->typeId().toStdString();
-    qDebug() << QString::fromStdString(oss.str());
-  }
+//  try {
+//    WorkspaceModelItem * item = Factory::Instance().CreateObject(projectItem->typeId(), projectItem);
+//    mGeometryItem->appendRow(item);
+//  }
+//  catch (Loki::DefaultFactoryError<QString, WorkspaceModelItem>::Exception &) {
+//    std::ostringstream oss;
+//    oss << "Could not create port attribute with type " << projectItem->typeId().toStdString();
+//    qDebug() << QString::fromStdString(oss.str());
+//  }
 }
 
 void WorkspaceModel::loadProject()

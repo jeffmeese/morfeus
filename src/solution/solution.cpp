@@ -7,12 +7,10 @@
 #include "solver.h"
 
 Solution::Solution()
-  : mSolver(new IterativeSolver)
+  : MorfeusObject("Solution")
+  , mSolver(new IterativeSolver)
 {
-}
-
-Solution::~Solution()
-{
+  mFreqIncr = mFreqStop = mFreqStart = 0.0;
 }
 
 void Solution::addExcitation(std::unique_ptr<Excitation> excitation)
@@ -25,7 +23,7 @@ void Solution::addObservation(std::unique_ptr<Observation> observation)
   mObservations.push_back(std::move(observation));
 }
 
-void Solution::doPrint(std::ostream &output, int tabPos) const
+void Solution::print(std::ostream &output, int tabPos) const
 {
   xmlutils::printHeader(output, tabPos, "Solution");
 
@@ -41,40 +39,58 @@ void Solution::doPrint(std::ostream &output, int tabPos) const
   for (std::size_t i = 0; i < mObservations.size(); i++) {
     mObservations.at(i)->print(output, tabPos+4);
   }
+  xmlutils::printHeader(output, tabPos, "End Solution");
+  output << "\n";
 }
 
-void Solution::doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
+void Solution::print(int tabPos) const
 {
+  print(std::cout, tabPos);
+}
+
+void Solution::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
+{
+  setFrequencyStart(xmlutils::readAttribute<double>(node, "freq-start"));
+  setFrequencyStop(xmlutils::readAttribute<double>(node, "freq-stop"));
+  setFrequencyIncrement(xmlutils::readAttribute<double>(node, "freq-incr"));
+
   rapidxml::xml_node<> * solverNode = node->first_node("Solver", 0, false);
+  if (solverNode == nullptr) {
+    std::cerr << "Warning: Solver section not found in solution specification\n";
+  }
+
   if (solverNode != nullptr) {
     std::string type = xmlutils::readAttribute<std::string>(solverNode, "type");
-    try {
-      std::unique_ptr<Solver> solver(Solver::Factory::Instance().CreateObject(type));
+    std::unique_ptr<Solver> solver(Solver::factory().create(type));
+    if (solver != nullptr) {
       solver->readFromXml(document, solverNode);
       setSolver(std::move(solver));
     }
-    catch (Loki::DefaultFactoryError<std::string, Solver>::Exception &) {
+    else {
       std::ostringstream oss;
-      oss << "Could not create solver with type " << type;
-      return;
+      oss << "Warning: Solver type " << type << " not recognized";
+      std::cerr << oss.str() << "\n";
     }
   }
 
   rapidxml::xml_node<> * excitationsNode = node->first_node("Excitations", 0, false);
+  if (excitationsNode == nullptr) {
+    std::cerr << "Warning: Excitations section not found in solution specification\n";
+  }
+
   if (excitationsNode != nullptr) {
-    rapidxml::xml_node<> * excitationNode = node->first_node("Excitation", 0, false);
+    rapidxml::xml_node<> * excitationNode = excitationsNode->first_node("Excitation", 0, false);
     while (excitationNode != nullptr) {
       std::string type = xmlutils::readAttribute<std::string>(excitationNode, "type");
-
-      try {
-        std::unique_ptr<Excitation> excitation(Excitation::Factory::Instance().CreateObject(type));
+      std::unique_ptr<Excitation> excitation(Excitation::factory().create(type));
+      if (excitation != nullptr) {
         excitation->readFromXml(document, excitationNode);
         addExcitation(std::move(excitation));
       }
-      catch (Loki::DefaultFactoryError<std::string, Excitation>::Exception &) {
+      else {
         std::ostringstream oss;
-        oss << "Could not create shape with type " << type;
-        return;
+        oss << "Warning: Excitation type " << type << " not recognized";
+        std::cerr << oss.str() << "\n";
       }
 
       // Shape factory needed here
@@ -83,20 +99,23 @@ void Solution::doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node
   }
 
   rapidxml::xml_node<> * observationsNode = node->first_node("Observations", 0, false);
+  if (observationsNode == nullptr) {
+    std::cerr << "Warning: Observation section not found in solution specification\n";
+  }
+
   if (observationsNode != nullptr) {
-    rapidxml::xml_node<> * observationNode = node->first_node("Observation", 0, false);
+    rapidxml::xml_node<> * observationNode = observationsNode->first_node("Observation", 0, false);
     while (observationNode != nullptr) {
       std::string type = xmlutils::readAttribute<std::string>(observationNode, "type");
-
-      try {
-        std::unique_ptr<Observation> observation(Observation::Factory::Instance().CreateObject(type));
+      std::unique_ptr<Observation> observation(Observation::factory().create(type));
+      if (observation != nullptr) {
         observation->readFromXml(document, observationNode);
         addObservation(std::move(observation));
       }
-      catch (Loki::DefaultFactoryError<std::string, Observation>::Exception &) {
+      else {
         std::ostringstream oss;
-        oss << "Could not create shape with type " << type;
-        return;
+        oss << "Warning: Observation type " << type << " not recognized";
+        std::cerr << oss.str() << "\n";
       }
 
       // Shape factory needed here
@@ -105,37 +124,40 @@ void Solution::doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node
   }
 }
 
-void Solution::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+void Solution::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
   rapidxml::xml_node<> * solutionNode = xmlutils::createNode(document, "Solution");
 
-  rapidxml::xml_node<> * solverNode = xmlutils::createNode(document, "Solver");
-  mSolver->writeToXml(document, solverNode);
+  xmlutils::writeAttribute(document, solutionNode, "freq-start", mFreqStart);
+  xmlutils::writeAttribute(document, solutionNode, "freq-stop", mFreqStop);
+  xmlutils::writeAttribute(document, solutionNode, "freq-incr", mFreqIncr);
+
+  mSolver->writeToXml(document, solutionNode);
 
   rapidxml::xml_node<> * excitationsNode = xmlutils::createNode(document, "Excitations");
   for (std::size_t i = 0; i < mExcitations.size(); i++) {
-    rapidxml::xml_node<> * childNode = xmlutils::createNode(document, "Excitation");
     const Excitation * excitation = mExcitations.at(i).get();
-    excitation->writeToXml(document, childNode);
-    excitationsNode->append_node(childNode);
+    excitation->writeToXml(document, excitationsNode);
   }
   solutionNode->append_node(excitationsNode);
 
   rapidxml::xml_node<> * observationsNode = xmlutils::createNode(document, "Observations");
   for (std::size_t i = 0; i < mObservations.size(); i++) {
-    rapidxml::xml_node<> * childNode = xmlutils::createNode(document, "Observation");
     const Observation * observation = mObservations.at(i).get();
-    observation->writeToXml(document, childNode);
-    observationsNode->append_node(childNode);
+    observation->writeToXml(document, observationsNode);
   }
   solutionNode->append_node(observationsNode);
 
   node->append_node(solutionNode);
 }
 
-void Solution::runSolution(double freqGHz, const Mesh * mesh)
+void Solution::runSolution(const Mesh * mesh)
 {
-  mSolver->runSolver(freqGHz, mesh, this);
+  std::size_t totalFrequencies = static_cast<std::size_t>( (mFreqStop - mFreqStart) / mFreqIncr);
+  for (std::size_t i = 0; i < totalFrequencies; i++) {
+    double freqGHz = mFreqStart + i*mFreqIncr;
+    mSolver->runSolver(freqGHz, mesh, this);
+  }
 }
 
 void Solution::setSolver(std::unique_ptr<Solver> solver)

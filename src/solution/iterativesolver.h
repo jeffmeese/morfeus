@@ -42,6 +42,7 @@ private:
   vector bicg(const vector & rhs);
   vector bicgStab(const vector & rhs);
   vector cgs(const vector & rhs);
+  Algorithm readAlgorithmAttribute(rapidxml::xml_node<> * node) const;
   std::string formatAlgoString(Algorithm algorithm) const;
 
 private:

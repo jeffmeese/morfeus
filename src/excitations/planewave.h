@@ -8,7 +8,8 @@ class Planewave
 {
 public:
   MORFEUS_LIB_DECL Planewave();
-  MORFEUS_LIB_DECL Planewave(int32_t id);
+  MORFEUS_LIB_DECL Planewave(const std::string & name);
+  MORFEUS_LIB_DECL Planewave(const std::string & id, const std::string & name);
 
 public:
   MORFEUS_LIB_DECL double fieldPolarization() const;

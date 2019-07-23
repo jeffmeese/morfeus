@@ -7,23 +7,27 @@
 #include "node.h"
 #include "xmlutils.h"
 
+#include <boost/bind.hpp>
+#include <boost/functional/factory.hpp>
+
 static const std::string OBJECT_ID("Probe Feed");
 
 ProbeFeed::ProbeFeed()
+  : Excitation (OBJECT_ID)
 {
   init(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, dcomplex(1.0, 0.0));
 }
 
-ProbeFeed::ProbeFeed(int32_t number)
-  : Excitation(number)
+ProbeFeed::ProbeFeed(const std::string & name)
+  : Excitation(OBJECT_ID, name)
 {
   init(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, dcomplex(1.0, 0.0));
 }
 
-ProbeFeed::ProbeFeed(int32_t number, double x1, double y1, double z1, double x2, double y2, double z2, const dcomplex & excitation)
-  : Excitation(number)
+ProbeFeed::ProbeFeed(const std::string & id, const std::string & name)
+  : Excitation(OBJECT_ID, id, name)
 {
-  init(x1, y1, z1, x2, y2, z2, excitation);
+  init(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, dcomplex(1.0, 0.0));
 }
 
 void ProbeFeed::doExcite(double freqGHz, const Mesh * mesh, const MeshInformation * meshInfo, vector & rhs) const
@@ -41,40 +45,36 @@ void ProbeFeed::doExcite(double freqGHz, const Mesh * mesh, const MeshInformatio
   const Edge * edge = mesh->findEdge(n1, n2);
   int unknown = edge->unknownNumber();
 
-  rhs[unknown-1] = -(math::cj * k0 * math::z0 * mExcitation * edge->computeLength(mesh));
+  rhs[unknown-1] = -(math::cj * k0 * math::z0 * mVoltage * edge->computeLength(mesh));
 }
 
 void ProbeFeed::doPrint(std::ostream & output, int tabPos) const
 {
-  xmlutils::printHeader(output, tabPos, "Probe Feed");
-  xmlutils::printValue(output, tabPos+2, "Name: ", name());
-  xmlutils::printValue(output, tabPos+2, "Number: ", number());
-  xmlutils::printValue(output, tabPos+2, "x1: ", mX1);
-  xmlutils::printValue(output, tabPos+2, "y1: ", mY1);
-  xmlutils::printValue(output, tabPos+2, "z1: ", mZ1);
-  xmlutils::printValue(output, tabPos+2, "x2: ", mX2);
-  xmlutils::printValue(output, tabPos+2, "y2: ", mY2);
-  xmlutils::printValue(output, tabPos+2, "z2: ", mZ2);
-  xmlutils::printValue(output, tabPos+2, "excitation: ", mExcitation);
+  xmlutils::printHeader(output, tabPos, OBJECT_ID);
+  xmlutils::printValue(output, tabPos, "x1: ", mX1);
+  xmlutils::printValue(output, tabPos, "y1: ", mY1);
+  xmlutils::printValue(output, tabPos, "z1: ", mZ1);
+  xmlutils::printValue(output, tabPos, "x2: ", mX2);
+  xmlutils::printValue(output, tabPos, "y2: ", mY2);
+  xmlutils::printValue(output, tabPos, "z2: ", mZ2);
+  xmlutils::printValue(output, tabPos, "Voltage: ", mVoltage);
 }
 
 void ProbeFeed::doXmlRead(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
 {
-  setName(xmlutils::readAttribute<std::string>(node, "name"));
-  setNumber(std::stoi(xmlutils::readAttribute<std::string>(node, "number")));
-  setX1(std::stod(xmlutils::readAttribute<std::string>(node, "x1")));
-  setY1(std::stod(xmlutils::readAttribute<std::string>(node, "y1")));
-  setZ1(std::stod(xmlutils::readAttribute<std::string>(node, "z1")));
-  setX2(std::stod(xmlutils::readAttribute<std::string>(node, "x2")));
-  setY2(std::stod(xmlutils::readAttribute<std::string>(node, "y2")));
-  setZ2(std::stod(xmlutils::readAttribute<std::string>(node, "z2")));
-  // Need excitation
+  setX1(xmlutils::readAttribute<double>(node, "x1"));
+  setY1(xmlutils::readAttribute<double>(node, "y1"));
+  setZ1(xmlutils::readAttribute<double>(node, "z1"));
+  setX2(xmlutils::readAttribute<double>(node, "x2"));
+  setY2(xmlutils::readAttribute<double>(node, "y2"));
+  setZ2(xmlutils::readAttribute<double>(node, "z2"));
+  double vo_r = xmlutils::readAttribute<double>(node, "vo_r");
+  double vo_i = xmlutils::readAttribute<double>(node, "vo_i");
+  setVoltage(dcomplex(vo_r, vo_i));
 }
 
 void ProbeFeed::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
-  xmlutils::writeAttribute(document, node, "name", name());
-  xmlutils::writeAttribute(document, node, "number", number());
   xmlutils::writeAttribute(document, node, "type", OBJECT_ID);
   xmlutils::writeAttribute(document, node, "x1", mX1);
   xmlutils::writeAttribute(document, node, "y1", mY1);
@@ -82,7 +82,8 @@ void ProbeFeed::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_no
   xmlutils::writeAttribute(document, node, "x2", mX2);
   xmlutils::writeAttribute(document, node, "y2", mY2);
   xmlutils::writeAttribute(document, node, "z2", mZ2);
-  // Need excitation
+  xmlutils::writeAttribute(document, node, "vo_r", mVoltage.real());
+  xmlutils::writeAttribute(document, node, "vo_i", mVoltage.imag());
 }
 
 void ProbeFeed::init(double x1, double y1, double z1, double x2, double y2, double z2, const dcomplex & value)
@@ -93,7 +94,7 @@ void ProbeFeed::init(double x1, double y1, double z1, double x2, double y2, doub
   mX2 = x2;
   mY2 = y2;
   mZ2 = z2;
-  mExcitation = value;
+  mVoltage = value;
 }
 
 void ProbeFeed::setPosition(double x1, double y1, double z1, double x2, double y2, double z2)
@@ -104,4 +105,8 @@ void ProbeFeed::setPosition(double x1, double y1, double z1, double x2, double y
   mX2 = x2;
   mY2 = y2;
   mZ2 = z2;
+}
+
+namespace  {
+  const bool r = Excitation::factory().registerType(OBJECT_ID, boost::bind(boost::factory<ProbeFeed*>()));
 }

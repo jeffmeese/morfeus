@@ -5,6 +5,8 @@
 #include "mesher.h"
 #include "solution.h"
 
+#include "rapidxml_print.hpp"
+
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -25,6 +27,14 @@ InputData::~InputData()
 {
 }
 
+void InputData::print()
+{
+  mGeometry->print();
+  mMesher->print();
+  mMaterialDatabase->print();
+  mSolution->print();
+}
+
 void InputData::readFromFile(const std::string & fileName)
 {
   std::ifstream input(fileName);
@@ -34,23 +44,26 @@ void InputData::readFromFile(const std::string & fileName)
     throw std::invalid_argument(oss.str());
   }
 
-  std::ostringstream oss;
-  std::string line;
-  while (std::getline(input, line)) {
-    if (input.fail()) {
-      break;
-    }
-    oss << line;
-  }
-
-  std::string text(oss.str());
-  char * parseText = new char[text.length()];
-  strcpy(parseText, text.c_str());
+  std::string fileContents((std::istreambuf_iterator<char>(input)), std::istreambuf_iterator<char>());
+  fileContents.push_back('\0');
 
   rapidxml::xml_document<> document;
-  document.parse<0>(parseText);
+  try {
+    document.parse<0>(&fileContents[0]);
+  }
+  catch (rapidxml::parse_error & ex) {
+    std::cout << ex.what() << " " << ex.where<char>() << "\n";
+    return;
+  }
 
-  rapidxml::xml_node<> * geomNode = document.first_node("Geometry", 0, false);
+  rapidxml::xml_node<> * projectNode = document.first_node("Project", 0, false);
+  if (projectNode == nullptr) {
+    std::ostringstream oss;
+    oss << "Error in input file: Could not find project specification";
+    throw std::invalid_argument(oss.str());
+  }
+
+  rapidxml::xml_node<> * geomNode = projectNode->first_node("Geometry", 0, false);
   if (geomNode == nullptr) {
     std::ostringstream oss;
     oss << "Error in input file: Could not find geometry specification";
@@ -58,7 +71,7 @@ void InputData::readFromFile(const std::string & fileName)
   }
   mGeometry->readFromXml(document, geomNode);
 
-  rapidxml::xml_node<> * materialsNode = document.first_node("Materials", 0, false);
+  rapidxml::xml_node<> * materialsNode = projectNode->first_node("Materials", 0, false);
   if (materialsNode == nullptr) {
     std::ostringstream oss;
     oss << "Error in input file: Could not find materials specification";
@@ -66,7 +79,7 @@ void InputData::readFromFile(const std::string & fileName)
   }
   mMaterialDatabase->readFromXml(document, materialsNode);
 
-  rapidxml::xml_node<> * mesherNode = document.first_node("Mesher", 0, false);
+  rapidxml::xml_node<> * mesherNode = projectNode->first_node("Mesher", 0, false);
   if (mesherNode == nullptr) {
     std::ostringstream oss;
     oss << "Error in input file: Could not find mesher specification";
@@ -74,13 +87,34 @@ void InputData::readFromFile(const std::string & fileName)
   }
   mMesher->readFromXml(document, mesherNode);
 
-  rapidxml::xml_node<> * solutionNode = document.first_node("Solution", 0, false);
+  rapidxml::xml_node<> * solutionNode = projectNode->first_node("Solution", 0, false);
   if (solutionNode == nullptr) {
     std::ostringstream oss;
     oss << "Error in input file: Could not find solution specification";
     throw std::invalid_argument(oss.str());
   }
   mSolution->readFromXml(document, solutionNode);
+}
+
+void InputData::saveToFile(const std::string &fileName)
+{
+  rapidxml::xml_document<> document;
+
+  rapidxml::xml_node<> * xml_decl = document.allocate_node(rapidxml::node_declaration);
+  xml_decl->append_attribute(document.allocate_attribute("version", "1.0"));
+  xml_decl->append_attribute(document.allocate_attribute("encoding", "utf-8"));
+  document.append_node(xml_decl);
+
+  rapidxml::xml_node<> * projectNode = xmlutils::createNode(document, "Project");
+  mGeometry->writeToXml(document, projectNode);
+  mMesher->writeToXml(document, projectNode);
+  mMaterialDatabase->writeToXml(document, projectNode);
+  mSolution->writeToXml(document, projectNode);
+
+  document.append_node(projectNode);
+
+  std::ofstream output(fileName);
+  output << document;
 }
 
 void InputData::validate() const

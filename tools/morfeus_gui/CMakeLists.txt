@@ -64,6 +64,10 @@ set(UI_FILES
 
 add_executable(${TARGET_NAME} ${HDR_FILES} ${SRC_FILES} ${UI_FILES})
 
+if (MSVC)
+  target_compile_definitions(${TARGET_NAME} PRIVATE -DMORFEUS_USE_LIBRARY)
+endif()
+
 target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/application)
 target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/commands)
 target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/project)

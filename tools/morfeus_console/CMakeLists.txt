@@ -22,4 +22,8 @@ set(HDR_FILES
 
 add_executable(${TARGET_NAME} ${HDR_FILES} ${SRC_FILES})
 
+if (MSVC)
+  target_compile_definitions(${TARGET_NAME} PRIVATE -DMORFEUS_USE_LIBRARY)
+endif()
+
 target_link_libraries(${TARGET_NAME} morfeus)

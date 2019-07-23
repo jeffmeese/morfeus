@@ -34,7 +34,7 @@ public:
   MORFEUS_LIB_DECL const Edge * edge(std::size_t index) const;
   MORFEUS_LIB_DECL Element * element(std::size_t index);
   MORFEUS_LIB_DECL const Element * element(std::size_t index) const;
-  MORFEUS_LIB_DECL Edge * findEdge(std::size_t node1, std::size_t node2) const;
+  MORFEUS_LIB_DECL Edge * findEdge(int32_t node1, int32_t node2) const;
   MORFEUS_LIB_DECL int32_t findNearestNode(double x, double y, double z) const;
   MORFEUS_LIB_DECL Node * node(std::size_t index);
   MORFEUS_LIB_DECL const Node * node(std::size_t index) const;

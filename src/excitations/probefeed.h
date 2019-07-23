@@ -10,8 +10,8 @@ class ProbeFeed
 {
 public:
   MORFEUS_LIB_DECL ProbeFeed();
-  MORFEUS_LIB_DECL ProbeFeed(int32_t number);
-  MORFEUS_LIB_DECL ProbeFeed(int32_t number, double x1, double y1, double z1, double x2, double y2, double z2, const dcomplex & value);
+  MORFEUS_LIB_DECL ProbeFeed(const std::string & name);
+  MORFEUS_LIB_DECL ProbeFeed(const std::string & id, const std::string & name);
 
 public:
   MORFEUS_LIB_DECL double x1() const;
@@ -20,7 +20,7 @@ public:
   MORFEUS_LIB_DECL double y2() const;
   MORFEUS_LIB_DECL double z1() const;
   MORFEUS_LIB_DECL double z2() const;
-  MORFEUS_LIB_DECL dcomplex excitation() const;
+  MORFEUS_LIB_DECL dcomplex voltage() const;
   MORFEUS_LIB_DECL void setX1(double x1);
   MORFEUS_LIB_DECL void setX2(double x2);
   MORFEUS_LIB_DECL void setY1(double y1);
@@ -28,7 +28,7 @@ public:
   MORFEUS_LIB_DECL void setZ1(double z1);
   MORFEUS_LIB_DECL void setZ2(double z2);
   MORFEUS_LIB_DECL void setPosition(double x1, double y1, double z1, double x2, double y2, double z2);
-  MORFEUS_LIB_DECL void setExcitation(const dcomplex & value);
+  MORFEUS_LIB_DECL void setVoltage(const dcomplex & value);
 
 protected:
   void doExcite(double freqGHz, const Mesh * mesh, const MeshInformation * meshInfo, vector & rhs) const override;
@@ -46,13 +46,8 @@ private:
   double mX2;
   double mY2;
   double mZ2;
-  dcomplex mExcitation;
+  dcomplex mVoltage;
 };
-
-inline dcomplex ProbeFeed::excitation() const
-{
-  return mExcitation;
-}
 
 inline void ProbeFeed::setX1(double x1)
 {
@@ -84,9 +79,14 @@ inline void ProbeFeed::setZ2(double z2)
   mZ2 = z2;
 }
 
-inline void ProbeFeed::setExcitation(const dcomplex & value)
+inline void ProbeFeed::setVoltage(const dcomplex &value)
 {
-  mExcitation = value;
+  mVoltage = value;
+}
+
+inline dcomplex ProbeFeed::voltage() const
+{
+  return mVoltage;
 }
 
 inline double ProbeFeed::x1() const

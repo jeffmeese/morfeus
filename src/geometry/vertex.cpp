@@ -1,18 +1,23 @@
 #include "vertex.h"
 
+static const std::string OBJECT_ID("Vertex");
+
 Vertex::Vertex()
+  : MorfeusObject (OBJECT_ID)
 {
   setPosition(0.0, 0.0);
   setBoundary(false);
 }
 
 Vertex::Vertex(double x, double y)
+  : MorfeusObject (OBJECT_ID)
 {
   setPosition(x, y);
   setBoundary(false);
 }
 
 Vertex::Vertex(int32_t number, double x, double y)
+  : MorfeusObject (OBJECT_ID)
 {
   setNumber(number);
   setPosition(x, y);
@@ -24,29 +29,34 @@ void Vertex::addAttribute(double value)
   mAttributes.push_back(value);
 }
 
-void Vertex::doPrint(std::ostream &output, int tabPos) const
+void Vertex::print(std::ostream &output, int tabPos) const
 {
-  xmlutils::printHeader(output, tabPos, "Vertex");
-  xmlutils::printValue(output, tabPos+2, "Name: ", name());
-  xmlutils::printValue(output, tabPos+2, "Number: ", number());
-  xmlutils::printValue(output, tabPos+2, "x", mX);
-  xmlutils::printValue(output, tabPos+2, "y", mY);
+  xmlutils::printValue(output, tabPos, "Number: ", mNumber);
+  xmlutils::printValue(output, tabPos, "x", mX);
+  xmlutils::printValue(output, tabPos, "y", mY);
 }
 
-void Vertex::doXmlRead(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
+void Vertex::print(int tabPos) const
 {
-  setName(xmlutils::readAttribute<std::string>(node, "name"));
-  setNumber(std::stoi(xmlutils::readAttribute<std::string>(node, "number")));
-  setX(std::stod(xmlutils::readAttribute<std::string>(node, "x")));
-  setY(std::stod(xmlutils::readAttribute<std::string>(node, "y")));
+  print(std::cout, tabPos);
 }
 
-void Vertex::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+void Vertex::readFromXml(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
 {
-  xmlutils::writeAttribute(document, node, "name", name());
-  xmlutils::writeAttribute(document, node, "number", number());
-  xmlutils::writeAttribute(document, node, "type", "Vertex");
+  setNumber(xmlutils::readAttribute<int32_t>(node, "number"));
+  setX(xmlutils::readAttribute<double>(node, "x"));
+  setY(xmlutils::readAttribute<double>(node, "y"));
+}
+
+void Vertex::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+{
+  xmlutils::writeAttribute(document, node, "number", mNumber);
   xmlutils::writeAttribute(document, node, "x", mX);
   xmlutils::writeAttribute(document, node, "y", mY);
 }
 
+void Vertex::setPosition(double x, double y)
+{
+  setX(x);
+  setY(y);
+}

@@ -34,7 +34,9 @@ public:
   Solution * solution();
 
 public:
+  void print();
   void readFromFile(const std::string & fileName);
+  void saveToFile(const std::string & fileName);
   void validate() const;
 
 private:

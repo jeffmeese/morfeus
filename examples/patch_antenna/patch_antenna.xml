@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<project>
-  <geometry>
-    <shape type="Rectangle" name="Cavity" number="1" left="-2.0" bottom="-2.0" top="2.0" right="2.0" />
-	<shape type="Rectangle" name="Patch" number="2" left="-1.0" bottom="-1.0" top="1.0" bottom="1.0" />
-	<region name="Patch Resion" x="0.0" y="0.0" attribute="2" max-area="0.025" />
-	<region name="Cavity Resion" x="-1.0" y="-1.0" attribute="1" max-area="0.025" />
-  </geometry>
-  <mesh />
-  <solution freq-start="2.0" freq-end="2.0" freq-incr="0.0">
-    <solver type="IterativeSolver" algorithm="bicg" min-iterations="5" max-iterations="10000" tolerance="0.00001" />
-    <excitation type="ProbeFeed" name="Feed 1" x1="0.5" y1="0.5" z1="0.0" x2="0.5" y1="0.5" z1="-0.1" value="(1.0,0.0)"/>
-	<observation type="FarField" name="Far Field" theta-start="-90" theta-end="90" theta-incr="1" phi-start="0" phi-stop="0" phi-incr="0" />
-  </solution>
-</project>
+<Project>
+  <Geometry>
+    <Shapes>
+		<Shape type="Rectangle" name="Cavity" number="1" xl="-2.0" xu="2.0" yl="-2.0" yu="2.0" />
+		<Shape type="Rectangle" name="Patch" number="2" xl="-1.0" xu="1.0" yl="-1.0" yu="1.0" />
+	</Shapes>
+	<Regions>
+		<Region name="Patch Region" x="0.0" y="0.0" attribute="2" max-area="0.025" />
+		<Region name="Cavity Region" x="-1.2" y="-1.2" attribute="1" max-area="0.025" />
+	</Regions>
+  </Geometry>
+  <Materials>
+	<Material type="Isotropic Material" name="Air" number="1" eps_r="1.0" eps_i="0.0" mu_r="1.0" mu_i="0.0" /> 
+  </Materials>
+  <Mesher name="Mesher" number="1" max-edge-length="0.25" min-edge-length="0.01" max-triangle-area="0.5" min-triangle-area="0.04" />
+  <Solution freq-start="2.0" freq-end="2.0" freq-incr="0.0">
+    <Solver type="Iterative Solver" algorithm="bicg" min-iterations="5" max-iterations="10000" tolerance="0.00001" />
+	<Excitations>
+		<Excitation type="Probe Feed" name="Feed 1" x1="0.5" y1="0.5" z1="0.0" x2="0.5" y1="0.5" z1="-0.1" vo_r="1.0" vo_i="0.0" />
+	</Excitations>
+	<Observations>
+		<Observation type="Far Field" name="Far Field 1" theta-start="-90" theta-end="90" theta-incr="1" phi-start="0" phi-stop="0" phi-incr="0" />
+	</Observations>
+  </Solution>
+</Project>

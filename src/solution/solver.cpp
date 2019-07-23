@@ -13,14 +13,18 @@
 #include "observation.h"
 #include "solution.h"
 
-Solver::Solver()
-  : mMeshInfo(new MeshInformation)
+Solver::Solver(const std::string & type)
+  : MorfeusObject(type)
+  , mMeshInfo(new MeshInformation)
 {
   mAllocated = false;
 }
 
-Solver::~Solver()
+Solver::Solver(const std::string & type, const std::string & id)
+  : MorfeusObject (type, id)
+  , mMeshInfo(new MeshInformation)
 {
+  mAllocated = false;
 }
 
 void Solver::buildBiMatrix(double freqGHz, const Mesh *mesh, const MeshInformation *meshInfo)
@@ -94,6 +98,53 @@ void Solver::buildFeMatrix(double freqGHz, const Mesh *mesh, const MeshInformati
       }
     }
   }
+}
+
+Solver::SolverFactory & Solver::factory()
+{
+  static SolverFactory f;
+  return f;
+}
+
+
+Solver * Solver::SolverFactory::create(const std::string & type)
+{
+  Solver * solver = mFactory.create(type);
+  return solver;
+}
+
+ bool Solver::SolverFactory::registerType(const std::string & type, boost::function<Solver*()> creator)
+{
+  mFactory.registerFactory(type, creator);
+  return true;
+}
+
+void Solver::print(std::ostream & output, int tabPos) const
+{
+  doPrint(output, tabPos);
+}
+
+void Solver::print(int tabPos) const
+{
+  print(std::cout);
+}
+
+void Solver::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
+{
+  doXmlRead(document, node);
+}
+
+void Solver::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+{
+  rapidxml::xml_node<> * solverNode = xmlutils::createNode(document, "Solver");
+  doXmlWrite(document, solverNode);
+  node->append_node(solverNode);
+}
+
+std::ostream & operator<<(std::ostream & output, const Solver & object)
+{
+  object.print(output);
+  return output;
 }
 
 void Solver::runSolver(double freqGHz, const Mesh * mesh, Solution * solution)

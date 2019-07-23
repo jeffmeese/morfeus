@@ -20,7 +20,7 @@ namespace xmlutils
   T parseValue(const rapidxml::xml_node<> * node);
 
   template <typename T>
-  T readAttribute(rapidxml::xml_node<> * node, const std::string & name);
+  T readAttribute(rapidxml::xml_node<> * node, const std::string & name, T defaultValue = T());
 
   template <typename T>
   void writeAttribute(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node, const std::string & name, const T & value);
@@ -154,9 +154,31 @@ namespace xmlutils
   }
 
   template <>
-  inline std::string readAttribute<std::string>(rapidxml::xml_node<> * node, const std::string & name)
+  inline int32_t readAttribute<int32_t>(rapidxml::xml_node<> * node, const std::string & name, int32_t defaultValue)
   {
-    std::string s;
+    int32_t value = defaultValue;
+    rapidxml::xml_attribute<> * attr = node->first_attribute(name.c_str(), 0, false);
+    if (attr != nullptr) {
+      value = stoi(std::string(attr->value()));
+    }
+    return value;
+  }
+
+  template <>
+  inline double readAttribute<double>(rapidxml::xml_node<> * node, const std::string & name, double defaultValue)
+  {
+    double value = defaultValue;
+    rapidxml::xml_attribute<> * attr = node->first_attribute(name.c_str(), 0, false);
+    if (attr != nullptr) {
+      value = stod(std::string(attr->value()));
+    }
+    return value;
+  }
+
+  template <>
+  inline std::string readAttribute<std::string>(rapidxml::xml_node<> * node, const std::string & name, std::string defaultValue)
+  {
+    std::string s = defaultValue;
     rapidxml::xml_attribute<> * attr = node->first_attribute(name.c_str(), 0, false);
     if (attr != nullptr) {
       s = attr->value();

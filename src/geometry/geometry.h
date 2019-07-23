@@ -37,11 +37,11 @@ public:
   MORFEUS_LIB_DECL void addRegion(std::unique_ptr<Region> region);
   MORFEUS_LIB_DECL void addShape(std::unique_ptr<Shape> shape);
   MORFEUS_LIB_DECL void createMesh(Mesh & mesh);
-
-protected:
-  void doPrint(std::ostream & output, int tabPos) const override;
-  void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
-  void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
+  MORFEUS_LIB_DECL void print(std::ostream & output, int tabPos = 0) const;
+  MORFEUS_LIB_DECL void print(int tabPos = 0) const;
+  MORFEUS_LIB_DECL void readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node);
+  MORFEUS_LIB_DECL void writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const;
+  MORFEUS_LIB_DECL friend std::ostream & operator<<(std::ostream & output, const Geometry & object);
 
 private:
   typedef std::unique_ptr<Hole> HolePtr;

@@ -1,18 +1,18 @@
 #ifndef TRIANGLESHAPE_H
 #define TRIANGLESHAPE_H
 
-#include "polygon.h"
+#include "shape.h"
 
 class TriangleShape
-    : public Polygon
+    : public Shape
 {
 public:
   MORFEUS_LIB_DECL TriangleShape();
-  MORFEUS_LIB_DECL TriangleShape(int32_t number);
-  MORFEUS_LIB_DECL TriangleShape(const std::string & name, int32_t number);
+  MORFEUS_LIB_DECL TriangleShape(const std::string & name);
+  MORFEUS_LIB_DECL TriangleShape(const std::string & id, const std::string & name);
   MORFEUS_LIB_DECL TriangleShape(double x1, double x2, double x3, double y1, double y2, double y3);
-  MORFEUS_LIB_DECL TriangleShape(int32_t number, double x1, double x2, double x3, double y1, double y2, double y3);
-  MORFEUS_LIB_DECL TriangleShape(const std::string & name, int32_t number, double x1, double x2, double x3, double y1, double y2, double y3);
+  MORFEUS_LIB_DECL TriangleShape(const std::string & name, double x1, double x2, double x3, double y1, double y2, double y3);
+  MORFEUS_LIB_DECL TriangleShape(const std::string & id, const std::string & name, double x1, double x2, double x3, double y1, double y2, double y3);
 
 public:
   MORFEUS_LIB_DECL double x1() const;

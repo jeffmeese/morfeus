@@ -19,8 +19,11 @@ extern "C"
   #include "triangulate.h"
 }
 
+static const std::string OBJECT_ID("Mesher");
+
 Mesher::Mesher()
-  : mMaxEdgeLength(1.0)
+  : MorfeusObject(OBJECT_ID)
+  , mMaxEdgeLength(1.0)
   , mMaxTriangleArea(-1.0)
   , mMinEdgeLength(-1.0)
   , mMinTriangleArea(-1.0)
@@ -35,8 +38,8 @@ void Mesher::createMesh(const Geometry * geometry, double cavityHeight, Mesh * m
 {
   std::unique_ptr<Mesh> surfaceMesh(new Mesh);
 
-  createSurfaceMesh(geometry, surfaceMesh.get());
-  extrudeVolumeMesh(surfaceMesh.get(), cavityHeight, mesh);
+  createSurfaceMesh(geometry, mesh);
+  //extrudeVolumeMesh(surfaceMesh.get(), cavityHeight, mesh);
 }
 
 void Mesher::createSurfaceMesh(const Geometry *geometry, Mesh *mesh) const
@@ -96,6 +99,7 @@ void Mesher::createSurfaceMesh(const Geometry *geometry, Mesh *mesh) const
   std::size_t segmentIndex = 0;
   std::size_t pointAttrIndex = 0;
   std::size_t segmentMarkerIndex = 0;
+  int32_t vertexOffset = 0;
   for (std::size_t i = 0; i < geometry->totalShapes(); i++) {
     const Shape * shape = geometry->shape(i);
     std::vector<Vertex> vertexList = shape->getVertexList();
@@ -113,12 +117,14 @@ void Mesher::createSurfaceMesh(const Geometry *geometry, Mesh *mesh) const
 
     for (std::size_t j = 0; j < segmentList.size(); j++) {
       const Segment & s = segmentList.at(j);
-      in.segmentlist[segmentIndex] = s.node1();
-      in.segmentlist[segmentIndex+1] = s.node2();
+      in.segmentlist[segmentIndex] = s.node1() + vertexOffset;
+      in.segmentlist[segmentIndex+1] = s.node2() + vertexOffset;
       in.segmentmarkerlist[segmentMarkerIndex] = s.boundary();
       segmentIndex += 2;
       segmentMarkerIndex++;
     }
+
+    vertexOffset += static_cast<int32_t>(vertexList.size());
   }
 
   std::size_t holeIndex = 0;
@@ -208,33 +214,38 @@ void Mesher::createSurfaceMesh(const Geometry *geometry, Mesh *mesh) const
   if (out.triangleattributelist != nullptr) free(out.triangleattributelist);
 }
 
-void Mesher::doPrint(std::ostream & output, int tabPos) const
+void Mesher::print(std::ostream & output, int tabPos) const
 {
   xmlutils::printHeader(output, tabPos, "Mesher");
   xmlutils::printValue(output, tabPos+2, "Min Edge Length: ", mMinEdgeLength);
   xmlutils::printValue(output, tabPos+2, "Max Edge Length: ", mMaxEdgeLength);
   xmlutils::printValue(output, tabPos+2, "Min Triangle Area: ", mMinTriangleArea);
   xmlutils::printValue(output, tabPos+2, "Max Triangle Area: ", mMaxTriangleArea);
+  xmlutils::printHeader(output, tabPos, "End Mesher");
+  output << "\n";
 }
 
-void Mesher::doXmlRead(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
+void Mesher::print(int tabPos) const
 {
-  setName(xmlutils::readAttribute<std::string>(node, "name"));
-  setNumber(std::stoi(xmlutils::readAttribute<std::string>(node, "number")));
-  setMinEdgeLength(std::stod(xmlutils::readAttribute<std::string>(node, "min-edge-length")));
-  setMaxEdgeLength(std::stod(xmlutils::readAttribute<std::string>(node, "max-edge-length")));
-  setMinTriangleArea(std::stod(xmlutils::readAttribute<std::string>(node, "min-triangle-area")));
-  setMaxTriangleArea(std::stod(xmlutils::readAttribute<std::string>(node, "max-triangle-area")));
+  print(std::cout, tabPos);
 }
 
-void Mesher::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+void Mesher::readFromXml(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
 {
-  xmlutils::writeAttribute(document, node, "name", name());
-  xmlutils::writeAttribute(document, node, "number", number());
-  xmlutils::writeAttribute(document, node, "min-edge-length", mMinEdgeLength);
-  xmlutils::writeAttribute(document, node, "max-edge-length", mMaxEdgeLength);
-  xmlutils::writeAttribute(document, node, "min-triangle-area", mMinTriangleArea);
-  xmlutils::writeAttribute(document, node, "max-triangle-area", mMaxTriangleArea);
+  setMinEdgeLength(xmlutils::readAttribute<double>(node, "min-edge-length"));
+  setMaxEdgeLength(xmlutils::readAttribute<double>(node, "max-edge-length"));
+  setMinTriangleArea(xmlutils::readAttribute<double>(node, "min-triangle-area"));
+  setMaxTriangleArea(xmlutils::readAttribute<double>(node, "max-triangle-area"));
+}
+
+void Mesher::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+{
+  rapidxml::xml_node<> * mesherNode = xmlutils::createNode(document, "Mesher");
+  xmlutils::writeAttribute(document, mesherNode, "min-edge-length", mMinEdgeLength);
+  xmlutils::writeAttribute(document, mesherNode, "max-edge-length", mMaxEdgeLength);
+  xmlutils::writeAttribute(document, mesherNode, "min-triangle-area", mMinTriangleArea);
+  xmlutils::writeAttribute(document, mesherNode, "max-triangle-area", mMaxTriangleArea);
+  node->append_node(mesherNode);
 }
 
 void Mesher::extrudeVolumeMesh(const Mesh *surfaceMesh, double cavityHeight, const Mesh *volumeMesh) const

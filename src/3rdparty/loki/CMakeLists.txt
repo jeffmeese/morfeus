@@ -129,6 +129,8 @@ set(HEADER_FILES
 # Create target
 add_library(${TARGET_NAME} ${LOKI_BUILD_TYPE} ${SOURCE_FILES} ${HEADER_FILES})
 
+target_compile_definitions(${TARGET_NAME} PUBLIC -DLOKI_FUNCTOR_IS_NOT_A_SMALLOBJECT)
+
 # Set target include directories
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

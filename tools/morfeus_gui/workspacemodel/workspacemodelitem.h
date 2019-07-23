@@ -4,8 +4,8 @@
 #include <QStandardItem>
 #include <QList>
 
-#include <Factory.h>
-#include <Singleton.h>
+//#include <Factory.h>
+//#include <Singleton.h>
 
 class Action;
 class AddRectangleCommand;
@@ -25,8 +25,8 @@ public:
 public:
   QList<Action*> getActionList() const;
 
-public:
-  typedef Loki::SingletonHolder<Loki::Factory<WorkspaceModelItem, QString, LOKI_TYPELIST_1(ProjectItem*)> > Factory;
+//public:
+  //typedef Loki::SingletonHolder<Loki::Factory<WorkspaceModelItem, QString, LOKI_TYPELIST_1(ProjectItem*)> > Factory;
 
 protected:
   WorkspaceModelItem(QString itemId);

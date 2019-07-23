@@ -31,7 +31,8 @@ dcomplex RectangleFace::doComputeMomEntry(const Face * otherFace, const Mesh * m
   return value;
 }
 
-bool RectangleFace::doIntersects(const Face *face) const
+dcomplex RectangleFace::doComputePlanewaveEntry(std::size_t edge, double freq, const Planewave *planewave, const Mesh *mesh) const
 {
-  return false;
+  dcomplex value(0.0,0.0);
+  return value;
 }

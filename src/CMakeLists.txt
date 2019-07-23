@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(morfeus C CXX)
 
 # Define options
-option(MORFEUS_BUILD_SHARED "Set to ON to build as a shared library" OFF)
+option(MORFEUS_BUILD_SHARED "Set to ON to build as a shared library" ON)
 
 # Set target name
 set(TARGET_NAME morfeus)
@@ -56,16 +56,17 @@ set(SRC_FILES
   mesher/meshrefinement.cpp
   observations/farfield.cpp
   observations/observation.cpp
-  solver/solution.cpp
-  solver/directsolver.cpp
-  solver/iterativesolver.cpp
-  solver/meshinformation.cpp
-  solver/solver.cpp
+  solution/solution.cpp
+  solution/directsolver.cpp
+  solution/iterativesolver.cpp
+  solution/meshinformation.cpp
+  solution/solver.cpp
 )
 
 set(HDR_FILES
   morfeus.h
   core/morfeusobject.h
+  core/factory.h
   excitations/excitation.h
   excitations/planewave.h
   excitations/probefeed.h
@@ -103,11 +104,11 @@ set(HDR_FILES
   xml/rapidxml_print.hpp
   xml/rapidxml_utils.hpp
   xml/xmlutils.h
-  solver/solution.h
-  solver/directsolver.h
-  solver/iterativesolver.h
-  solver/meshinformation.h
-  solver/solver.h
+  solution/solution.h
+  solution/directsolver.h
+  solution/iterativesolver.h
+  solution/meshinformation.h
+  solution/solver.h
 )
 
 # Create target
@@ -134,11 +135,11 @@ target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/mat
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/mesh)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/mesher)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/observations)
-target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/solver)
+target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/solution)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/xml)
 target_include_directories(${TARGET_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
 
-target_link_libraries(${TARGET_NAME} loki)
+#target_link_libraries(${TARGET_NAME} loki)
 target_link_libraries(${TARGET_NAME} triangle)
 target_link_libraries(${TARGET_NAME} bcrypt)
 target_link_libraries(${TARGET_NAME} ${BOOST_LIBRARIES})

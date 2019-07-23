@@ -19,8 +19,8 @@ Mesh::~Mesh()
 
 void Mesh::addEdge(std::unique_ptr<Edge> edge)
 {
-  mEdgeTable[edge->node1()].push_back(EdgePair(edge->node2(), edge->id()));
-  mEdgeTable[edge->node2()].push_back(EdgePair(edge->node1(), edge->id()));
+  mEdgeTable[edge->node1()].push_back(EdgePair(edge->node2(), edge->number()));
+  mEdgeTable[edge->node2()].push_back(EdgePair(edge->node1(), edge->number()));
   mEdges.push_back(std::move(edge));
 }
 
@@ -88,7 +88,7 @@ const Element * Mesh::element(std::size_t index) const
   return mElements.at(index).get();
 }
 
-Edge * Mesh::findEdge(std::size_t node1, std::size_t node2) const
+Edge * Mesh::findEdge(int32_t node1, int32_t node2) const
 {
 	typedef EdgeList::const_iterator Itr;
 	typedef EdgeTable::const_iterator MapItr;

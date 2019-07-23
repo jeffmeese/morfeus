@@ -42,13 +42,13 @@ void RectangleWorkspaceItem::setData(const QVariant & value, int role)
   WorkspaceModelItem::setData(value, role);
 }
 
-namespace  {
+//namespace  {
 
-  WorkspaceModelItem * createFunction(ProjectItem * item)
-  {
-    RectangleItem * rectangle = dynamic_cast<RectangleItem*>(item);
-    return new RectangleWorkspaceItem(rectangle);
-  }
+//  WorkspaceModelItem * createFunction(ProjectItem * item)
+//  {
+//    RectangleItem * rectangle = dynamic_cast<RectangleItem*>(item);
+//    return new RectangleWorkspaceItem(rectangle);
+//  }
 
-  const bool registered = WorkspaceModelItem::Factory::Instance().Register(OBJECT_ID, createFunction);
-}
+//  const bool registered = WorkspaceModelItem::Factory::Instance().Register(OBJECT_ID, createFunction);
+//}

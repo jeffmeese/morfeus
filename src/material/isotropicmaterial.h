@@ -8,7 +8,11 @@ class IsotropicMaterial
 {
 public:
   MORFEUS_LIB_DECL IsotropicMaterial();
-  MORFEUS_LIB_DECL IsotropicMaterial(int32_t number, const dcomplex & permittivity, const dcomplex & permeability);
+  MORFEUS_LIB_DECL IsotropicMaterial(const std::string & name);
+  MORFEUS_LIB_DECL IsotropicMaterial(const std::string & id, const std::string & name);
+  MORFEUS_LIB_DECL IsotropicMaterial(const dcomplex & permittivity, const dcomplex & permeability);
+  MORFEUS_LIB_DECL IsotropicMaterial(const std::string & namem, const dcomplex & permittivity, const dcomplex & permeability);
+  MORFEUS_LIB_DECL IsotropicMaterial(const std::string & id, const std::string & name, const dcomplex & permittivity, const dcomplex & permeability);
 
 public:
   MORFEUS_LIB_DECL dcomplex permeability() const;

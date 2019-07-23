@@ -1,14 +1,19 @@
 #ifndef RECTANGLE_H
 #define RECTANGLE_H
 
-#include "polygon.h"
+#include "shape.h"
 #include "point2d.h"
 
 class Rectangle
-    : public Polygon
+    : public Shape
 {
 public:
   MORFEUS_LIB_DECL Rectangle();
+  MORFEUS_LIB_DECL Rectangle(const std::string & name);
+  MORFEUS_LIB_DECL Rectangle(const std::string & id, const std::string & name);
+  MORFEUS_LIB_DECL Rectangle(double xl, double xu, double yl, double yu);
+  MORFEUS_LIB_DECL Rectangle(const std::string & name, double xl, double xu, double yl, double yu);
+  MORFEUS_LIB_DECL Rectangle(const std::string & id, const std::string & name, double xl, double xu, double yl, double yu);
 
 public:
   MORFEUS_LIB_DECL Point2D lowerLeft() const;
