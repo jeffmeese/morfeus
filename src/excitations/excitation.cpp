@@ -23,15 +23,15 @@ Excitation::ExcitationFactory & Excitation::factory()
   return f;
 }
 
+Excitation * Excitation::ExcitationFactory::create(const std::string & type)
+{
+  return mFactory.create(type);
+}
+
 bool Excitation::ExcitationFactory::registerType(const std::string &type, boost::function<Excitation *()> creator)
 {
   mFactory.registerFactory(type, creator);
   return true;
-}
-
-Excitation * Excitation::ExcitationFactory::create(const std::string & type)
-{
-  return mFactory.create(type);
 }
 
 void Excitation::excite(double freqGHz, const Mesh *mesh, const MeshInformation *meshInfo, vector &rhs) const

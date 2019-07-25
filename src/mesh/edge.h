@@ -2,10 +2,12 @@
 #define EDGE_H
 
 #include "morfeus.h"
+#include "morfeusobject.h"
 
 class Mesh;
 
 class Edge
+    : public MorfeusObject
 {
 public:
   MORFEUS_LIB_DECL Edge(int32_t number);

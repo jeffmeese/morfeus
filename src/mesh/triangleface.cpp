@@ -7,8 +7,13 @@
 #include "node.h"
 #include "planewave.h"
 
-TriangleFace::TriangleFace(int32_t id)
-  : Face(id, 3, 3)
+TriangleFace::TriangleFace()
+  : Face("TriangleFace", 3, 3)
+{
+}
+
+TriangleFace::TriangleFace(int32_t number)
+  : Face("TriangleFace", number, 3, 3)
 {
 }
 

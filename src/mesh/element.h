@@ -2,6 +2,7 @@
 #define ELEMENT_H
 
 #include "morfeus.h"
+#include "morfeusobject.h"
 
 #include <vector>
 
@@ -9,23 +10,22 @@ class Face;
 class Mesh;
 
 class Element
+    : MorfeusObject
 {
 public:
-  MORFEUS_LIB_DECL virtual ~Element();
-
-public:
   MORFEUS_LIB_DECL double attribute(std::size_t index) const;
-  MORFEUS_LIB_DECL int32_t id() const;
   MORFEUS_LIB_DECL int32_t edgeSign(std::size_t index) const;
   MORFEUS_LIB_DECL int32_t edge(std::size_t index) const;
   MORFEUS_LIB_DECL int32_t epsilonId() const;
   MORFEUS_LIB_DECL int32_t muId() const;
   MORFEUS_LIB_DECL int32_t node(std::size_t index) const;
+  MORFEUS_LIB_DECL int32_t number() const;
   MORFEUS_LIB_DECL void setEpsilonId(int32_t value);
   MORFEUS_LIB_DECL void setEdge(std::size_t index, int32_t value);
   MORFEUS_LIB_DECL void setEdgeSign(std::size_t index, int32_t value);
   MORFEUS_LIB_DECL void setMuId(int32_t value);
   MORFEUS_LIB_DECL void setNode(std::size_t index, int32_t value);
+  MORFEUS_LIB_DECL void setNumber(int32_t number);
   MORFEUS_LIB_DECL std::size_t totalAttributes() const;
   MORFEUS_LIB_DECL std::size_t totalEdges() const;
   MORFEUS_LIB_DECL std::size_t totalFaces() const;
@@ -43,10 +43,14 @@ protected:
   virtual Face * doConstructFace(std::size_t index) const = 0;
 
 protected:
-  Element(int32_t id, std::size_t nodes, std::size_t edges, std::size_t faces);
+  Element(const std::string & type, std::size_t nodes, std::size_t edges, std::size_t faces);
+  Element(const std::string & type, int32_t number, std::size_t nodes, std::size_t edges, std::size_t faces);
 
 private:
-  int32_t mId;
+  void init(std::size_t nodes, std::size_t edges, std::size_t faces);
+
+private:
+  int32_t mNumber;
   int32_t mEpsilonId;
   int32_t mMuId;
   std::size_t mFaces;
@@ -59,11 +63,6 @@ private:
 inline double Element::attribute(std::size_t index) const
 {
   return mAttributes.at(index);
-}
-
-inline int32_t Element::id() const
-{
-  return mId;
 }
 
 inline int32_t Element::edge(std::size_t index) const
@@ -91,6 +90,11 @@ inline int32_t Element::node(std::size_t index) const
   return mNodes.at(index);
 }
 
+inline int32_t Element::number() const
+{
+  return mNumber;
+}
+
 inline void Element::setEdge(std::size_t index, int32_t value)
 {
   mEdges[index] = value;
@@ -114,6 +118,11 @@ inline void Element::setMuId(int32_t value)
 inline void Element::setNode(std::size_t index, int32_t value)
 {
   mNodes[index] = value;
+}
+
+inline void Element::setNumber(int32_t number)
+{
+  mNumber = number;
 }
 
 inline std::size_t Element::totalAttributes() const

@@ -23,14 +23,9 @@ Shape::ShapeFactory & Shape::factory()
   return f;
 }
 
-std::vector<Segment> Shape::getSegmentList() const
+std::vector<MesherPolygon> Shape::getMesherPolygons() const
 {
-  return doGetSegmentList();
-}
-
-std::vector<Vertex> Shape::getVertexList() const
-{
-  return doGetVertexList();
+  return doGetMesherPolygons();
 }
 
 void Shape::print(std::ostream & output, int tabPos) const

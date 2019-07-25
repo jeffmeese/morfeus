@@ -22,6 +22,7 @@ public:
   MORFEUS_LIB_DECL double xu() const;
   MORFEUS_LIB_DECL double yl() const;
   MORFEUS_LIB_DECL double yu() const;
+  MORFEUS_LIB_DECL double z() const;
   MORFEUS_LIB_DECL void setLowerLeft(Point2D value);
   MORFEUS_LIB_DECL void setUpperRight(Point2D value);
   MORFEUS_LIB_DECL void setPosition(double xl, double xu, double yl, double yu);
@@ -30,14 +31,14 @@ public:
   MORFEUS_LIB_DECL void setXu(double value);
   MORFEUS_LIB_DECL void setYl(double value);
   MORFEUS_LIB_DECL void setYu(double value);
+  MORFEUS_LIB_DECL void setZ(double value);
 
 public:
   MORFEUS_LIB_DECL double height() const;
   MORFEUS_LIB_DECL double width() const;
 
 protected:
-  std::vector<Segment> doGetSegmentList() const override;
-  std::vector<Vertex> doGetVertexList() const override;
+  std::vector<MesherPolygon> doGetMesherPolygons() const override;
   void doPrint(std::ostream & output, int tabPos) const override;
   void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
   void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
@@ -47,6 +48,7 @@ private:
   double mXu;
   double mYl;
   double mYu;
+  double mZ;
 };
 
 inline Point2D Rectangle::lowerLeft() const
@@ -79,6 +81,11 @@ inline double Rectangle::yu() const
   return mYu;
 }
 
+inline double Rectangle::z() const
+{
+  return mZ;
+}
+
 inline void Rectangle::setLowerLeft(Point2D value)
 {
   mXl = value.x();
@@ -109,6 +116,11 @@ inline void Rectangle::setYl(double value)
 inline void Rectangle::setYu(double value)
 {
   mYu = value;
+}
+
+inline void Rectangle::setZ(double value)
+{
+  mZ = value;
 }
 
 #endif // RECTANGLE_H

@@ -1,7 +1,8 @@
 #include "node.h"
 
 Node::Node(int32_t number)
-  : mNumber(number)
+  : MorfeusObject("Node")
+  , mNumber(number)
 {
   setPosition(0.0, 0.0, 0.0);
   setBoundary(false);
@@ -11,7 +12,8 @@ Node::Node(int32_t number)
 }
 
 Node::Node(int32_t number, double x, double y, double z)
-  : mNumber(number)
+  : MorfeusObject("Node")
+  , mNumber(number)
 {
   setPosition(x, y, z);
   setBoundary(false);

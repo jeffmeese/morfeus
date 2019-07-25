@@ -41,24 +41,10 @@ TriangleShape::TriangleShape(const std::string & id, const std::string & name, d
   init(x1, x2, x3, y1, y2, y3);
 }
 
-std::vector<Segment> TriangleShape::doGetSegmentList() const
+std::vector<MesherPolygon> TriangleShape::doGetMesherPolygons() const
 {
-  std::vector<Segment> segmentList;
-
-  segmentList.push_back(Segment(0, 0, 1));
-  segmentList.push_back(Segment(0, 1, 2));
-  segmentList.push_back(Segment(0, 2, 0));
-  return segmentList;
-}
-
-std::vector<Vertex> TriangleShape::doGetVertexList() const
-{
-  std::vector<Vertex> vertexList;
-
-  vertexList.push_back(Vertex(0, mX1, mY1));
-  vertexList.push_back(Vertex(1, mX2, mY2));
-  vertexList.push_back(Vertex(2, mX3, mY3));
-  return vertexList;
+  std::vector<MesherPolygon> polygons;
+  return polygons;
 }
 
 void TriangleShape::doPrint(std::ostream &output, int tabPos) const

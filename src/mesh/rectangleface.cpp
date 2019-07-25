@@ -2,8 +2,13 @@
 
 #include "mesh.h"
 
-RectangleFace::RectangleFace(int32_t id)
-  : Face(id, 4, 4)
+RectangleFace::RectangleFace()
+  : Face("RectangleFace", 4, 4)
+{
+}
+
+RectangleFace::RectangleFace(int32_t number)
+  : Face("RectangleFace", number, 4, 4)
 {
 
 }

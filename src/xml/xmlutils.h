@@ -165,6 +165,17 @@ namespace xmlutils
   }
 
   template <>
+  inline std::size_t readAttribute<std::size_t>(rapidxml::xml_node<> * node, const std::string & name, std::size_t defaultValue)
+  {
+    std::size_t value = defaultValue;
+    rapidxml::xml_attribute<> * attr = node->first_attribute(name.c_str(), 0, false);
+    if (attr != nullptr) {
+      value = stoul(std::string(attr->value()));
+    }
+    return value;
+  }
+
+  template <>
   inline double readAttribute<double>(rapidxml::xml_node<> * node, const std::string & name, double defaultValue)
   {
     double value = defaultValue;

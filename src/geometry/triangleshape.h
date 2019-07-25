@@ -30,8 +30,7 @@ public:
   MORFEUS_LIB_DECL void setY3(double value);
 
 protected:
-  std::vector<Segment> doGetSegmentList() const override;
-  std::vector<Vertex> doGetVertexList() const override;
+  std::vector<MesherPolygon> doGetMesherPolygons() const override;
   void doPrint(std::ostream & output, int tabPos) const override;
   void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
   void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;

@@ -45,26 +45,10 @@ Rectangle::Rectangle(const std::string & id, const std::string & name, double xl
   setPosition(xl, xu, yl, yu);
 }
 
-std::vector<Segment> Rectangle::doGetSegmentList() const
+std::vector<MesherPolygon> Rectangle::doGetMesherPolygons() const
 {
-  std::vector<Segment> segmentList;
-
-  segmentList.push_back(Segment(0, 1, 2));
-  segmentList.push_back(Segment(1, 2, 3));
-  segmentList.push_back(Segment(2, 3, 4));
-  segmentList.push_back(Segment(3, 4, 1));
-
-  return segmentList;
-}
-
-std::vector<Vertex> Rectangle::doGetVertexList() const
-{
-  std::vector<Vertex> vertexList;
-  vertexList.push_back(Vertex(0, mXl, mYl));
-  vertexList.push_back(Vertex(1, mXu, mYl));
-  vertexList.push_back(Vertex(2, mXu, mYu));
-  vertexList.push_back(Vertex(3, mXl, mYu));
-  return vertexList;
+  std::vector<MesherPolygon> polygons;
+  return polygons;
 }
 
 void Rectangle::doPrint(std::ostream &output, int tabPos) const
@@ -74,6 +58,7 @@ void Rectangle::doPrint(std::ostream &output, int tabPos) const
   xmlutils::printValue(output, tabPos, "xu: ", mXu);
   xmlutils::printValue(output, tabPos, "yl: ", mYl);
   xmlutils::printValue(output, tabPos, "yu: ", mYu);
+  xmlutils::printValue(output, tabPos, "z: ", mZ);
 }
 
 void Rectangle::doXmlRead(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
@@ -82,6 +67,7 @@ void Rectangle::doXmlRead(rapidxml::xml_document<> &, rapidxml::xml_node<> * nod
   setXu(xmlutils::readAttribute<double>(node, "xu"));
   setYl(xmlutils::readAttribute<double>(node, "yl"));
   setYu(xmlutils::readAttribute<double>(node, "yu"));
+  setZ(xmlutils::readAttribute<double>(node, "z"));
 }
 
 void Rectangle::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
@@ -91,6 +77,7 @@ void Rectangle::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_no
   xmlutils::writeAttribute(document, node, "xu", mXu);
   xmlutils::writeAttribute(document, node, "yl", mYl);
   xmlutils::writeAttribute(document, node, "yu", mYu);
+  xmlutils::writeAttribute(document, node, "z", mZ);
 }
 
 double Rectangle::height() const

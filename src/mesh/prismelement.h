@@ -8,7 +8,8 @@ class PrismElement
     : public Element
 {
 public:
-  MORFEUS_LIB_DECL PrismElement(int32_t id);
+  MORFEUS_LIB_DECL PrismElement();
+  MORFEUS_LIB_DECL PrismElement(int32_t number);
 
 protected:
   void doComputeFeEntry(const Mesh * mesh, std::size_t localEdge1, std::size_t localEdge2, dcomplex & i1, dcomplex & i2) const override;

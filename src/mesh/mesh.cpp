@@ -8,7 +8,8 @@
 #include <sstream>
 
 Mesh::Mesh()
-  : mMaterialDatabase(nullptr)
+  : MorfeusObject("Mesh")
+  , mMaterialDatabase(nullptr)
 {
   mNodeTolerance = 1e-6;
 }

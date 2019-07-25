@@ -8,13 +8,13 @@
 #include <string>
 
 template <class AbstractProduct, class IdType=std::string,
-          class MakeType=boost::function<typename std::remove_pointer<AbstractProduct>::type*()> >
+          class Creator=boost::function<typename std::remove_pointer<AbstractProduct>::type*()> >
 class Factory
 {
   using abstract_type = typename std::remove_pointer<AbstractProduct>::type;
 
 public:
-  void registerFactory(IdType type, const MakeType & make)
+  void registerFactory(IdType type, const Creator & make)
   {
     mFactoryMap.insert(std::make_pair(type, make));
   }
@@ -29,7 +29,7 @@ public:
     return nullptr;
   }
 private:
-  boost::container::flat_map<IdType, MakeType> mFactoryMap;
+  boost::container::flat_map<IdType, Creator> mFactoryMap;
 };
 
 #endif // FACTORY_H

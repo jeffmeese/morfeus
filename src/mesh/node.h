@@ -2,8 +2,10 @@
 #define NODE_H
 
 #include "morfeus.h"
+#include "morfeusobject.h"
 
 class Node
+    : public MorfeusObject
 {
 public:
   MORFEUS_LIB_DECL Node(int32_t number);

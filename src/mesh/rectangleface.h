@@ -9,7 +9,8 @@ class RectangleFace
     : public Face
 {
 public:
-  RectangleFace(int32_t id);
+  MORFEUS_LIB_DECL RectangleFace();
+  MORFEUS_LIB_DECL RectangleFace(int32_t number);
 
 public:
   //MORFEUS_LIB_DECL dcomplex computeEntry(const RectangleFace * otherFace, const Mesh & mesh, std::size_t localEdge) const;

@@ -24,15 +24,20 @@ add_subdirectory(3rdparty)
 find_package(Boost COMPONENTS system thread REQUIRED)
 
 set(SRC_FILES
+  conditions/boundarycondition.cpp
+  conditions/perfectelectricconductor.cpp
   core/morfeusobject.cpp
   excitations/excitation.cpp
   excitations/planewave.cpp
   excitations/probefeed.cpp
+  geometry/box.cpp
   geometry/circle.cpp
+  geometry/cylinder.cpp
   geometry/geometry.cpp
   geometry/hole.cpp
   geometry/point2d.cpp
-  geometry/polygon.cpp
+  geometry/point3d.cpp
+  geometry/polygonshape.cpp
   geometry/rectangle.cpp
   geometry/region.cpp
   geometry/segment.cpp
@@ -50,9 +55,12 @@ set(SRC_FILES
   mesh/node.cpp
   mesh/prismelement.cpp
   mesh/rectangleface.cpp
+  mesh/tetelement.cpp
   mesh/triangleelement.cpp
   mesh/triangleface.cpp
+  mesher/mesherfacet.cpp
   mesher/mesher.cpp
+  mesher/mesherpolygon.cpp
   mesher/meshrefinement.cpp
   observations/farfield.cpp
   observations/observation.cpp
@@ -65,16 +73,21 @@ set(SRC_FILES
 
 set(HDR_FILES
   morfeus.h
+  conditions/boundarycondition.h
+  conditions/perfectelectricconductor.h
   core/morfeusobject.h
   core/factory.h
   excitations/excitation.h
   excitations/planewave.h
   excitations/probefeed.h
+  geometry/box.h
   geometry/circle.h
+  geometry/cylinder.h
   geometry/geometry.h
   geometry/hole.h
   geometry/point2d.h
-  geometry/polygon.h
+  geometry/point3d.h
+  geometry/polygonshape.h
   geometry/rectangle.h
   geometry/region.h
   geometry/segment.h
@@ -93,9 +106,12 @@ set(HDR_FILES
   mesh/node.h
   mesh/prismelement.h
   mesh/rectangleface.h
+  mesh/tetelement.h
   mesh/triangleelement.h
   mesh/triangleface.h
+  mesher/mesherfacet.h
   mesher/mesher.h
+  mesher/mesherpolygon.h
   mesher/meshrefinement.h
   observations/farfield.h
   observations/observation.h
@@ -114,6 +130,8 @@ set(HDR_FILES
 # Create target
 add_library(${TARGET_NAME} ${BUILD_TYPE} ${HDR_FILES} ${SRC_FILES})
 
+target_compile_definitions(${TARGET_NAME} PUBLIC -DTETLIBRARY)
+
 # Set target compile options and definitions
 if (MSVC)
   target_compile_definitions(${TARGET_NAME} PUBLIC -DBOOST_ALL_NO_LIB)
@@ -127,6 +145,7 @@ if (MORFEUS_BUILD_SHARED)
 endif()
 
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/conditions)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/core)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/excitations)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/geometry)
@@ -140,6 +159,7 @@ target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/xml
 target_include_directories(${TARGET_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
 
 #target_link_libraries(${TARGET_NAME} loki)
-target_link_libraries(${TARGET_NAME} triangle)
+target_link_libraries(${TARGET_NAME} tet)
+target_link_libraries(${TARGET_NAME} libtri)
 target_link_libraries(${TARGET_NAME} bcrypt)
 target_link_libraries(${TARGET_NAME} ${BOOST_LIBRARIES})

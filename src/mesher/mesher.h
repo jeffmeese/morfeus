@@ -4,6 +4,11 @@
 #include "morfeus.h"
 #include "morfeusobject.h"
 
+#include "mesherfacet.h"
+#include "vertex.h"
+
+#include <vector>
+
 class Geometry;
 class Mesh;
 class MeshRefinement;
@@ -34,8 +39,8 @@ public:
   MORFEUS_LIB_DECL friend std::ostream & operator<<(std::ostream & output, const Mesher & object);
 
 private:
-  void createSurfaceMesh(const Geometry * geometry, Mesh * mesh) const;
-  void extrudeVolumeMesh(const Mesh * surfaceMesh, double cavityHeight, const Mesh * volumeMesh) const;
+  void formVertexList(std::vector<Vertex> & vertices, const Geometry & geometry);
+  void formFacets(std::vector<MesherFacet> & facets, const Geometry & geometry);
 
 private:
   double mMaxEdgeLength;

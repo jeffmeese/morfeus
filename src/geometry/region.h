@@ -11,9 +11,9 @@ public:
   MORFEUS_LIB_DECL Region();
   MORFEUS_LIB_DECL Region(const std::string & name);
   MORFEUS_LIB_DECL Region(const std::string & id, const std::string & name);
-  MORFEUS_LIB_DECL Region(double x, double y);
-  MORFEUS_LIB_DECL Region(const std::string & name, double x, double y);
-  MORFEUS_LIB_DECL Region(const std::string & id, const std::string & name, double x, double y);
+  MORFEUS_LIB_DECL Region(double x, double y, double z);
+  MORFEUS_LIB_DECL Region(const std::string & name, double x, double y, double z);
+  MORFEUS_LIB_DECL Region(const std::string & id, const std::string & name, double x, double y, double z);
 
 public:
   MORFEUS_LIB_DECL double attribute() const;
@@ -21,12 +21,14 @@ public:
   MORFEUS_LIB_DECL std::string name() const;
   MORFEUS_LIB_DECL double x() const;
   MORFEUS_LIB_DECL double y() const;
+  MORFEUS_LIB_DECL double z() const;
   MORFEUS_LIB_DECL void setAttribute(double value);
   MORFEUS_LIB_DECL void setMaxArea(double value);
   MORFEUS_LIB_DECL void setName(const std::string & name);
-  MORFEUS_LIB_DECL void setPosition(double x, double y);
+  MORFEUS_LIB_DECL void setPosition(double x, double y, double z);
   MORFEUS_LIB_DECL void setX(double value);
   MORFEUS_LIB_DECL void setY(double value);
+  MORFEUS_LIB_DECL void setZ(double value);
 
 public:
   MORFEUS_LIB_DECL void print(std::ostream & output, int tabPos = 0) const;
@@ -40,6 +42,7 @@ private:
   double mMaxArea;
   double mX;
   double mY;
+  double mZ;
   std::string mName;
 };
 
@@ -78,6 +81,11 @@ inline void Region::setY(double value)
   mY = value;
 }
 
+inline void Region::setZ(double value)
+{
+  mZ = value;
+}
+
 inline double Region::x() const
 {
   return mX;
@@ -86,6 +94,11 @@ inline double Region::x() const
 inline double Region::y() const
 {
   return mY;
+}
+
+inline double Region::z() const
+{
+  return mZ;
 }
 
 #endif // REGION_H

@@ -5,12 +5,14 @@
 #include "morfeusobject.h"
 
 #include "factory.h"
+#include "mesherpolygon.h"
 #include "segment.h"
 #include "vertex.h"
 
 #include <string>
 #include <vector>
 
+class Polygon;
 class Shape
     : public MorfeusObject
 {
@@ -21,8 +23,7 @@ public:
   MORFEUS_LIB_DECL void setName(const std::string & name);
 
 public:
-  MORFEUS_LIB_DECL std::vector<Segment> getSegmentList() const;
-  MORFEUS_LIB_DECL std::vector<Vertex> getVertexList() const;
+  MORFEUS_LIB_DECL std::vector<MesherPolygon> getMesherPolygons() const;
   MORFEUS_LIB_DECL void print(std::ostream & output, int tabPos = 0) const;
   MORFEUS_LIB_DECL void print(int tabPos = 0) const;
   MORFEUS_LIB_DECL void readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node);
@@ -38,8 +39,7 @@ protected:
   Shape(const std::string & type, const std::string & id, const std::string & name);
 
 protected:
-  virtual std::vector<Segment> doGetSegmentList() const = 0;
-  virtual std::vector<Vertex> doGetVertexList() const = 0;
+  virtual std::vector<MesherPolygon> doGetMesherPolygons() const = 0;
   virtual void doPrint(std::ostream & output, int tabPos = 0) const = 0;
   virtual void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) = 0;
   virtual void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const = 0;

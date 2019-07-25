@@ -7,6 +7,7 @@ class TriangleFace
     : public Face
 {
 public:
+  TriangleFace();
   TriangleFace(int32_t id);
 
 protected:

@@ -5,8 +5,13 @@
 #include "mesh.h"
 #include "node.h"
 
-PrismElement::PrismElement(int32_t id)
-  : Element(id, 6, 9, 5)
+PrismElement::PrismElement()
+  : Element("PrismElement", 6, 9, 5)
+{
+}
+
+PrismElement::PrismElement(int32_t number)
+  : Element("PrismElement", number, 6, 9, 5)
 {
 }
 

@@ -2,6 +2,7 @@
 #define MESH_H
 
 #include "morfeus.h"
+#include "morfeusobject.h"
 
 #include <list>
 #include <map>
@@ -14,6 +15,7 @@ class MaterialDatabase;
 class Node;
 
 class Mesh
+    : public MorfeusObject
 {
 public:
   MORFEUS_LIB_DECL Mesh();

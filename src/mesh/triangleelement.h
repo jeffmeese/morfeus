@@ -8,7 +8,8 @@ class TriangleElement
     : public Element
 {
 public:
-  MORFEUS_LIB_DECL TriangleElement(int32_t id);
+  MORFEUS_LIB_DECL TriangleElement();
+  MORFEUS_LIB_DECL TriangleElement(int32_t number);
 
 protected:
   void doEdgeNodes(std::size_t index, int32_t & localNode1, int32_t & localNode2) const override;

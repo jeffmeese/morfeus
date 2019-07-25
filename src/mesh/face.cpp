@@ -5,25 +5,21 @@
 
 #include <algorithm>
 
-Face::Face(int32_t id, std::size_t totalNodes, std::size_t totalEdges)
-  : mId(id)
-  , mPosition(Position::Top)
-{
-  mNodes.resize(totalNodes);
-  mEdges.resize(totalEdges);
-  mEdgeSigns.resize(totalEdges);
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/geometry/arithmetic/cross_product.hpp>
 
-  for (std::size_t i = 0; i < totalNodes; i++) {
-    mNodes[i] = -1;
-  }
-  for (std::size_t i = 0; i < totalEdges; i++) {
-    mEdges[i] = -1;
-    mEdgeSigns[i] = 1;
-  }
+Face::Face(const std::string & type, int32_t number, std::size_t totalNodes, std::size_t totalEdges)
+  : MorfeusObject(type)
+  , mNumber(number)
+{
+  init(totalNodes, totalEdges);
 }
 
-Face::~Face()
+Face::Face(const std::string & type, std::size_t totalNodes, std::size_t totalEdges)
+  : MorfeusObject(type)
+  , mNumber(-1)
 {
+  init(totalNodes, totalEdges);
 }
 
 double Face::computeArea(const Mesh * mesh) const
@@ -33,7 +29,23 @@ double Face::computeArea(const Mesh * mesh) const
 
 double Face::computeNormal(const Mesh * mesh) const
 {
+//  boost::numeric::ublas::vector<double> v1(3);
+//  boost::numeric::ublas::vector<double> v2(3);
+//  boost::numeric::ublas::vector<double> v3(3);
+
+//  for (std::size_t i = 0; i < totalNodes(); i++) {
+//    const Node * currNode = mesh->node(mNodes[i]);
+//    v1[i] = currNode->x();
+//    v2[i] = currNode->y();
+//    v3[i] = currNode->z();
+//  }
+
+//  boost::numeric::ublas::vector<double> v4(v1-v2);
+//  boost::numeric::ublas::vector<double> v5(v1-v3);
+//  boost::numeric::ublas::vector<double> cp = boost::geometry::cross_product(v4, v5);
+
   return 0.0;
+
 //  math::vector<double> normalVector(0.0, 0.0, 0.0);
 
 //  for (std::size_t i = 0; i < totalNodes()-1; i++) {
@@ -63,14 +75,19 @@ dcomplex Face::computePlanewaveEntry(std::size_t edge, double freq, const Planew
   return doComputePlanewaveEntry(edge, freq, planewave, mesh);
 }
 
-int32_t Face::edgeSign(std::size_t localEdge) const
+void Face::init(std::size_t totalNodes, std::size_t totalEdges)
 {
-  return mEdgeSigns.at(localEdge);
-}
+  mNodes.resize(totalNodes);
+  mEdges.resize(totalEdges);
+  mEdgeSigns.resize(totalEdges);
 
-int32_t Face::id() const
-{
-  return mId;
+  for (std::size_t i = 0; i < totalNodes; i++) {
+    mNodes[i] = -1;
+  }
+  for (std::size_t i = 0; i < totalEdges; i++) {
+    mEdges[i] = -1;
+    mEdgeSigns[i] = 1;
+  }
 }
 
 bool Face::isCoincident(const Face *otherFace) const
@@ -89,49 +106,4 @@ bool Face::isCoincident(const Face *otherFace) const
   }
 
   return true;
-}
-
-int32_t Face::edge(std::size_t index) const
-{
-  return mEdges[index];
-}
-
-int32_t Face::node(std::size_t index) const
-{
-  return mNodes[index];
-}
-
-Face::Position Face::position() const
-{
-  return mPosition;
-}
-
-void Face::setEdge(std::size_t index, int32_t value)
-{
-  mEdges[index] = value;
-}
-
-void Face::setEdgeSign(std::size_t localEdge, int32_t edgeSign)
-{
-  mEdgeSigns[localEdge] = edgeSign;
-}
-
-void Face::setNode(std::size_t index, int32_t value)
-{
-  mNodes[index] = value;
-}
-
-void Face::setPosition(Position position)
-{
-  mPosition = position;
-}
-
-std::size_t Face::totalEdges() const
-{
-  return mEdges.size();
-}
-
-std::size_t Face::totalNodes() const
-{
-  return mNodes.size();
 }

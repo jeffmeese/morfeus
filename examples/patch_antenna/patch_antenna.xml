@@ -2,7 +2,7 @@
 <Project>
   <Geometry>
     <Shapes>
-		<Shape type="Rectangle" name="Cavity" number="1" xl="-2.0" xu="2.0" yl="-2.0" yu="2.0" />
+		<Shape type="Box" name="Cavity" number="1" xl="-2.0" xu="2.0" yl="-2.0" yu="2.0" />
 		<Shape type="Rectangle" name="Patch" number="2" xl="-1.0" xu="1.0" yl="-1.0" yu="1.0" />
 	</Shapes>
 	<Regions>

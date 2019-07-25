@@ -34,7 +34,7 @@ void Planewave::doExcite(double freqGHz, const Mesh *mesh, const MeshInformation
 
   for (size_t i = 0; i < boundaryFaces.size(); i++) {
     const Face * boundaryFace = boundaryFaces.at(i);
-    if (boundaryFace->position() == Face::Position::Top) {
+    //if (boundaryFace->position() == Face::Position::Top) {
       for (size_t j = 0; j < boundaryFace->totalEdges(); j++) {
         const Edge * edge = mesh->edge(boundaryFace->edge(j));
         int unknown = edge->unknownNumber();
@@ -43,7 +43,7 @@ void Planewave::doExcite(double freqGHz, const Mesh *mesh, const MeshInformation
           rhs[unknown-1] += result;
         }
       }
-    }
+    //}
   }
 }
 

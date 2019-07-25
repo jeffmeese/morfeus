@@ -1,8 +1,13 @@
 #include "triangleelement.h"
 #include "triangleface.h"
 
-TriangleElement::TriangleElement(int32_t id)
-  : Element(id, 3, 3, 1)
+TriangleElement::TriangleElement()
+  : Element("TriangleElement", 3, 3, 1)
+{
+}
+
+TriangleElement::TriangleElement(int32_t number)
+  : Element("TriangleElement", number, 3, 3, 1)
 {
 }
 
@@ -12,7 +17,7 @@ void TriangleElement::doComputeFeEntry(const Mesh * mesh, std::size_t localEdge1
 
 Face * TriangleElement::doConstructFace(std::size_t) const
 {
-  Face * face = new TriangleFace(id());
+  Face * face = new TriangleFace;
   face->setNode(0, node(0));
   face->setNode(1, node(1));
   face->setNode(2, node(2));

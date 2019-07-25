@@ -6,7 +6,8 @@
 #include <cmath>
 
 Edge::Edge(int32_t number)
-  : mNumber(number)
+  : MorfeusObject("Edge")
+  , mNumber(number)
   , mNode1(-1)
   , mNode2(-1)
   , mUnknown(-1)
@@ -14,7 +15,8 @@ Edge::Edge(int32_t number)
 }
 
 Edge::Edge(int32_t number, int32_t node1, int32_t node2)
-  : mNumber(number)
+  : MorfeusObject("Edge")
+  , mNumber(number)
   , mNode1(node1)
   , mNode2(node2)
   , mUnknown(-1)
