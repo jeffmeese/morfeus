@@ -13,41 +13,55 @@ Rectangle::Rectangle()
   : Shape (OBJECT_ID)
 {
   setPosition(0.0,0.0,0.0,0.0);
+  setZ(0.0);
 }
 
 Rectangle::Rectangle(const std::string & name)
   : Shape (OBJECT_ID, name)
 {
   setPosition(0.0,0.0,0.0,0.0);
+  setZ(0.0);
 }
 
 Rectangle::Rectangle(const std::string & id, const std::string & name)
   : Shape (OBJECT_ID, id, name)
 {
   setPosition(0.0,0.0,0.0,0.0);
+  setZ(0.0);
 }
 
 Rectangle::Rectangle(double xl, double xu, double yl, double yu)
   : Shape (OBJECT_ID)
 {
   setPosition(xl, xu, yl, yu);
+  setZ(0.0);
 }
 
 Rectangle::Rectangle(const std::string & name, double xl, double xu, double yl, double yu)
   : Shape (OBJECT_ID, name)
 {
   setPosition(xl, xu, yl, yu);
+  setZ(0.0);
 }
 
 Rectangle::Rectangle(const std::string & id, const std::string & name, double xl, double xu, double yl, double yu)
   : Shape (OBJECT_ID, id, name)
 {
   setPosition(xl, xu, yl, yu);
+  setZ(0.0);
 }
 
 std::vector<MesherPolygon> Rectangle::doGetMesherPolygons() const
 {
   std::vector<MesherPolygon> polygons;
+
+  MesherPolygon p;
+  p.addPoint(mXl, mYl, mZ);
+  p.addPoint(mXu, mYl, mZ);
+  p.addPoint(mXu, mYu, mZ);
+  p.addPoint(mXl, mYu, mZ);
+
+  polygons.push_back(p);
   return polygons;
 }
 

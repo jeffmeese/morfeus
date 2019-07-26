@@ -5,18 +5,73 @@ static const std::string OBJECT_ID("Box");
 Box::Box()
   : Shape(OBJECT_ID)
 {
+  setPosition(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
+}
 
+Box::Box(double xl, double xu, double yl, double yu, double zl, double zu)
+  : Shape(OBJECT_ID)
+{
+  setPosition(xl, xu, yl, yu, zl, zu);
 }
 
 Box::Box(const std::string & name)
   : Shape(OBJECT_ID, name)
 {
+  setPosition(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
+}
 
+Box::Box(const std::string & name, double xl, double xu, double yl, double yu, double zl, double zu)
+  : Shape(OBJECT_ID, name)
+{
+  setPosition(xl, xu, yl, yu, zl, zu);
 }
 
 std::vector<MesherPolygon> Box::doGetMesherPolygons() const
 {
   std::vector<MesherPolygon> polygons;
+
+  MesherPolygon p;
+  p.addPoint(mXl, mYl, mZl);
+  p.addPoint(mXu, mYl, mZl);
+  p.addPoint(mXu, mYu, mZl);
+  p.addPoint(mXl, mYu, mZl);
+  polygons.push_back(p);
+
+  p.clearPoints();
+  p.addPoint(mXl, mYl, mZu);
+  p.addPoint(mXu, mYl, mZu);
+  p.addPoint(mXu, mYu, mZu);
+  p.addPoint(mXl, mYu, mZu);
+  polygons.push_back(p);
+
+  p.clearPoints();
+  p.addPoint(mXu, mYl, mZl);
+  p.addPoint(mXu, mYu, mZl);
+  p.addPoint(mXu, mYu, mZu);
+  p.addPoint(mXu, mYl, mZu);
+  polygons.push_back(p);
+
+  p.clearPoints();
+  p.addPoint(mXu, mYu, mZl);
+  p.addPoint(mXl, mYu, mZl);
+  p.addPoint(mXl, mYu, mZu);
+  p.addPoint(mXu, mYu, mZu);
+  polygons.push_back(p);
+
+  p.clearPoints();
+  p.addPoint(mXl, mYu, mZl);
+  p.addPoint(mXl, mYl, mZl);
+  p.addPoint(mXl, mYl, mZu);
+  p.addPoint(mXl, mYu, mZu);
+  polygons.push_back(p);
+
+  p.clearPoints();
+  p.addPoint(mXl, mYl, mZl);
+  p.addPoint(mXu, mYl, mZl);
+  p.addPoint(mXu, mYl, mZu);
+  p.addPoint(mXl, mYl, mZu);
+  polygons.push_back(p);
+
   return polygons;
 }
 
@@ -50,4 +105,14 @@ void Box::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> *
   xmlutils::writeAttribute(document, node, "yu", mYu);
   xmlutils::writeAttribute(document, node, "yl", mZl);
   xmlutils::writeAttribute(document, node, "yu", mZu);
+}
+
+void Box::setPosition(double xl, double xu, double yl, double yu, double zl, double zu)
+{
+  setXl(xl);
+  setXu(xu);
+  setYl(yl);
+  setYu(yu);
+  setZl(zl);
+  setZu(zu);
 }

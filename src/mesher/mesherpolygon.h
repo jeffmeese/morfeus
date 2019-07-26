@@ -6,6 +6,8 @@
 
 #include <vector>
 
+#include <boost/qvm/vec.hpp>
+
 class MesherPolygon
 {
 public:
@@ -18,8 +20,9 @@ public:
 public:
   MORFEUS_LIB_DECL void addPoint(double x, double y, double z);
   MORFEUS_LIB_DECL void addPoint(const Point3D & point);
-  MORFEUS_LIB_DECL void computeNormal(double * v) const;
-  MORFEUS_LIB_DECL bool isCoplanar(const MesherPolygon & polygon) const;
+  MORFEUS_LIB_DECL void clearPoints();
+  MORFEUS_LIB_DECL boost::qvm::vec<double, 3> computeNormal() const;
+  MORFEUS_LIB_DECL bool isCoplanar(const MesherPolygon & polygon, double tolerance = 1e-8) const;
 
 private:
   std::vector<Point3D> mPoints;

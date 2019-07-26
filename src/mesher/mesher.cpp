@@ -196,15 +196,36 @@ void Mesher::createMesh(const Geometry * geometry, double cavityHeight, Mesh * m
   //extrudeVolumeMesh(surfaceMesh.get(), cavityHeight, mesh);
 }
 
-void Mesher::formFacets(std::vector<MesherFacet> &facets, const Geometry &geometry)
+void Mesher::formFacets(std::vector<MesherFacet> &facets, const Geometry * geometry)
 {
+  // Create a list of all polygons in the geometry
   std::vector<MesherPolygon> allPolygons;
-  for (std::size_t i = 0; i < geometry.totalShapes(); i++) {
-    const Shape * shape = geometry.shape(i);
+  for (std::size_t i = 0; i < geometry->totalShapes(); i++) {
+    const Shape * shape = geometry->shape(i);
     std::vector<MesherPolygon> polygons = shape->getMesherPolygons();
     for (std::size_t j = 0; j < polygons.size(); j++) {
       allPolygons.push_back(polygons.at(j));
     }
+  }
+
+  // Loop until we assigned each polygon to a facet
+  while (allPolygons.size() > 0) {
+
+    // Add the first polygon to the facet and remove it from the list
+    MesherPolygon p1(allPolygons.at(0));
+    MesherFacet facet;
+    facet.addPolygon(p1);
+    allPolygons.erase(allPolygons.begin());
+
+    // Add coplanar polygons to this facet and remove them from the list
+    for (std::size_t i = 0; i < allPolygons.size(); i++) {
+      const MesherPolygon & p2 = allPolygons.at(i);
+      if (p1.isCoplanar(p2)) {
+        facet.addPolygon(p2);
+        allPolygons.erase(allPolygons.begin() + i);
+      }
+    }
+    facets.push_back(facet);
   }
 }
 

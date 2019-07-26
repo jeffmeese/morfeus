@@ -8,7 +8,9 @@ class Box
 {
 public:
   MORFEUS_LIB_DECL Box();
+  MORFEUS_LIB_DECL Box(double xl, double xu, double yl, double yu, double zl, double zu);
   MORFEUS_LIB_DECL Box(const std::string & name);
+  MORFEUS_LIB_DECL Box(const std::string & name, double xl, double xu, double yl, double yu, double zl, double zu);
 
 public:
   MORFEUS_LIB_DECL double xl() const;
@@ -17,6 +19,7 @@ public:
   MORFEUS_LIB_DECL double yu() const;
   MORFEUS_LIB_DECL double zl() const;
   MORFEUS_LIB_DECL double zu() const;
+  MORFEUS_LIB_DECL void setPosition(double xl, double xu, double yl, double yu, double zl, double zu);
   MORFEUS_LIB_DECL void setXl(double value);
   MORFEUS_LIB_DECL void setXu(double value);
   MORFEUS_LIB_DECL void setYl(double value);

@@ -38,9 +38,9 @@ public:
   MORFEUS_LIB_DECL void writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const;
   MORFEUS_LIB_DECL friend std::ostream & operator<<(std::ostream & output, const Mesher & object);
 
-private:
+public:
   void formVertexList(std::vector<Vertex> & vertices, const Geometry & geometry);
-  void formFacets(std::vector<MesherFacet> & facets, const Geometry & geometry);
+  MORFEUS_LIB_DECL void formFacets(std::vector<MesherFacet> & facets, const Geometry * geometry);
 
 private:
   double mMaxEdgeLength;
