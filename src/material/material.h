@@ -10,7 +10,7 @@
 
 #include <map>
 
-namespace Morfeus {
+namespace morfeus {
 
 class Material
     : public MorfeusObject

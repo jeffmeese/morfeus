@@ -6,7 +6,7 @@
 #include "observation.h"
 #include "solver.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 Solution::Solution()
   : MorfeusObject("Solution")

@@ -7,7 +7,7 @@
 #include <fstream>
 #include <sstream>
 
-namespace Morfeus {
+namespace morfeus {
 namespace mesh {
 
 Mesh::Mesh()

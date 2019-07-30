@@ -3,7 +3,7 @@
 
 #include "morfeus.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 namespace math
 {

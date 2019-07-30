@@ -5,7 +5,7 @@
 
 #include <cmath>
 
-namespace Morfeus {
+namespace morfeus {
 namespace mesh {
 
 Edge::Edge(int32_t number)

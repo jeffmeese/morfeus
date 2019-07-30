@@ -3,7 +3,7 @@
 
 #include "boundarycondition.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 class PerfectElectricCounductor : public BoundaryCondition
 {

@@ -5,7 +5,7 @@
 #include <boost/bind.hpp>
 #include <boost/functional/factory.hpp>
 
-namespace Morfeus {
+namespace morfeus {
 
 static const std::string OBJECT_ID("Isotropic Material");
 

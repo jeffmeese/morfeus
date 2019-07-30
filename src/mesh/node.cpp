@@ -1,6 +1,6 @@
 #include "node.h"
 
-namespace Morfeus {
+namespace morfeus {
 namespace mesh {
 
 Node::Node(int32_t number)

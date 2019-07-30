@@ -1,6 +1,6 @@
 #include "boundarycondition.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 BoundaryCondition::BoundaryCondition(const std::string & type)
   : MorfeusObject (type)

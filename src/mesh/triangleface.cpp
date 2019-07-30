@@ -8,7 +8,7 @@
 #include "node.h"
 #include "planewave.h"
 
-namespace Morfeus {
+namespace morfeus {
 namespace mesh {
 
 TriangleFace::TriangleFace()

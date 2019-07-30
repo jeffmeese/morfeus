@@ -8,7 +8,7 @@
 
 static const QString commandIdentifier("Project.AddRectangle");
 
-AddRectangleCommand::AddRectangleCommand(GuiProject * project, std::unique_ptr<Morfeus::Geometry::Rectangle> rectangle)
+AddRectangleCommand::AddRectangleCommand(GuiProject * project, std::unique_ptr<morfeus::geometry::Rectangle> rectangle)
   : Command(commandIdentifier)
   , mProjectModified(false)
   , mProject(project)

@@ -3,7 +3,7 @@
 
 #include "material.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 class IsotropicMaterial
     : public Material

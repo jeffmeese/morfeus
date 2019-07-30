@@ -8,14 +8,14 @@ class MeshItem
     : public ProjectItem
 {
 public:
-  MeshItem(std::unique_ptr<Morfeus::mesh::Mesh> mesh);
+  MeshItem(std::unique_ptr<morfeus::mesh::Mesh> mesh);
 
 protected:
   bool loadAttributes(QXmlStreamReader & reader) override;
   bool saveAttributes(QXmlStreamWriter & writer) const override;
 
 private:
-  std::unique_ptr<Morfeus::mesh::Mesh> mMesh;
+  std::unique_ptr<morfeus::mesh::Mesh> mMesh;
 };
 
 #endif // MESHITEM_H

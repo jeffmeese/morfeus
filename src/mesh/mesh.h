@@ -9,7 +9,7 @@
 #include <memory>
 #include <vector>
 
-namespace Morfeus {
+namespace morfeus {
   class MaterialDatabase;
   namespace mesh {
     class Edge;
@@ -18,7 +18,7 @@ namespace Morfeus {
   }
 }
 
-namespace Morfeus {
+namespace morfeus {
 namespace mesh {
 
 class Mesh

@@ -13,7 +13,7 @@
 #include "observation.h"
 #include "solution.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 Solver::Solver(const std::string & type)
   : MorfeusObject(type)

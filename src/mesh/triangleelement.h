@@ -4,7 +4,7 @@
 #include "morfeus.h"
 #include "element.h"
 
-namespace Morfeus {
+namespace morfeus {
 namespace mesh {
 
 class TriangleElement

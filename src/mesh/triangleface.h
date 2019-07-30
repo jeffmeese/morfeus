@@ -3,7 +3,7 @@
 
 #include "face.h"
 
-namespace Morfeus {
+namespace morfeus {
 namespace mesh {
 
 class TriangleFace

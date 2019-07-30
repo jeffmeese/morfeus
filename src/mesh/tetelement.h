@@ -3,7 +3,7 @@
 
 #include "element.h"
 
-namespace Morfeus {
+namespace morfeus {
 namespace mesh {
 
 class TetElement

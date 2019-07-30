@@ -1,6 +1,6 @@
 #include "material.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 Material::Material(const std::string & type)
   : MorfeusObject (type)

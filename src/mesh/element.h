@@ -6,7 +6,7 @@
 
 #include <vector>
 
-namespace Morfeus {
+namespace morfeus {
 namespace mesh {
 
 class Face;

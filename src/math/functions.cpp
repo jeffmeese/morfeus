@@ -2,7 +2,7 @@
 
 #include "constants.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 void math::centroid(std::size_t points, double const * x, double const * y, double & xc, double & yc)
 {

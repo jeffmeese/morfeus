@@ -5,7 +5,7 @@
 
 #include "excitation.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 class ProbeFeed
     : public Excitation

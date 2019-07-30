@@ -1,7 +1,7 @@
 #include "triangleelement.h"
 #include "triangleface.h"
 
-namespace Morfeus {
+namespace morfeus {
 namespace mesh {
 
 TriangleElement::TriangleElement()

@@ -12,7 +12,7 @@
 #include <memory>
 #include <vector>
 
-namespace Morfeus {
+namespace morfeus {
 
 class Excitation;
 class MaterialDatabase;

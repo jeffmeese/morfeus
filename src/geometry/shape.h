@@ -16,8 +16,8 @@
 
 class BoundaryCondition;
 
-namespace Morfeus {
-namespace Geometry {
+namespace morfeus {
+namespace geometry {
 
 class Shape
     : public MorfeusObject

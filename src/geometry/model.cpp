@@ -20,8 +20,8 @@
 #include <string>
 #include <iostream>
 
-namespace Morfeus {
-namespace Geometry {
+namespace morfeus {
+namespace geometry {
 
 Model::Model()
   : MorfeusObject ("Geometry")

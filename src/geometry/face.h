@@ -6,8 +6,8 @@
 
 #include <vector>
 
-namespace Morfeus {
-namespace Geometry {
+namespace morfeus {
+namespace geometry {
 
 class Face
 {

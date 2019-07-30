@@ -1,7 +1,7 @@
 #include "materialdatabase.h"
 #include "material.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 static const std::string OBJECT_ID("Material Database");
 

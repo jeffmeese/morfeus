@@ -5,7 +5,7 @@
 #include <string>
 
 class CommandLine;
-namespace Morfeus {
+namespace morfeus {
 class MeshInformation;
 class MorfeusProject;
 namespace mesh {
@@ -26,16 +26,16 @@ public:
   void execute();
 
 private:
-  void createMesh(Morfeus::mesh::Mesh * mesh);
+  void createMesh(morfeus::mesh::Mesh * mesh);
   void parseCommandLine(int argc, char ** argv);
   void readInput();
-  void reportObservation(const Morfeus::observation::Observation * observation);
-  void runSolution(const Morfeus::mesh::Mesh * mesh, const Morfeus::MeshInformation * meshInfo);
+  void reportObservation(const morfeus::observation::Observation * observation);
+  void runSolution(const morfeus::mesh::Mesh * mesh, const morfeus::MeshInformation * meshInfo);
 
 private:
   std::string mFileName;
   std::unique_ptr<CommandLine> mCommandLine;
-  std::unique_ptr<Morfeus::MorfeusProject> mProject;
+  std::unique_ptr<morfeus::MorfeusProject> mProject;
 };
 
 #endif // APPLICATION_H

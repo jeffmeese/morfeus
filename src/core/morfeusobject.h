@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <string>
 
-namespace Morfeus {
+namespace morfeus {
 
 class MorfeusObject
 {

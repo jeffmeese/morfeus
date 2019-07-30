@@ -1,6 +1,6 @@
 #include "excitation.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 Excitation::Excitation(const std::string & type)
   : MorfeusObject (type)

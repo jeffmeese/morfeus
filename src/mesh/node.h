@@ -4,7 +4,7 @@
 #include "morfeus.h"
 #include "morfeusobject.h"
 
-namespace Morfeus {
+namespace morfeus {
 namespace mesh {
 
 class Node

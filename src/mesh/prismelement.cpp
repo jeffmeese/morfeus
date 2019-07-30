@@ -5,7 +5,7 @@
 #include "mesh.h"
 #include "node.h"
 
-namespace Morfeus {
+namespace morfeus {
 namespace mesh {
 
 PrismElement::PrismElement()

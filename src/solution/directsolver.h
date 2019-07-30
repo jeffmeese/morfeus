@@ -3,7 +3,7 @@
 
 #include "solver.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 class DirectSolver
     : public Solver

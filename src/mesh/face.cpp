@@ -8,7 +8,7 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/geometry/arithmetic/cross_product.hpp>
 
-namespace Morfeus {
+namespace morfeus {
 namespace mesh {
 
 Face::Face(const std::string & type, int32_t number, std::size_t totalNodes, std::size_t totalEdges)

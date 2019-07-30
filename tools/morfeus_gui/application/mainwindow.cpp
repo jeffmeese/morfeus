@@ -48,7 +48,7 @@ void MainWindow::exitProgram()
 void MainWindow::handleAddRectangle()
 {
   GuiProject * project = mApplication.project();
-  std::unique_ptr<Morfeus::Geometry::Rectangle> rectangle(new Morfeus::Geometry::Rectangle);
+  std::unique_ptr<morfeus::geometry::Rectangle> rectangle(new morfeus::geometry::Rectangle);
   AddRectangleCommand * command = new AddRectangleCommand(project, std::move(rectangle));
   mApplication.commandStack().push(command);
   updateWindowTitle();

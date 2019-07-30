@@ -1,6 +1,6 @@
 #include "gaussquad.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 size_t math::gaussQuadTriangle(size_t numPoints, std::vector<math::TrianglePoint> & points)
 {

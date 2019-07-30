@@ -1,6 +1,6 @@
 #include "element.h"
 
-namespace Morfeus {
+namespace morfeus {
 namespace mesh {
 
 Element::Element(const std::string & type, std::size_t nodes, std::size_t edges, std::size_t faces)

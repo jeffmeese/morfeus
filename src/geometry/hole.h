@@ -5,8 +5,8 @@
 #include "point3d.h"
 #include "shape.h"
 
-namespace Morfeus {
-namespace Geometry {
+namespace morfeus {
+namespace geometry {
 
 class Hole
     : public MorfeusObject

@@ -8,10 +8,10 @@
 
 #include <fstream>
 
-namespace Morfeus {
+namespace morfeus {
 
 MorfeusProject::MorfeusProject()
-  : mModel(new Geometry::Model)
+  : mModel(new geometry::Model)
   , mMaterialDatabase(new MaterialDatabase)
   , mMesher(new Mesher)
   , mSolution(new Solution)

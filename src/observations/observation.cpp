@@ -1,6 +1,6 @@
 #include "observation.h"
 
-namespace Morfeus {
+namespace morfeus {
 namespace observation {
 
 Observation::Observation(const std::string & type)

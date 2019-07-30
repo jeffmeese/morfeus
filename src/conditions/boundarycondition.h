@@ -3,7 +3,7 @@
 
 #include "morfeusobject.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 class BoundaryCondition
     : public MorfeusObject

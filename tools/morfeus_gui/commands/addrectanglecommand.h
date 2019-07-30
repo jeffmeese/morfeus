@@ -17,7 +17,7 @@ class AddRectangleCommand
     : public Command
 {
 public:
-  AddRectangleCommand(GuiProject * project, std::unique_ptr<Morfeus::Geometry::Rectangle> rectangle);
+  AddRectangleCommand(GuiProject * project, std::unique_ptr<morfeus::geometry::Rectangle> rectangle);
 
 public:
   static QString commandId();

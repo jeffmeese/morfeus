@@ -3,7 +3,7 @@
 
 #include "observation.h"
 
-namespace Morfeus {
+namespace morfeus {
 namespace observation {
 
 class FarField

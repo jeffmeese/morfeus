@@ -8,11 +8,11 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-namespace Morfeus {
+namespace morfeus {
   class Planewave;
 }
 
-namespace Morfeus {
+namespace morfeus {
 namespace mesh {
 
 class Mesh;

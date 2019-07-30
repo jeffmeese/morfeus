@@ -1,6 +1,6 @@
 #include "meshrefinement.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 MeshRefinement::MeshRefinement()
 {

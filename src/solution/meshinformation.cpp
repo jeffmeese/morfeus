@@ -7,7 +7,7 @@
 
 #include <vector>
 
-namespace Morfeus {
+namespace morfeus {
 
 MeshInformation::MeshInformation()
 {

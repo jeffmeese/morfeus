@@ -20,7 +20,7 @@
 
 #include "tetgen.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 static const std::string OBJECT_ID("Mesher");
 
@@ -51,27 +51,27 @@ Mesher::~Mesher()
 // from the local number of each shape to the global number of
 // the geometry.
 //
-void Mesher::addFacets(const Geometry::Model *geometry, tetgenio *in) const
+void Mesher::addFacets(const geometry::Model *geometry, tetgenio *in) const
 {
   std::size_t vertexOffset = 0;
 
   // Make a list of all mesher polygons from the geometry
   std::vector<Mesher::Polygon> polygons;
   for (std::size_t i = 0; i < geometry->totalShapes(); i++) {
-    const Geometry::Shape * shape = geometry->shape(i);
+    const geometry::Shape * shape = geometry->shape(i);
 
     // The global specification ::Facet below is required to
     // make sure the compiler doesn't try to use Mesher::Facet
-    std::vector<Geometry::Vertex> vertexList = shape->getVertexList();
-    std::vector<Geometry::Face> facetList = shape->getFacetList();
+    std::vector<geometry::Vertex> vertexList = shape->getVertexList();
+    std::vector<geometry::Face> facetList = shape->getFacetList();
     for (std::size_t j = 0; j < facetList.size(); j++) {
-      const Geometry::Face & facet = facetList.at(j);
+      const geometry::Face & facet = facetList.at(j);
 
       Mesher::Polygon p;
       for (std::size_t k = 0; k < facet.totalSegments(); k++) {
-        const Geometry::Segment & segment = facet.segment(k);
+        const geometry::Segment & segment = facet.segment(k);
         int32_t node1 = segment.node1();
-        Geometry::Vertex v1 = vertexList.at(node1);
+        geometry::Vertex v1 = vertexList.at(node1);
         v1.setNumber(v1.number()+vertexOffset);
         p.addVertex(v1);
       }
@@ -135,7 +135,7 @@ void Mesher::addFacets(const Geometry::Model *geometry, tetgenio *in) const
       p->numberofvertices = static_cast<int>(polygon.totalVertices());
       p->vertexlist = new int[p->numberofvertices];
       for (std::size_t k = 0; k < polygon.totalVertices(); k++) {
-        const Geometry::Vertex & v = polygon.vertex(k);
+        const geometry::Vertex & v = polygon.vertex(k);
         p->vertexlist[k] = v.number();
       }
     }
@@ -149,7 +149,7 @@ void Mesher::addFacets(const Geometry::Model *geometry, tetgenio *in) const
 // Essentially, for each hole there are three numbers, the x, y, and z
 // position of the hole. So, for each hole we just increment our
 // counter by 3.
-void Mesher::addHoles(const Geometry::Model *model, tetgenio *in) const
+void Mesher::addHoles(const geometry::Model *model, tetgenio *in) const
 {
   // Allocate holes
   in->numberofholes = static_cast<int>(model->totalHoles());
@@ -159,7 +159,7 @@ void Mesher::addHoles(const Geometry::Model *model, tetgenio *in) const
     // Write holes to input structure
     std::size_t holeIndex = 0;
     for (std::size_t i = 0; i < model->totalHoles(); i++) {
-      const Geometry::Hole * hole = model->hole(i);
+      const geometry::Hole * hole = model->hole(i);
       in->holelist[holeIndex] = hole->position().x();
       in->holelist[holeIndex+1] = hole->position().y();
       in->holelist[holeIndex+2] = hole->position().z();
@@ -209,14 +209,14 @@ void Mesher::addMeshNodes(const tetgenio *out, mesh::Mesh *mesh) const
 // Currently, these are unused but we must still allocate space
 // for the marker list and set the number of attributes to 0.
 //
-void Mesher::addPoints(const Geometry::Model *model, tetgenio *in) const
+void Mesher::addPoints(const geometry::Model *model, tetgenio *in) const
 {
   // Determine the number of points for all shapes
   in->numberofpointattributes = 0;
-  std::vector<Geometry::Vertex> allVertexList;
+  std::vector<geometry::Vertex> allVertexList;
   for (std::size_t i = 0; i < model->totalShapes(); i++) {
-    const Geometry::Shape * shape = model->shape(i);
-    std::vector<Geometry::Vertex> vertexList = shape->getVertexList();
+    const geometry::Shape * shape = model->shape(i);
+    std::vector<geometry::Vertex> vertexList = shape->getVertexList();
     for (std::size_t j = 0; j < vertexList.size(); j++)
       allVertexList.push_back(vertexList.at(j));
   }
@@ -233,7 +233,7 @@ void Mesher::addPoints(const Geometry::Model *model, tetgenio *in) const
   std::size_t pointMarkerIndex = 0;
   int32_t vertexOffset = 0;
   for (std::size_t j = 0; j < allVertexList.size(); j++) {
-    const Geometry::Vertex & v = allVertexList.at(j);
+    const geometry::Vertex & v = allVertexList.at(j);
     in->pointlist[pointIndex] = v.x();
     in->pointlist[pointIndex+1] = v.y();
     in->pointlist[pointIndex+2] = v.z();
@@ -251,7 +251,7 @@ void Mesher::addPoints(const Geometry::Model *model, tetgenio *in) const
 // position of the region along with an attrbute and maximum tet area.
 // So, for each hole we just increment our counter by 5.
 //
-void Mesher::addRegions(const Geometry::Model *model, tetgenio *in) const
+void Mesher::addRegions(const geometry::Model *model, tetgenio *in) const
 {
   // Allocate regions
   in->numberofregions = static_cast<int>(model->totalRegions());
@@ -261,7 +261,7 @@ void Mesher::addRegions(const Geometry::Model *model, tetgenio *in) const
     // Write regions to input structure
     std::size_t regionIndex = 0;
     for (std::size_t i = 0; i < model->totalRegions(); i++) {
-      const Geometry::Region * region = model->region(i);
+      const geometry::Region * region = model->region(i);
       in->regionlist[regionIndex] = region->position().x();
       in->regionlist[regionIndex+1] = region->position().y();
       in->regionlist[regionIndex+2] = region->position().z();
@@ -290,7 +290,7 @@ void Mesher::addRegions(const Geometry::Model *model, tetgenio *in) const
 //! 5. Call tetrahedralize to create the volume mesh
 //! 6. Copy the relevant data from the tetgenio output data structure to the appropriate mesh format
 //!
-void Mesher::createMesh(const Geometry::Model * model, mesh::Mesh * mesh) const
+void Mesher::createMesh(const geometry::Model * model, mesh::Mesh * mesh) const
 {
   // Populate the input structure
   tetgenio in;
@@ -425,7 +425,7 @@ std::size_t Mesher::Facet::totalPolygons() const
   return mPolygons.size();
 }
 
-void Mesher::Polygon::addVertex(const Geometry::Vertex &vertex)
+void Mesher::Polygon::addVertex(const geometry::Vertex &vertex)
 {
   mVertices.push_back(vertex);
 }
@@ -485,14 +485,14 @@ boost::qvm::vec<double, 3> Mesher::Polygon::computeNormal() const
 //!
 bool Mesher::Polygon::isCoplanar(const Mesher::Polygon & polygon, double tolerance) const
 {
-  const Geometry::Vertex & v1 = this->mVertices[0];
+  const geometry::Vertex & v1 = this->mVertices[0];
 
   // First determine the normal vector using the first three points of this polygon
   boost::qvm::vec<double, 3> nv = computeNormal();
 
   // Next determine if each point in the supplied polygon is coplanar with this polygon.
   for (std::size_t i = 0; i < polygon.totalVertices(); i++) {
-    const Geometry::Vertex & v2 = polygon.vertex(i);
+    const geometry::Vertex & v2 = polygon.vertex(i);
 
     // Compute the vector from the first point of this polygon to the current point
     boost::qvm::vec<double, 3> vd = {v2.x()-v1.x(), v2.y()-v1.y(), v2.z()-v1.z()} ;
@@ -511,7 +511,7 @@ std::size_t Mesher::Polygon::totalVertices() const
   return mVertices.size();
 }
 
-const Geometry::Vertex & Mesher::Polygon::vertex(std::size_t index) const
+const geometry::Vertex & Mesher::Polygon::vertex(std::size_t index) const
 {
   return mVertices.at(index);
 }

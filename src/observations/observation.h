@@ -10,7 +10,7 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-namespace Morfeus {
+namespace morfeus {
 
 class MeshInformation;
 namespace mesh {

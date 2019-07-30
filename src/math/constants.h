@@ -3,7 +3,7 @@
 
 #include <boost/math/constants/constants.hpp>
 
-namespace Morfeus {
+namespace morfeus {
 
 namespace math
 {

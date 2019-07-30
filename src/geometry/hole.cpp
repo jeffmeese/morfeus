@@ -4,8 +4,8 @@
 
 static const std::string OBJECT_ID("Hole");
 
-namespace Morfeus {
-namespace Geometry {
+namespace morfeus {
+namespace geometry {
 
 Hole::Hole()
   : MorfeusObject (OBJECT_ID)

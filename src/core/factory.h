@@ -7,7 +7,7 @@
 
 #include <string>
 
-namespace Morfeus {
+namespace morfeus {
 
 template <class AbstractProduct, class IdType=std::string,
           class Creator=boost::function<typename std::remove_pointer<AbstractProduct>::type*()> >

@@ -13,7 +13,7 @@
 #include <boost/numeric/ublas/triangular.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 
-namespace Morfeus {
+namespace morfeus {
 
   class Excitation;
   namespace mesh {
@@ -28,7 +28,7 @@ namespace Morfeus {
   class Solution;
 }
 
-namespace Morfeus {
+namespace morfeus {
 
 class Solver
     : private boost::noncopyable

@@ -3,7 +3,7 @@
 
 #include "excitation.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 class Planewave
     : public Excitation

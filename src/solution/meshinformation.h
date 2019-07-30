@@ -6,7 +6,7 @@
 #include <map>
 #include <vector>
 
-namespace Morfeus {
+namespace morfeus {
   namespace mesh {
     class Element;
     class Face;
@@ -14,7 +14,7 @@ namespace Morfeus {
   }
 }
 
-namespace Morfeus {
+namespace morfeus {
 
 class MeshInformation
 {

@@ -1,7 +1,7 @@
 #include "point3d.h"
 
-namespace Morfeus {
-namespace Geometry {
+namespace morfeus {
+namespace geometry {
 
 Point3D::Point3D()
 {

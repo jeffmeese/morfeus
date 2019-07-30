@@ -3,8 +3,8 @@
 #include <boost/bind.hpp>
 #include <boost/functional/factory.hpp>
 
-namespace Morfeus {
-namespace Geometry {
+namespace morfeus {
+namespace geometry {
 
 static const std::string OBJECT_ID("Cylinder");
 

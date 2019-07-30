@@ -15,7 +15,7 @@
 
 Application::Application(int argc, char ** argv)
   : mCommandLine(new CommandLine)
-  , mProject(new Morfeus::MorfeusProject)
+  , mProject(new morfeus::MorfeusProject)
 {
   parseCommandLine(argc, argv);
 }
@@ -24,7 +24,7 @@ Application::~Application()
 {
 }
 
-void Application::createMesh(Morfeus::mesh::Mesh * mesh)
+void Application::createMesh(morfeus::mesh::Mesh * mesh)
 {
 
 }
@@ -36,15 +36,15 @@ void Application::execute()
 
   // Create the mesh
   std::cout << "Creating Mesh...";
-  std::unique_ptr<Morfeus::mesh::Mesh> mesh(new Morfeus::mesh::Mesh);
-  const Morfeus::Mesher * mesher = mProject->mesher();
+  std::unique_ptr<morfeus::mesh::Mesh> mesh(new morfeus::mesh::Mesh);
+  const morfeus::Mesher * mesher = mProject->mesher();
   mesh->setMaterialDatabase(mProject->materialDatabase());
   mesher->createMesh(mProject->model(), mesh.get());
   std::cout << "done\n";
 
   // Analyze the mesh
   std::cout << "Analyzing Mesh...";
-  std::unique_ptr<Morfeus::MeshInformation> meshInformation(new Morfeus::MeshInformation);
+  std::unique_ptr<morfeus::MeshInformation> meshInformation(new morfeus::MeshInformation);
   meshInformation->analyzeMesh(mesh.get());
   std::cout << "done\n";
 
@@ -71,15 +71,15 @@ void Application::readInput()
   }
 }
 
-void Application::reportObservation(const Morfeus::observation::Observation *observation)
+void Application::reportObservation(const morfeus::observation::Observation *observation)
 {
   observation->report(std::cout);
 }
 
-void Application::runSolution(const Morfeus::mesh::Mesh * mesh, const Morfeus::MeshInformation * meshInfo)
+void Application::runSolution(const morfeus::mesh::Mesh * mesh, const morfeus::MeshInformation * meshInfo)
 {
   // Calculate the total number of frequencies
-  Morfeus::Solution * solution = mProject->solution();
+  morfeus::Solution * solution = mProject->solution();
   double freqStart = solution->frequencyStart();
   double freqStop = solution->frequencyStop();
   double freqIncr = solution->frequencyIncrement();
@@ -108,34 +108,34 @@ void Application::runSolution(const Morfeus::mesh::Mesh * mesh, const Morfeus::M
     double freqGHz = freqStart + i*freqIncr;
 
     // Calculate non angle dependent excitations
-    Morfeus::Solver::vector rhs;
+    morfeus::Solver::vector rhs;
     for (std::size_t i = 0; i < solution->totalExcitations(); i++) {
-      const Morfeus::Excitation * excitation = solution->getExcitation(i);
+      const morfeus::Excitation * excitation = solution->getExcitation(i);
       if (!excitation->angleDependent()) {
         excitation->excite(freqGHz, 0.0, 0.0, mesh, meshInfo, rhs);
       }
     }
 
     for (std::size_t j = 0; j < totalTheta; j++) {
-      double theta = (thetaStart + j*thetaIncr) * Morfeus::math::deg2rad;
+      double theta = (thetaStart + j*thetaIncr) * morfeus::math::deg2rad;
 
       for (std::size_t k = 0; k < totalPhi; k++) {
-        double phi = (phiStart + j*phiIncr) * Morfeus::math::deg2rad;
+        double phi = (phiStart + j*phiIncr) * morfeus::math::deg2rad;
 
         // Calculate angle dependent excitations
         for (std::size_t i = 0; i < solution->totalExcitations(); i++) {
-          const Morfeus::Excitation * excitation = solution->getExcitation(i);
+          const morfeus::Excitation * excitation = solution->getExcitation(i);
           if (excitation->angleDependent()) {
             excitation->excite(freqGHz, theta, phi, mesh, meshInfo, rhs);
           }
         }
 
         // Solve the system
-        Morfeus::Solver::vector efield = solution->solver()->runSolver(freqGHz, mesh, meshInfo, rhs);
+        morfeus::Solver::vector efield = solution->solver()->runSolver(freqGHz, mesh, meshInfo, rhs);
 
         // Solve the system and calculate the observations
         for (std::size_t i = 0; i < solution->totalObservations(); i++) {
-          Morfeus::observation::Observation * observation = solution->getObservation(i);
+          morfeus::observation::Observation * observation = solution->getObservation(i);
           observation->calculate(freqGHz, theta, phi, mesh, meshInfo, efield);
           reportObservation(observation);
         }

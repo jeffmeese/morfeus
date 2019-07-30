@@ -1,7 +1,7 @@
 #include "shape.h"
 
-namespace Morfeus {
-namespace Geometry {
+namespace morfeus {
+namespace geometry {
 
 Shape::Shape(const std::string & type)
   : MorfeusObject (type)

@@ -1,6 +1,6 @@
 #include "perfectelectricconductor.h"
 
-namespace Morfeus {
+namespace morfeus {
 
 PerfectElectricCounductor::PerfectElectricCounductor()
   : BoundaryCondition ("PerfectElectricConductor")

@@ -7,8 +7,8 @@
 #include "rapidxml.hpp"
 #include "xmlutils.h"
 
-namespace Morfeus {
-namespace Geometry {
+namespace morfeus {
+namespace geometry {
 
 class Region
     : public MorfeusObject

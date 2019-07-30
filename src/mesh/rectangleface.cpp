@@ -2,7 +2,7 @@
 
 #include "mesh.h"
 
-namespace Morfeus {
+namespace morfeus {
 namespace mesh {
 
 RectangleFace::RectangleFace()

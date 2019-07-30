@@ -1,7 +1,7 @@
 #include "face.h"
 
-namespace Morfeus {
-namespace Geometry {
+namespace morfeus {
+namespace geometry {
 
 Face::Face()
 {

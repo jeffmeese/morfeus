@@ -1,7 +1,7 @@
 #include "segment.h"
 
-namespace Morfeus {
-namespace Geometry {
+namespace morfeus {
+namespace geometry {
 
 static const std::string OBJECT_ID("Segment");
 

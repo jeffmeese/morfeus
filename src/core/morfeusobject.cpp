@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-namespace Morfeus {
+namespace morfeus {
 
 MorfeusObject::MorfeusObject(const std::string & type)
   : mId(createId())

@@ -2,8 +2,8 @@
 
 static const std::string OBJECT_ID("Region");
 
-namespace Morfeus {
-namespace Geometry {
+namespace morfeus {
+namespace geometry {
 
 Region::Region()
   : MorfeusObject (OBJECT_ID)

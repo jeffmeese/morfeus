@@ -1,7 +1,7 @@
 #include "tetelement.h"
 #include "triangleface.h"
 
-namespace Morfeus {
+namespace morfeus {
 namespace mesh {
 
 TetElement::TetElement()

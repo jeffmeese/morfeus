@@ -7,8 +7,8 @@
 
 #include <memory>
 
-namespace Morfeus {
-  namespace Geometry {
+namespace morfeus {
+  namespace geometry {
     class Model;
   }
   class MaterialDatabase;
@@ -16,7 +16,7 @@ namespace Morfeus {
   class Solution;
 }
 
-namespace Morfeus {
+namespace morfeus {
 
 class MorfeusProject
 {
@@ -24,8 +24,8 @@ public:
   MORFEUS_LIB_DECL MorfeusProject();
 
 public:
-  MORFEUS_LIB_DECL Geometry::Model * model();
-  MORFEUS_LIB_DECL const Geometry::Model * model() const;
+  MORFEUS_LIB_DECL geometry::Model * model();
+  MORFEUS_LIB_DECL const geometry::Model * model() const;
   MORFEUS_LIB_DECL MaterialDatabase * materialDatabase();
   MORFEUS_LIB_DECL const MaterialDatabase * materialDatabase() const;
   MORFEUS_LIB_DECL Mesher * mesher();
@@ -44,18 +44,18 @@ public:
 
 
 private:
-  std::unique_ptr<Geometry::Model> mModel;
+  std::unique_ptr<geometry::Model> mModel;
   std::unique_ptr<MaterialDatabase> mMaterialDatabase;
   std::unique_ptr<Mesher> mMesher;
   std::unique_ptr<Solution> mSolution;
 };
 
-inline Geometry::Model * MorfeusProject::model()
+inline geometry::Model * MorfeusProject::model()
 {
   return mModel.get();
 }
 
-inline const Geometry::Model * MorfeusProject::model() const
+inline const geometry::Model * MorfeusProject::model() const
 {
   return mModel.get();
 }

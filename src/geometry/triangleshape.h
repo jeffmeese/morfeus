@@ -4,8 +4,8 @@
 #include "shape.h"
 #include "point3d.h"
 
-namespace Morfeus {
-namespace Geometry {
+namespace morfeus {
+namespace geometry {
 
 class TriangleShape
     : public Shape

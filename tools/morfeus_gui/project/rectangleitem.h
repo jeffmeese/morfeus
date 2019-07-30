@@ -11,12 +11,12 @@ class RectangleItem
   Q_OBJECT
 
 public:
-  RectangleItem(std::unique_ptr<Morfeus::Geometry::Rectangle> rectangle);
+  RectangleItem(std::unique_ptr<morfeus::geometry::Rectangle> rectangle);
 
 public:
-  const Morfeus::Geometry::Rectangle * rectangle() const;
-  Morfeus::Geometry::Rectangle * rectangle();
-  std::unique_ptr<Morfeus::Geometry::Rectangle> removeRectangle();
+  const morfeus::geometry::Rectangle * rectangle() const;
+  morfeus::geometry::Rectangle * rectangle();
+  std::unique_ptr<morfeus::geometry::Rectangle> removeRectangle();
 
 protected:
   bool loadAttributes(QXmlStreamReader & reader) override;
@@ -26,15 +26,15 @@ protected slots:
   void handleItemChanged();
 
 private:
-  std::unique_ptr<Morfeus::Geometry::Rectangle> mRectangle;
+  std::unique_ptr<morfeus::geometry::Rectangle> mRectangle;
 };
 
-inline const Morfeus::Geometry::Rectangle * RectangleItem::rectangle() const
+inline const morfeus::geometry::Rectangle * RectangleItem::rectangle() const
 {
   return mRectangle.get();
 }
 
-inline Morfeus::Geometry::Rectangle * RectangleItem::rectangle()
+inline morfeus::geometry::Rectangle * RectangleItem::rectangle()
 {
   return mRectangle.get();
 }
