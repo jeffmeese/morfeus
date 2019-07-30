@@ -3,6 +3,8 @@
 
 #include "morfeus.h"
 
+namespace Morfeus {
+
 namespace math
 {
   //template <typename T> std::valarray<T> abs(const std::valarray<T> & v);
@@ -19,6 +21,8 @@ namespace math
   MORFEUS_LIB_DECL double triangleArea(double const * x, double const * y);
   MORFEUS_LIB_DECL double wavelengthToFrequency(double wavelength);
   MORFEUS_LIB_DECL double wavenumberToFrequency(double wavelength);
+}
+
 }
 
 #endif // FUNCTIONS_H

@@ -9,6 +9,8 @@
 #include <boost/bind.hpp>
 #include <boost/functional/factory.hpp>
 
+namespace Morfeus {
+
 static const std::string OBJECT_ID("Iterative Solver");
 
 IterativeSolver::IterativeSolver()
@@ -56,15 +58,15 @@ Solver::vector IterativeSolver::cgs(const vector & rhs)
   return efield;
 }
 
-void IterativeSolver::clearMatrices(const Mesh *mesh, const MeshInformation *meshInfo)
+void IterativeSolver::clearMatrices(const mesh::Mesh *mesh, const MeshInformation *meshInfo)
 {
   for (std::size_t i = 1; i <= mesh->totalElements(); i++) {
-    const Element * element = mesh->element(i);
+    const mesh::Element * element = mesh->element(i);
     for (std::size_t j = 1; j <= element->totalEdges(); j++) {
-      const Edge * sourceEdge = mesh->edge(element->edge(j));
+      const mesh::Edge * sourceEdge = mesh->edge(element->edge(j));
       int32_t sourceUnknown = sourceEdge->unknownNumber();
       for (std::size_t k = 1; k <= element->totalEdges(); k++) {
-        const Edge * testEdge = mesh->edge(element->edge(k));
+        const mesh::Edge * testEdge = mesh->edge(element->edge(k));
         int32_t testUnknown = testEdge->unknownNumber();
 
         if (sourceUnknown >= 0 && sourceUnknown <= testUnknown) {
@@ -165,4 +167,6 @@ Solver::vector IterativeSolver::solveSystem(const vector &rhs)
 
 namespace  {
   const bool r = Solver::factory().registerType(OBJECT_ID, boost::bind(boost::factory<IterativeSolver*>()));
+}
+
 }

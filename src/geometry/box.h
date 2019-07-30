@@ -1,105 +1,87 @@
-#ifndef BOX_H
-#define BOX_H
+#ifndef MORFEUS_GEOMETRY_BOX_H
+#define MORFEUS_GEOMETRY_BOX_H
 
 #include "shape.h"
+#include "point3d.h"
+
+namespace Morfeus {
+namespace Geometry {
 
 class Box
     : public Shape
 {
 public:
   MORFEUS_LIB_DECL Box();
-  MORFEUS_LIB_DECL Box(double xl, double xu, double yl, double yu, double zl, double zu);
+  MORFEUS_LIB_DECL Box(const Point3D & center, double length, double width, double height);
   MORFEUS_LIB_DECL Box(const std::string & name);
-  MORFEUS_LIB_DECL Box(const std::string & name, double xl, double xu, double yl, double yu, double zl, double zu);
+  MORFEUS_LIB_DECL Box(const std::string & name, const Point3D & center, double length, double width, double height);
 
 public:
-  MORFEUS_LIB_DECL double xl() const;
-  MORFEUS_LIB_DECL double xu() const;
-  MORFEUS_LIB_DECL double yl() const;
-  MORFEUS_LIB_DECL double yu() const;
-  MORFEUS_LIB_DECL double zl() const;
-  MORFEUS_LIB_DECL double zu() const;
-  MORFEUS_LIB_DECL void setPosition(double xl, double xu, double yl, double yu, double zl, double zu);
-  MORFEUS_LIB_DECL void setXl(double value);
-  MORFEUS_LIB_DECL void setXu(double value);
-  MORFEUS_LIB_DECL void setYl(double value);
-  MORFEUS_LIB_DECL void setYu(double value);
-  MORFEUS_LIB_DECL void setZl(double value);
-  MORFEUS_LIB_DECL void setZu(double value);
+  MORFEUS_LIB_DECL Point3D center() const;
+  MORFEUS_LIB_DECL double height() const;
+  MORFEUS_LIB_DECL double length() const;
+  MORFEUS_LIB_DECL double width() const;
+  MORFEUS_LIB_DECL void setCenter(const Point3D & pt);
+  MORFEUS_LIB_DECL void setHeight(double value);
+  MORFEUS_LIB_DECL void setLength(double value);
+  MORFEUS_LIB_DECL void setWidth(double value);
 
 protected:
-  std::vector<MesherPolygon> doGetMesherPolygons() const override;
+  std::vector<Face> doGetFacetList() const override;
+  std::vector<Segment> doGetSegmentList() const override;
+  std::vector<Vertex> doGetVertexList() const override;
   void doPrint(std::ostream & output, int tabPos) const override;
   void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
   void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
 
 private:
-  double mXl;
-  double mXu;
-  double mYl;
-  double mYu;
-  double mZl;
-  double mZu;
+  Point3D mCenter;
+  double mHeight;
+  double mLength;
+  double mWidth;
 };
 
-inline double Box::xl() const
+inline Point3D Box::center() const
 {
-  return mXl;
+  return mCenter;
 }
 
-inline double Box::xu() const
+inline double Box::height() const
 {
-  return mXu;
+  return mHeight;
 }
 
-inline double Box::yl() const
+inline double Box::length() const
 {
-  return mYl;
+  return mLength;
 }
 
-inline double Box::yu() const
+inline double Box::width() const
 {
-  return mYu;
+  return mWidth;
 }
 
-inline double Box::zl() const
+inline void Box::setCenter(const Point3D & pt)
 {
-  return mZl;
+  mCenter = pt;
 }
 
-inline double Box::zu() const
+inline void Box::setHeight(double value)
 {
-  return mZu;
+  mHeight = value;
 }
 
-inline void Box::setXl(double value)
+inline void Box::setLength(double value)
 {
-  mXl = value;
+  mLength = value;
 }
 
-inline void Box::setXu(double value)
+inline void Box::setWidth(double value)
 {
-  mXu = value;
+  mWidth = value;
 }
 
-inline void Box::setYl(double value)
-{
-  mYl = value;
+}
 }
 
-inline void Box::setYu(double value)
-{
-  mYu = value;
-}
-
-inline void Box::setZl(double value)
-{
-  mZl = value;
-}
-
-inline void Box::setZu(double value)
-{
-  mZu = value;
-}
-
-#endif // BOX_H
+#endif // MORFEUS_GEOMETRY_BOX_H

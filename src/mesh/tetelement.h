@@ -3,6 +3,9 @@
 
 #include "element.h"
 
+namespace Morfeus {
+namespace mesh {
+
 class TetElement
     : public Element
 {
@@ -15,5 +18,8 @@ protected:
   Face * doConstructFace(std::size_t index) const override;
   void doEdgeNodes(std::size_t index, int32_t & localNode1, int32_t & localNode2) const override;
 };
+
+}
+}
 
 #endif // TETELEMENT_H

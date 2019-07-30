@@ -5,6 +5,8 @@
 #include <boost/bind.hpp>
 #include <boost/functional/factory.hpp>
 
+namespace Morfeus {
+
 static const std::string OBJECT_ID("Isotropic Material");
 
 IsotropicMaterial::IsotropicMaterial()
@@ -79,3 +81,4 @@ namespace  {
   const bool r = Material::factory().registerType(OBJECT_ID,boost::bind(boost::factory<IsotropicMaterial*>()));
 }
 
+}

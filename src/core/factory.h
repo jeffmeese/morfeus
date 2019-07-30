@@ -7,6 +7,8 @@
 
 #include <string>
 
+namespace Morfeus {
+
 template <class AbstractProduct, class IdType=std::string,
           class Creator=boost::function<typename std::remove_pointer<AbstractProduct>::type*()> >
 class Factory
@@ -31,5 +33,7 @@ public:
 private:
   boost::container::flat_map<IdType, Creator> mFactoryMap;
 };
+
+}
 
 #endif // FACTORY_H

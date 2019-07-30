@@ -8,7 +8,13 @@
 
 #include <boost/numeric/ublas/vector.hpp>
 
-class Planewave;
+namespace Morfeus {
+  class Planewave;
+}
+
+namespace Morfeus {
+namespace mesh {
+
 class Mesh;
 
 class Face
@@ -41,7 +47,7 @@ public:
   MORFEUS_LIB_DECL double computeNormal(const Mesh * mesh) const;
   MORFEUS_LIB_DECL dcomplex computeMomEntry(const Face * otherFace, const Mesh * mesh, std::size_t localEdge) const;
   MORFEUS_LIB_DECL FarFieldEntry computeFarFieldEntry(double freqGhz, double theta, double phi, const Mesh* mesh, const vector & efield) const;
-  MORFEUS_LIB_DECL dcomplex computePlanewaveEntry(std::size_t edge, double freq, const Planewave * planewave, const Mesh * mesh) const;
+  MORFEUS_LIB_DECL dcomplex computePlanewaveEntry(std::size_t edge, double freq, double alpha, double thetaInc, double phiInc, const Mesh * mesh) const;
   MORFEUS_LIB_DECL bool isCoincident(const Face * otherFace) const;
   //MORFEUS_LIB_DECL void computeNormal(const Mesh & mesh) const;
 
@@ -52,7 +58,7 @@ protected:
 protected:
   virtual double doComputeArea(const Mesh * mesh) const = 0;
   virtual dcomplex doComputeMomEntry(const Face * otherFace, const Mesh * mesh, std::size_t localEdge) const = 0;
-  virtual dcomplex doComputePlanewaveEntry(std::size_t edge, double freq, const Planewave * planewave, const Mesh * mesh) const = 0;
+  virtual dcomplex doComputePlanewaveEntry(std::size_t edge, double freq, double alpha, double theta, double phi, const Mesh * mesh) const = 0;
 
 private:
   void init(std::size_t totalNodes, std::size_t totalEdges);
@@ -112,6 +118,9 @@ inline std::size_t Face::totalEdges() const
 inline std::size_t Face::totalNodes() const
 {
   return mNodes.size();
+}
+
+}
 }
 
 #endif // FACE_H

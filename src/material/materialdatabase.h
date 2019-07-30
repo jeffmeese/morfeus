@@ -3,9 +3,13 @@
 
 #include "morfeus.h"
 #include "morfeusobject.h"
+#include "rapidxml.hpp"
+#include "xmlutils.h"
 
 #include <memory>
 #include <vector>
+
+namespace Morfeus {
 
 class Material;
 
@@ -51,6 +55,8 @@ inline const Material * MaterialDatabase::material(std::size_t index) const
 inline std::size_t MaterialDatabase::totalMaterials() const
 {
   return mMaterials.size();
+}
+
 }
 
 #endif // MATERIALDATABASE_H

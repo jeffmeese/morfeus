@@ -1,6 +1,8 @@
 #include "materialdatabase.h"
 #include "material.h"
 
+namespace Morfeus {
+
 static const std::string OBJECT_ID("Material Database");
 
 MaterialDatabase::MaterialDatabase()
@@ -69,4 +71,6 @@ std::unique_ptr<Material> MaterialDatabase::takeMaterial(std::size_t index)
   std::unique_ptr<Material> material(mMaterials.at(index).release());
   mMaterials.erase(mMaterials.begin() + index);
   return material;
+}
+
 }

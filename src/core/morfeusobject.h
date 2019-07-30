@@ -2,11 +2,11 @@
 #define MORFEUSOBJECT_H
 
 #include "morfeus.h"
-#include "rapidxml.hpp"
-#include "xmlutils.h"
 
 #include <cstdint>
 #include <string>
+
+namespace Morfeus {
 
 class MorfeusObject
 {
@@ -37,6 +37,8 @@ inline std::string MorfeusObject::id() const
 inline std::string MorfeusObject::type() const
 {
   return mType;
+}
+
 }
 
 #endif // MORFEUSOBJECT_H

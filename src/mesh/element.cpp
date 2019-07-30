@@ -1,7 +1,11 @@
 #include "element.h"
 
+namespace Morfeus {
+namespace mesh {
+
 Element::Element(const std::string & type, std::size_t nodes, std::size_t edges, std::size_t faces)
   : MorfeusObject(type)
+  , mAttribute(DielectricElement)
   , mNumber(-1)
 {
   init(nodes, edges, faces);
@@ -9,14 +13,10 @@ Element::Element(const std::string & type, std::size_t nodes, std::size_t edges,
 
 Element::Element(const std::string & type, int32_t number, std::size_t nodes, std::size_t edges, std::size_t faces)
   : MorfeusObject(type)
+  , mAttribute(DielectricElement)
   , mNumber(number)
 {
   init(nodes, edges, faces);
-}
-
-void Element::addAttribute(double value)
-{
-  mAttributes.push_back(value);
 }
 
 Face * Element::constructFace(std::size_t index) const
@@ -48,4 +48,7 @@ void Element::init(std::size_t nodes, std::size_t edges, std::size_t faces)
   for (std::size_t i = 0; i < nodes; i++) {
     mNodes[i] = -1;
   }
+}
+
+}
 }

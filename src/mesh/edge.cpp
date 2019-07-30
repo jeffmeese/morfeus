@@ -5,6 +5,9 @@
 
 #include <cmath>
 
+namespace Morfeus {
+namespace mesh {
+
 Edge::Edge(int32_t number)
   : MorfeusObject("Edge")
   , mNumber(number)
@@ -37,4 +40,7 @@ double Edge::computeLength(const Mesh *mesh) const
   double z2 = node2->z();
 
   return sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) );
+}
+
+}
 }

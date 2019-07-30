@@ -3,8 +3,13 @@
 
 #include "morfeus.h"
 #include "morfeusobject.h"
+#include "rapidxml.hpp"
+#include "xmlutils.h"
 
 #include <vector>
+
+namespace Morfeus {
+namespace Geometry {
 
 class Vertex
     : public MorfeusObject
@@ -99,6 +104,9 @@ inline double Vertex::y() const
 inline double Vertex::z() const
 {
   return mZ;
+}
+
+}
 }
 
 #endif // VERTEX_H

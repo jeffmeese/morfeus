@@ -1,17 +1,17 @@
-#include "geometry.h"
+#include "model.h"
 
-#include "edge.h"
-#include "hole.h"
-#include "mesh.h"
-#include "node.h"
-#include "region.h"
-#include "shape.h"
-#include "segment.h"
-#include "triangleshape.h"
-#include "vertex.h"
+#include "geometry/hole.h"
+#include "geometry/region.h"
+#include "geometry/shape.h"
+#include "geometry/segment.h"
+#include "geometry/triangleshape.h"
+#include "geometry/vertex.h"
+#include "mesh/edge.h"
+#include "mesh/mesh.h"
+#include "mesh/node.h"
 
-#include "rapidxml.hpp"
-#include "xmlutils.h"
+#include "xml/rapidxml.hpp"
+#include "xml/xmlutils.h"
 
 #include <fstream>
 #include <memory>
@@ -20,31 +20,34 @@
 #include <string>
 #include <iostream>
 
-Geometry::Geometry()
+namespace Morfeus {
+namespace Geometry {
+
+Model::Model()
   : MorfeusObject ("Geometry")
 {
 }
 
-Geometry::~Geometry()
+Model::~Model()
 {
 }
 
-void Geometry::addHole(std::unique_ptr<Hole> hole)
+void Model::addHole(std::unique_ptr<Hole> hole)
 {
   mHoles.push_back(std::move(hole));
 }
 
-void Geometry::addRegion(std::unique_ptr<Region> region)
+void Model::addRegion(std::unique_ptr<Region> region)
 {
   mRegions.push_back(std::move(region));
 }
 
-void Geometry::addShape(std::unique_ptr<Shape> shape)
+void Model::addShape(std::unique_ptr<Shape> shape)
 {
   mShapes.push_back(std::move(shape));
 }
 
-void Geometry::print(std::ostream &output, int tabPos) const
+void Model::print(std::ostream &output, int tabPos) const
 {
   xmlutils::printHeader(output, tabPos, "Geometry");
 
@@ -76,12 +79,12 @@ void Geometry::print(std::ostream &output, int tabPos) const
   output << "\n";
 }
 
-void Geometry::print(int tabPos) const
+void Model::print(int tabPos) const
 {
   print(std::cout, tabPos);
 }
 
-void Geometry::readFromXml(rapidxml::xml_document<> &document, rapidxml::xml_node<> *node)
+void Model::readFromXml(rapidxml::xml_document<> &document, rapidxml::xml_node<> *node)
 {
   rapidxml::xml_node<> * shapesNode = node->first_node("Shapes", 0, false);
   if (shapesNode != nullptr) {
@@ -125,32 +128,34 @@ void Geometry::readFromXml(rapidxml::xml_document<> &document, rapidxml::xml_nod
   }
 }
 
-void Geometry::writeToXml(rapidxml::xml_document<> &document, rapidxml::xml_node<> *node) const
+void Model::writeToXml(rapidxml::xml_document<> &document, rapidxml::xml_node<> *node) const
 {
-  rapidxml::xml_node<> * geomNode = xmlutils::createNode(document, "Geometry");
-
   rapidxml::xml_node<> * shapesNode = xmlutils::createNode(document, "Shapes");
   for (std::size_t i = 0; i < mShapes.size(); i++) {
+    rapidxml::xml_node<> * shapeNode = xmlutils::createNode(document, "Shape");
     const Shape * shape = mShapes.at(i).get();
-    shape->writeToXml(document, shapesNode);
+    shape->writeToXml(document, shapeNode);
   }
-  geomNode->append_node(shapesNode);
+  node->append_node(shapesNode);
 
   rapidxml::xml_node<> * regionsNode = xmlutils::createNode(document, "Regions");
   for (std::size_t i = 0; i < mRegions.size(); i++) {
+    rapidxml::xml_node<> * regionNode = xmlutils::createNode(document, "Region");
     const Region * region = mRegions.at(i).get();
-    region->writeToXml(document, regionsNode);
+    region->writeToXml(document, regionNode);
   }
-  geomNode->append_node(regionsNode);
+  node->append_node(regionsNode);
 
   rapidxml::xml_node<> * holesNode = xmlutils::createNode(document, "Holes");
   for (std::size_t i = 0; i < mHoles.size(); i++) {
+    rapidxml::xml_node<> * holeNode = xmlutils::createNode(document, "Hole");
     const Hole * hole = mHoles.at(i).get();
-    hole->writeToXml(document, holesNode);
+    hole->writeToXml(document, holeNode);
   }
-  geomNode->append_node(holesNode);
+  node->append_node(holesNode);
+}
 
-  node->append_node(geomNode);
+}
 }
 
 

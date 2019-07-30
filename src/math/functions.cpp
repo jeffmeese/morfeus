@@ -2,6 +2,8 @@
 
 #include "constants.h"
 
+namespace Morfeus {
+
 void math::centroid(std::size_t points, double const * x, double const * y, double & xc, double & yc)
 {
 
@@ -34,4 +36,6 @@ double math::wavelengthToFrequency(double wavelength)
 double math::wavenumberToFrequency(double wavelength)
 {
   return 2.0*boost::math::double_constants::pi / math::wavelengthToFrequency(wavelength);
+}
+
 }

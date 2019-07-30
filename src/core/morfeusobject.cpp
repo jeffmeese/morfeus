@@ -6,6 +6,8 @@
 
 #include <iostream>
 
+namespace Morfeus {
+
 MorfeusObject::MorfeusObject(const std::string & type)
   : mId(createId())
   , mType(type)
@@ -27,4 +29,6 @@ std::string MorfeusObject::createId()
   boost::uuids::random_generator gen;
   boost::uuids::uuid uuid = gen();
   return boost::uuids::to_string(uuid);
+}
+
 }

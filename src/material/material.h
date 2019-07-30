@@ -3,10 +3,14 @@
 
 #include "morfeus.h"
 #include "morfeusobject.h"
+#include "rapidxml.hpp"
+#include "xmlutils.h"
 
 #include "factory.h"
 
 #include <map>
+
+namespace Morfeus {
 
 class Material
     : public MorfeusObject
@@ -94,6 +98,8 @@ inline void Material::setValue(Direction direction, dcomplex value)
 inline dcomplex Material::value(Direction direction) const
 {
   return mValues[direction];
+}
+
 }
 
 #endif // MATERIAL_H

@@ -5,6 +5,8 @@
 
 #include "excitation.h"
 
+namespace Morfeus {
+
 class ProbeFeed
     : public Excitation
 {
@@ -31,7 +33,7 @@ public:
   MORFEUS_LIB_DECL void setVoltage(const dcomplex & value);
 
 protected:
-  void doExcite(double freqGHz, const Mesh * mesh, const MeshInformation * meshInfo, vector & rhs) const override;
+  void doExcite(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const MeshInformation * meshInfo, vector & rhs) const override;
   void doPrint(std::ostream & output, int tabPos) const override;
   void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
   void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
@@ -117,6 +119,8 @@ inline double ProbeFeed::z1() const
 inline double ProbeFeed::z2() const
 {
   return mZ2;
+}
+
 }
 
 #endif // PROBEFEED_H

@@ -8,6 +8,9 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/geometry/arithmetic/cross_product.hpp>
 
+namespace Morfeus {
+namespace mesh {
+
 Face::Face(const std::string & type, int32_t number, std::size_t totalNodes, std::size_t totalEdges)
   : MorfeusObject(type)
   , mNumber(number)
@@ -70,9 +73,9 @@ dcomplex Face::computeMomEntry(const Face * otherFace, const Mesh * mesh, std::s
   return doComputeMomEntry(otherFace, mesh, localEdge);
 }
 
-dcomplex Face::computePlanewaveEntry(std::size_t edge, double freq, const Planewave *planewave, const Mesh * mesh) const
+dcomplex Face::computePlanewaveEntry(std::size_t edge, double freq, double alpha, double theta, double phi, const Mesh * mesh) const
 {
-  return doComputePlanewaveEntry(edge, freq, planewave, mesh);
+  return doComputePlanewaveEntry(edge, freq, alpha, theta, phi, mesh);
 }
 
 void Face::init(std::size_t totalNodes, std::size_t totalEdges)
@@ -106,4 +109,7 @@ bool Face::isCoincident(const Face *otherFace) const
   }
 
   return true;
+}
+
+}
 }

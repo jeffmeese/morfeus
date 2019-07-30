@@ -5,17 +5,30 @@
 #include "morfeusobject.h"
 
 #include "factory.h"
+#include "rapidxml.hpp"
+#include "xmlutils.h"
 
 #include <boost/noncopyable.hpp>
 #include <boost/numeric/ublas/matrix_sparse.hpp>
 #include <boost/numeric/ublas/triangular.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 
-class Excitation;
-class Mesh;
-class MeshInformation;
-class Observation;
-class Solution;
+namespace Morfeus {
+
+  class Excitation;
+  namespace mesh {
+  class Mesh;
+  }
+  class MeshInformation;
+
+  namespace Observation {
+    class Observation;
+  }
+
+  class Solution;
+}
+
+namespace Morfeus {
 
 class Solver
     : private boost::noncopyable
@@ -24,12 +37,17 @@ class Solver
   class SolverFactory;
 
 public:
+  typedef boost::numeric::ublas::vector<dcomplex> vector;
+
+public:
+  MORFEUS_LIB_DECL bool allocated() const;
   MORFEUS_LIB_DECL void print(std::ostream & output, int tabPos = 0) const;
   MORFEUS_LIB_DECL void print(int tabPos = 0) const;
   MORFEUS_LIB_DECL void readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node);
   MORFEUS_LIB_DECL void writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const;
   MORFEUS_LIB_DECL friend std::ostream & operator<<(std::ostream & output, const Solver & object);
-  MORFEUS_LIB_DECL void runSolver(double freqGhz, const Mesh * mesh, Solution * solution);
+  MORFEUS_LIB_DECL vector runSolver(double freqGhz, const mesh::Mesh * mesh, const MeshInformation * meshInfo, const vector & rhs);
+  MORFEUS_LIB_DECL void setAllocated(bool value);
 
 public:
   MORFEUS_LIB_DECL static SolverFactory & factory();
@@ -41,11 +59,10 @@ protected:
 protected:
   typedef boost::numeric::ublas::mapped_matrix<dcomplex> sparse_matrix;
   typedef boost::numeric::ublas::triangular_matrix<dcomplex> triangular_matrix;
-  typedef boost::numeric::ublas::vector<dcomplex> vector;
 
 protected:
   virtual void allocateMatrices(const MeshInformation * meshInfo) = 0;
-  virtual void clearMatrices(const Mesh * mesh, const MeshInformation * meshInfo) = 0;
+  virtual void clearMatrices(const mesh::Mesh * mesh, const MeshInformation * meshInfo) = 0;
   virtual void doPrint(std::ostream & output, int tabPos = 0) const = 0;
   virtual void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) = 0;
   virtual void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const = 0;
@@ -54,8 +71,8 @@ protected:
   virtual void updateFiniteElementMatrix(std::size_t row, std::size_t col, const dcomplex & i1, const dcomplex & i2) = 0;
 
 private:
-  void buildBiMatrix(double freqGHz, const Mesh * mesh, const MeshInformation * meshInfo);
-  void buildFeMatrix(double freqGHz, const Mesh * mesh, const MeshInformation * meshInfo);
+  void buildBiMatrix(double freqGHz, const mesh::Mesh * mesh, const MeshInformation * meshInfo);
+  void buildFeMatrix(double freqGHz, const mesh::Mesh * mesh, const MeshInformation * meshInfo);
 
 private:
   class SolverFactory
@@ -69,13 +86,19 @@ private:
   };
 
 private:
-  typedef std::unique_ptr<MeshInformation> MeshInformationPtr;
-
-private:
   bool mAllocated;
-  vector mEfield;
-  vector mRhs;
-  MeshInformationPtr mMeshInfo;
 };
+
+inline bool Solver::allocated() const
+{
+  return mAllocated;
+}
+
+inline void Solver::setAllocated(bool value)
+{
+  mAllocated = value;
+}
+
+}
 
 #endif // SOLVER_H

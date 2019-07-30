@@ -5,11 +5,19 @@
 #include "morfeusobject.h"
 
 #include "factory.h"
+#include "rapidxml.hpp"
+#include "xmlutils.h"
 
 #include <boost/numeric/ublas/vector.hpp>
 
-class Mesh;
+namespace Morfeus {
+
 class MeshInformation;
+namespace mesh {
+  class Mesh;
+}
+
+namespace observation {
 
 class Observation
     : public MorfeusObject
@@ -24,10 +32,10 @@ public:
   MORFEUS_LIB_DECL void setName(const std::string & name);
 
 public:
-  MORFEUS_LIB_DECL void calculate(double freqGHz, const Mesh * mesh, const MeshInformation * meshInfo, const vector & efield);
-  MORFEUS_LIB_DECL void excite(double freqGHz, const Mesh * mesh, const MeshInformation * meshInfo, vector & rhs) const;
+  MORFEUS_LIB_DECL void calculate(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const MeshInformation * meshInfo, const vector & efield);
   MORFEUS_LIB_DECL void print(std::ostream & output, int tabPos = 0) const;
   MORFEUS_LIB_DECL void print(int tabPos = 0) const;
+  MORFEUS_LIB_DECL void report(std::ostream & output) const;
   MORFEUS_LIB_DECL void readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node);
   MORFEUS_LIB_DECL void writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const;
   MORFEUS_LIB_DECL friend std::ostream & operator<<(std::ostream & output, const Observation & object);
@@ -41,8 +49,9 @@ protected:
   Observation(const std::string & type, const std::string & id, const std::string & name);
 
 protected:
-  virtual void doCalculate(double freqGHz, const Mesh * mesh, const MeshInformation * meshInfo, const vector & efield) = 0;
+  virtual void doCalculate(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const MeshInformation * meshInfo, const vector & efield) = 0;
   virtual void doPrint(std::ostream & output, int tabPos = 0) const = 0;
+  virtual void doReport(std::ostream & output) const = 0;
   virtual void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) = 0;
   virtual void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const = 0;
 
@@ -69,6 +78,9 @@ inline std::string Observation::name() const
 inline void Observation::setName(const std::string & name)
 {
   mName = name;
+}
+
+}
 }
 
 #endif // OBSERVATION_H

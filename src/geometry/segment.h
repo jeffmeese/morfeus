@@ -3,6 +3,11 @@
 
 #include "morfeus.h"
 #include "morfeusobject.h"
+#include "rapidxml.hpp"
+#include "xmlutils.h"
+
+namespace Morfeus {
+namespace Geometry {
 
 class Segment
     : public MorfeusObject
@@ -76,4 +81,8 @@ inline void Segment::setNumber(int32_t value)
 {
   mNumber = value;
 }
+
+}
+}
+
 #endif // SEGMENT_H

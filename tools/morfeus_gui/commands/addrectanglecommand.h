@@ -7,6 +7,8 @@
 
 #include <QStandardItem>
 
+#include "geometry/rectangle.h"
+
 class GuiProject;
 class Rectangle;
 class ProjectItem;
@@ -15,7 +17,7 @@ class AddRectangleCommand
     : public Command
 {
 public:
-  AddRectangleCommand(GuiProject * project, std::unique_ptr<Rectangle> rectangle);
+  AddRectangleCommand(GuiProject * project, std::unique_ptr<Morfeus::Geometry::Rectangle> rectangle);
 
 public:
   static QString commandId();

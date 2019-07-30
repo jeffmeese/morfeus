@@ -3,10 +3,14 @@
 
 #include "morfeus.h"
 
+namespace Morfeus {
+
 class MeshRefinement
 {
 public:
   MORFEUS_LIB_DECL MeshRefinement();
 };
+
+}
 
 #endif // MESHREFINEMENT_H

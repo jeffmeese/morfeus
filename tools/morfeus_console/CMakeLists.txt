@@ -10,14 +10,12 @@ cmake_policy(SET CMP0020 NEW)
 set(SRC_FILES
   application.cpp
   commandline.cpp
-  inputdata.cpp
   main.cpp
 )
 
 set(HDR_FILES
   application.h
   commandline.h
-  inputdata.h
 )
 
 add_executable(${TARGET_NAME} ${HDR_FILES} ${SRC_FILES})

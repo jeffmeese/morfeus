@@ -1,5 +1,8 @@
 #include "observation.h"
 
+namespace Morfeus {
+namespace observation {
+
 Observation::Observation(const std::string & type)
   : MorfeusObject (type)
 {
@@ -18,9 +21,9 @@ Observation::Observation(const std::string & type, const std::string & id, const
 {
 }
 
-void Observation::calculate(double freqGHz, const Mesh *mesh, const MeshInformation *meshInfo, const vector &efield)
+void Observation::calculate(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh *mesh, const MeshInformation *meshInfo, const vector &efield)
 {
-  doCalculate(freqGHz, mesh, meshInfo, efield);
+  doCalculate(freqGHz, thetaInc, phiInc, mesh, meshInfo, efield);
 }
 
 Observation::ObservationFactory & Observation::factory()
@@ -35,7 +38,7 @@ Observation * Observation::ObservationFactory::create(const std::string & type)
   return object;
 }
 
- bool Observation::ObservationFactory::registerType(const std::string & type, boost::function<Observation*()> creator)
+bool Observation::ObservationFactory::registerType(const std::string & type, boost::function<Observation*()> creator)
 {
   mFactory.registerFactory(type, creator);
   return true;
@@ -52,6 +55,11 @@ void Observation::print(int tabPos) const
   print(std::cout);
 }
 
+void Observation::report(std::ostream &output) const
+{
+  doReport(output);
+}
+
 void Observation::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
 {
   setName(xmlutils::readAttribute<std::string>(node, "name"));
@@ -60,8 +68,9 @@ void Observation::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml
 
 void Observation::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
-  rapidxml::xml_node<> * childNode = xmlutils::createNode(document, "Observation");
-  xmlutils::writeAttribute(document, childNode, "name", mName);
-  doXmlWrite(document, childNode);
-  node->append_node(childNode);
+  xmlutils::writeAttribute(document, node, "name", mName);
+  doXmlWrite(document, node);
+}
+
+}
 }

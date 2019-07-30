@@ -1,11 +1,17 @@
-#ifndef GEOMETRY_H
-#define GEOMETRY_H
+#ifndef MORFEUS_GEOMETRY_MODEL_H
+#define MORFEUS_GEOMETRY_MODEL_H
 
 #include "morfeus.h"
 #include "morfeusobject.h"
 
+#include "rapidxml.hpp"
+#include "xmlutils.h"
+
 #include <memory>
 #include <vector>
+
+namespace Morfeus {
+namespace Geometry {
 
 class Hole;
 class Mesh;
@@ -14,12 +20,12 @@ class Segment;
 class Shape;
 class Vertex;
 
-class Geometry
+class Model
     : public MorfeusObject
 {
 public:
-  MORFEUS_LIB_DECL Geometry();
-  MORFEUS_LIB_DECL virtual ~Geometry();
+  MORFEUS_LIB_DECL Model();
+  MORFEUS_LIB_DECL virtual ~Model();
 
 public:
   MORFEUS_LIB_DECL const Hole * hole(std::size_t index) const;
@@ -41,7 +47,7 @@ public:
   MORFEUS_LIB_DECL void print(int tabPos = 0) const;
   MORFEUS_LIB_DECL void readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node);
   MORFEUS_LIB_DECL void writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const;
-  MORFEUS_LIB_DECL friend std::ostream & operator<<(std::ostream & output, const Geometry & object);
+  MORFEUS_LIB_DECL friend std::ostream & operator<<(std::ostream & output, const Model & object);
 
 private:
   typedef std::unique_ptr<Hole> HolePtr;
@@ -59,49 +65,52 @@ private:
   ShapeVector mShapes;
 };
 
-inline const Hole * Geometry::hole(std::size_t index) const
+inline const Hole * Model::hole(std::size_t index) const
 {
   return mHoles.at(index).get();
 }
 
-inline Hole * Geometry::hole(std::size_t index)
+inline Hole * Model::hole(std::size_t index)
 {
   return mHoles.at(index).get();
 }
 
-inline const Region * Geometry::region(std::size_t index) const
+inline const Region * Model::region(std::size_t index) const
 {
   return mRegions.at(index).get();
 }
 
-inline Region * Geometry::region(std::size_t index)
+inline Region * Model::region(std::size_t index)
 {
   return mRegions.at(index).get();
 }
 
-inline const Shape * Geometry::shape(std::size_t index) const
+inline const Shape * Model::shape(std::size_t index) const
 {
   return mShapes.at(index).get();
 }
 
-inline Shape * Geometry::shape(std::size_t index)
+inline Shape * Model::shape(std::size_t index)
 {
   return mShapes.at(index).get();
 }
 
-inline std::size_t Geometry::totalHoles() const
+inline std::size_t Model::totalHoles() const
 {
   return mHoles.size();
 }
 
-inline std::size_t Geometry::totalRegions() const
+inline std::size_t Model::totalRegions() const
 {
   return mRegions.size();
 }
 
-inline std::size_t Geometry::totalShapes() const
+inline std::size_t Model::totalShapes() const
 {
   return mShapes.size();
 }
 
-#endif // GEOMETRY_H
+}
+}
+
+#endif // MORFEUS_GEOMETRY_MODEL_H

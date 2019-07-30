@@ -4,7 +4,10 @@
 #include "morfeus.h"
 #include "morfeusobject.h"
 
-class Mesh;
+namespace Morfeus {
+namespace mesh {
+
+  class Mesh;
 
 class Edge
     : public MorfeusObject
@@ -65,6 +68,9 @@ inline void Edge::setUnknownNumber(int32_t value)
 inline int32_t Edge::unknownNumber() const
 {
   return mUnknown;
+}
+
+}
 }
 
 #endif // EDGE_H

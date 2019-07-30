@@ -7,6 +7,9 @@
 #include <fstream>
 #include <sstream>
 
+namespace Morfeus {
+namespace mesh {
+
 Mesh::Mesh()
   : MorfeusObject("Mesh")
   , mMaterialDatabase(nullptr)
@@ -41,31 +44,44 @@ void Mesh::createEdges(Element *element)
   for (int32_t i = 0; i < element->totalEdges(); i++) {
     int32_t edgeNode1 = -1, edgeNode2 = -1;
     element->edgeNodes(i, edgeNode1, edgeNode2);
-    int node1 = element->edge(edgeNode1);
-    int node2 = element->edge(edgeNode2);
-
+    int node1 = element->node(edgeNode1);
+    int node2 = element->node(edgeNode2);
     int edgeNumber = -1;
-    EdgeList & edgeList1 = mEdgeTable[node1];
-    for (EdgeList::iterator itr = edgeList1.begin(); itr != edgeList1.end(); ++itr) {
-      if (itr->first == node2) {
-        edgeNumber = itr->second;
-        break;
-      }
+    Edge * edge = findEdge(node1, node2);
+    if (edge != nullptr) {
+      edgeNumber = edge->number();
     }
-
-    EdgeList & edgeList2 = mEdgeTable[node2];
-    for (EdgeList::iterator itr = edgeList2.begin(); itr != edgeList2.end(); ++itr) {
-      if (itr->first == node1) {
-        edgeNumber = itr->second;
-        break;
-      }
-    }
-
-    if (edgeNumber == -1) {
+    else {
       edgeNumber = static_cast<int32_t>(mEdges.size());
       EdgePtr edge(new Edge(edgeNumber, node1, node2));
       addEdge(std::move(edge));
     }
+    element->setEdge(i, edgeNumber);
+
+
+//    int edgeNumber = -1;
+//    EdgeList & edgeList1 = mEdgeTable[node1];
+//    for (EdgeList::iterator itr = edgeList1.begin(); itr != edgeList1.end(); ++itr) {
+//      if (itr->first == node2) {
+//        edgeNumber = itr->second;
+//        break;
+//      }
+//    }
+
+//    EdgeList & edgeList2 = mEdgeTable[node2];
+//    for (EdgeList::iterator itr = edgeList2.begin(); itr != edgeList2.end(); ++itr) {
+//      if (itr->first == node1) {
+//        edgeNumber = itr->second;
+//        break;
+//      }
+//    }
+
+//    if (edgeNumber == -1) {
+//      edgeNumber = static_cast<int32_t>(mEdges.size());
+//      EdgePtr edge(new Edge(edgeNumber, node1, node2));
+//      addEdge(std::move(edge));
+//    }
+
   }
 }
 
@@ -212,4 +228,50 @@ void Mesh::writeGeomFile(const std::string &fileName) const
     }
     output << "\n";
   }
+}
+
+void Mesh::writeVtkFile(const std::string &fileName) const
+{
+  std::ofstream output(fileName);
+
+  output << "# vtk DataFile Version 2.0\n";
+  output << "Unstructured Grid\n";
+  output << "ASCII\n";
+  output << "DATASET UNSTRUCTURED_GRID\n";
+  output << "POINTS " << totalNodes() << " double\n";
+  for (std::size_t i = 0; i < mNodes.size(); i++) {
+    const Node * node = mNodes.at(i).get();
+    output << node->x() << " " << node->y() << " " << node->z() << "\n";
+  }
+  output << "\n";
+
+  output << "CELLS " << mElements.size() << " " << mElements.size()*5 << "\n";
+  for (std::size_t i = 0; i < mElements.size(); i++) {
+    const Element * element = mElements.at(i).get();
+    output << element->totalNodes() << " ";
+    for (std::size_t j = 0; j < element->totalNodes(); j++) {
+      int32_t number = element->node(j);
+      output << number << " ";
+    }
+    output << "\n";
+  }
+  output << "\n";
+
+  output << "CELL_TYPES " << mElements.size() << "\n";
+  for (std::size_t i = 0; i < mElements.size(); i++) {
+    output << "10\n";
+  }
+  output << "\n";
+
+  output << "CELL_DATA " << mElements.size() << "\n";
+  output << "SCALARS cell_scalars int 1\n";
+  output << "LOOKUP_TABLE default\n";
+  for (std::size_t i = 0; i < mElements.size(); i++) {
+    const Element * element = mElements.at(i).get();
+    output << element->attribute() << "\n";
+  }
+  output << "\n";
+}
+
+}
 }

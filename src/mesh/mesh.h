@@ -9,10 +9,17 @@
 #include <memory>
 #include <vector>
 
-class Edge;
-class Element;
-class MaterialDatabase;
-class Node;
+namespace Morfeus {
+  class MaterialDatabase;
+  namespace mesh {
+    class Edge;
+    class Element;
+    class Node;
+  }
+}
+
+namespace Morfeus {
+namespace mesh {
 
 class Mesh
     : public MorfeusObject
@@ -32,11 +39,11 @@ public:
   MORFEUS_LIB_DECL void addEdge(std::unique_ptr<Edge> edge);
   MORFEUS_LIB_DECL void addElement(std::unique_ptr<Element> element);
   MORFEUS_LIB_DECL void addNode(std::unique_ptr<Node> node);
-  MORFEUS_LIB_DECL Edge * edge(std::size_t index);
-  MORFEUS_LIB_DECL const Edge * edge(std::size_t index) const;
-  MORFEUS_LIB_DECL Element * element(std::size_t index);
-  MORFEUS_LIB_DECL const Element * element(std::size_t index) const;
-  MORFEUS_LIB_DECL Edge * findEdge(int32_t node1, int32_t node2) const;
+  MORFEUS_LIB_DECL mesh::Edge * edge(std::size_t index);
+  MORFEUS_LIB_DECL const mesh::Edge * edge(std::size_t index) const;
+  MORFEUS_LIB_DECL mesh::Element * element(std::size_t index);
+  MORFEUS_LIB_DECL const mesh::Element * element(std::size_t index) const;
+  MORFEUS_LIB_DECL mesh::Edge * findEdge(int32_t node1, int32_t node2) const;
   MORFEUS_LIB_DECL int32_t findNearestNode(double x, double y, double z) const;
   MORFEUS_LIB_DECL Node * node(std::size_t index);
   MORFEUS_LIB_DECL const Node * node(std::size_t index) const;
@@ -44,6 +51,7 @@ public:
   MORFEUS_LIB_DECL std::unique_ptr<Element> takeElement(std::size_t index);
   MORFEUS_LIB_DECL std::unique_ptr<Node> takeNode(std::size_t index);
   MORFEUS_LIB_DECL void writeGeomFile(const std::string & fileName) const;
+  MORFEUS_LIB_DECL void writeVtkFile(const std::string & fileName) const;
 
   // Implementation
 private:
@@ -78,6 +86,9 @@ inline const MaterialDatabase * Mesh::materialDatabase() const
 inline void Mesh::setMaterialDatabase(const MaterialDatabase *database)
 {
   mMaterialDatabase = database;
+}
+
+}
 }
 
 #endif // MESH_H

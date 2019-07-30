@@ -2,6 +2,9 @@
 
 #include "mesh.h"
 
+namespace Morfeus {
+namespace mesh {
+
 RectangleFace::RectangleFace()
   : Face("RectangleFace", 4, 4)
 {
@@ -36,8 +39,11 @@ dcomplex RectangleFace::doComputeMomEntry(const Face * otherFace, const Mesh * m
   return value;
 }
 
-dcomplex RectangleFace::doComputePlanewaveEntry(std::size_t edge, double freq, const Planewave *planewave, const Mesh *mesh) const
+dcomplex RectangleFace::doComputePlanewaveEntry(std::size_t edge, double freq, double alpha, double theta, double phi, const Mesh *mesh) const
 {
   dcomplex value(0.0,0.0);
   return value;
+}
+
+}
 }

@@ -1,5 +1,7 @@
 #include "material.h"
 
+namespace Morfeus {
+
 Material::Material(const std::string & type)
   : MorfeusObject (type)
 {
@@ -56,10 +58,8 @@ void Material::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_no
 
 void Material::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
-  rapidxml::xml_node<> * childNode = xmlutils::createNode(document, "Material");
-  xmlutils::writeAttribute(document, childNode, "name", mName);
-  doXmlWrite(document, childNode);
-  node->append_node(childNode);
+  xmlutils::writeAttribute(document, node, "name", mName);
+  doXmlWrite(document, node);
 }
 
 void Material::init()
@@ -67,4 +67,6 @@ void Material::init()
   for (std::size_t i = 0; i < 9; i++) {
     mValues[i] = dcomplex(1.0, 0.0);
   }
+}
+
 }

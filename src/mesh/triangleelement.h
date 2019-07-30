@@ -4,6 +4,9 @@
 #include "morfeus.h"
 #include "element.h"
 
+namespace Morfeus {
+namespace mesh {
+
 class TriangleElement
     : public Element
 {
@@ -16,5 +19,8 @@ protected:
   void doComputeFeEntry(const Mesh * mesh, std::size_t localEdge1, std::size_t localEdge2, dcomplex & i1, dcomplex & i2) const override;
   Face * doConstructFace(std::size_t index) const override;
 };
+
+}
+}
 
 #endif // TRIANGLEELEMENT_H

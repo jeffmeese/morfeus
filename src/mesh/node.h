@@ -4,6 +4,9 @@
 #include "morfeus.h"
 #include "morfeusobject.h"
 
+namespace Morfeus {
+namespace mesh {
+
 class Node
     : public MorfeusObject
 {
@@ -55,5 +58,8 @@ private:
   double mY;
   double mZ;
 };
+
+}
+}
 
 #endif // NODE_H

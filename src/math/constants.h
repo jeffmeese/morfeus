@@ -3,6 +3,8 @@
 
 #include <boost/math/constants/constants.hpp>
 
+namespace Morfeus {
+
 namespace math
 {
   static const double deg2rad = boost::math::double_constants::pi / 180.0;
@@ -13,6 +15,8 @@ namespace math
   const std::complex<double> cj(0.0,1.0);
   const std::complex<double> zero(0.0,0.0);
   const std::complex<double> one(1.0,0.0);
+}
+
 }
 
 #endif // CONSTANTS_H

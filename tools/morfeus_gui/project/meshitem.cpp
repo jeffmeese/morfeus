@@ -2,7 +2,7 @@
 
 #include <mesh.h>
 
-MeshItem::MeshItem(std::unique_ptr<Mesh> mesh)
+MeshItem::MeshItem(std::unique_ptr<Morfeus::mesh::Mesh> mesh)
   : ProjectItem ("Mesh")
   , mMesh(std::move(mesh))
 {

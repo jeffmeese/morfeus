@@ -4,6 +4,9 @@
 #include "morfeus.h"
 #include "element.h"
 
+namespace Morfeus {
+namespace mesh {
+
 class PrismElement
     : public Element
 {
@@ -27,5 +30,8 @@ private:
   double sxy(double const * x, double const * y) const;
   double syy(double const * x, double const * y) const;
 };
+
+}
+}
 
 #endif // PRISMELEMENT_H

@@ -3,6 +3,8 @@
 
 #include "solver.h"
 
+namespace Morfeus {
+
 class IterativeSolver
     : public Solver
 {
@@ -30,7 +32,7 @@ public:
 
 protected:
   void allocateMatrices(const MeshInformation * meshInfo) override;
-  void clearMatrices(const Mesh * mesh, const MeshInformation * meshInfo) override;
+  void clearMatrices(const mesh::Mesh * mesh, const MeshInformation * meshInfo) override;
   void doPrint(std::ostream & output, int tabPos) const override;
   void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
   void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
@@ -92,6 +94,8 @@ inline void IterativeSolver::setMinIterations(std::size_t value)
 inline void IterativeSolver::setTolerance(double value)
 {
   mTolerance = value;
+}
+
 }
 
 #endif // ITERATIVESOLVER_H

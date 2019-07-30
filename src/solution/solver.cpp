@@ -3,7 +3,7 @@
 #include "edge.h"
 #include "element.h"
 #include "excitation.h"
-#include "face.h"
+#include "mesh/face.h"
 #include "functions.h"
 #include "isotropicmaterial.h"
 #include "material.h"
@@ -13,30 +13,30 @@
 #include "observation.h"
 #include "solution.h"
 
+namespace Morfeus {
+
 Solver::Solver(const std::string & type)
   : MorfeusObject(type)
-  , mMeshInfo(new MeshInformation)
+  , mAllocated(false)
 {
-  mAllocated = false;
 }
 
 Solver::Solver(const std::string & type, const std::string & id)
   : MorfeusObject (type, id)
-  , mMeshInfo(new MeshInformation)
+  , mAllocated(false)
 {
-  mAllocated = false;
 }
 
-void Solver::buildBiMatrix(double freqGHz, const Mesh *mesh, const MeshInformation *meshInfo)
+void Solver::buildBiMatrix(double freqGHz, const mesh::Mesh *mesh, const MeshInformation *meshInfo)
 {
-  std::vector<const Face*> boundaryFaces = meshInfo->boundaryFaces();
+  std::vector<mesh::Face*> boundaryFaces = meshInfo->boundaryFaces();
   for (std::size_t i = 0; i < boundaryFaces.size(); i++) {
-    const Face * face = boundaryFaces.at(i);
+    const mesh::Face * face = boundaryFaces.at(i);
     for (std::size_t j = 0; j < face->totalEdges(); j++) {
-      const Edge * sourceEdge = mesh->edge(face->edge(j));
+      const mesh::Edge * sourceEdge = mesh->edge(face->edge(j));
       int32_t sourceUnknown = sourceEdge->unknownNumber();
       for (std::size_t k = 0; k < face->totalEdges(); j++) {
-        const Edge * testEdge = mesh->edge(face->edge(k));
+        const mesh::Edge * testEdge = mesh->edge(face->edge(k));
         int32_t testUnknown = testEdge->unknownNumber();
 
         if (sourceUnknown >= 0 && sourceUnknown <= testUnknown) {
@@ -50,7 +50,7 @@ void Solver::buildBiMatrix(double freqGHz, const Mesh *mesh, const MeshInformati
   }
 }
 
-void Solver::buildFeMatrix(double freqGHz, const Mesh *mesh, const MeshInformation *meshInfo)
+void Solver::buildFeMatrix(double freqGHz, const mesh::Mesh *mesh, const MeshInformation *meshInfo)
 {
   const MaterialDatabase * materialDatabase = mesh->materialDatabase();
   double k0 = math::frequencyToWavenumber(freqGHz);
@@ -61,7 +61,7 @@ void Solver::buildFeMatrix(double freqGHz, const Mesh *mesh, const MeshInformati
   // Loop through each element and calculate the finite element entry for each pair
   // of edges if both edges have unknown values
   for (std::size_t i = 1; i <= mesh->totalElements(); i++) {
-    const Element * element = mesh->element(i);
+    const mesh::Element * element = mesh->element(i);
     int32_t epsId = element->epsilonId();
     int32_t muId = element->muId();
 
@@ -76,10 +76,10 @@ void Solver::buildFeMatrix(double freqGHz, const Mesh *mesh, const MeshInformati
     }
 
     for (std::size_t j = 1; j <= element->totalEdges(); j++) {
-      const Edge * sourceEdge = mesh->edge(element->edge(j));
+      const mesh::Edge * sourceEdge = mesh->edge(element->edge(j));
       int32_t sourceUnknown = sourceEdge->unknownNumber();
       for (std::size_t k = 1; k <= element->totalEdges(); k++) {
-        const Edge * testEdge = mesh->edge(element->edge(k));
+        const mesh::Edge * testEdge = mesh->edge(element->edge(k));
         int32_t testUnknown = testEdge->unknownNumber();
 
         if (sourceUnknown >= 0 && sourceUnknown <= testUnknown) {
@@ -136,9 +136,7 @@ void Solver::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node
 
 void Solver::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
-  rapidxml::xml_node<> * solverNode = xmlutils::createNode(document, "Solver");
-  doXmlWrite(document, solverNode);
-  node->append_node(solverNode);
+  doXmlWrite(document, node);
 }
 
 std::ostream & operator<<(std::ostream & output, const Solver & object)
@@ -147,15 +145,9 @@ std::ostream & operator<<(std::ostream & output, const Solver & object)
   return output;
 }
 
-void Solver::runSolver(double freqGHz, const Mesh * mesh, Solution * solution)
+Solver::vector Solver::runSolver(double freqGHz, const mesh::Mesh * mesh, const MeshInformation * meshInfo, const vector & rhs)
 {
-  MeshInformation * meshInfo(mMeshInfo.get());
-
-  // Allocate the matrices if needed
-  if (!mAllocated) {
-    meshInfo->analyzeMesh(mesh);
-    mEfield.resize(meshInfo->totalUnknowns());
-    mRhs.resize(meshInfo->totalUnknowns());
+  if (mAllocated) {
     allocateMatrices(meshInfo);
     mAllocated = true;
   }
@@ -163,26 +155,14 @@ void Solver::runSolver(double freqGHz, const Mesh * mesh, Solution * solution)
   // Clear any current matrix values
   clearMatrices(mesh, meshInfo);
 
-  // Clear the rhs and efield
-  for (std::size_t i = 0; i < meshInfo->totalUnknowns(); i++) {
-    mRhs[i] = dcomplex(0.0,0.0);
-    mEfield[i] = dcomplex(0.0, 0.0);
-  }
-
   // Build the coefficient matrices
   buildFeMatrix(freqGHz, mesh, meshInfo);
   buildBiMatrix(freqGHz, mesh, meshInfo);
 
-  // Calculate the coefficient matrix and build the excitation vector
-  for (std::size_t i = 0; i < solution->totalExcitations(); i++) {
-    const Excitation * excitation = solution->getExcitation(i);
-    excitation->excite(freqGHz, mesh, meshInfo, mRhs);
-  }
+  // Allocate the efield matrix and solve the system
+  vector efield(meshInfo->totalUnknowns(), dcomplex(0.0, 0.0));
+  efield = solveSystem(rhs);
+  return efield;
+}
 
-  // Solve the system and calculate the observations
-  mEfield = solveSystem(mRhs);
-  for (std::size_t i = 0; i < solution->totalObservations(); i++) {
-    Observation * observation = solution->getObservation(i);
-    observation->calculate(freqGHz, mesh, meshInfo, mEfield);
-  }
 }

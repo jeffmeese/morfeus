@@ -2,21 +2,20 @@
 #define MESHITEM_H
 
 #include "projectitem.h"
-
-class Mesh;
+#include "mesh/mesh.h"
 
 class MeshItem
     : public ProjectItem
 {
 public:
-  MeshItem(std::unique_ptr<Mesh> mesh);
+  MeshItem(std::unique_ptr<Morfeus::mesh::Mesh> mesh);
 
 protected:
   bool loadAttributes(QXmlStreamReader & reader) override;
   bool saveAttributes(QXmlStreamWriter & writer) const override;
 
 private:
-  std::unique_ptr<Mesh> mMesh;
+  std::unique_ptr<Morfeus::mesh::Mesh> mMesh;
 };
 
 #endif // MESHITEM_H

@@ -3,10 +3,18 @@
 
 #include "morfeus.h"
 
+#include <map>
 #include <vector>
 
-class Face;
-class Mesh;
+namespace Morfeus {
+  namespace mesh {
+    class Element;
+    class Face;
+    class Mesh;
+  }
+}
+
+namespace Morfeus {
 
 class MeshInformation
 {
@@ -14,25 +22,26 @@ public:
   MORFEUS_LIB_DECL MeshInformation();
 
 public:
-  MORFEUS_LIB_DECL const std::vector<const Face*> & boundaryFaces() const;
+  MORFEUS_LIB_DECL const std::vector<mesh::Face*> & boundaryFaces() const;
   MORFEUS_LIB_DECL std::size_t totalBoundaryUnknowns() const;
   MORFEUS_LIB_DECL std::size_t totalUnknowns() const;
 
 public:
-  MORFEUS_LIB_DECL void analyzeMesh(const Mesh * mesh);
+  MORFEUS_LIB_DECL void analyzeMesh(mesh::Mesh * mesh);
 
 private:
-  void identifyBoundaryFaces(const Mesh * mesh);
+  void identifyBoundaryFaces(mesh::Mesh * mesh);
   void init();
-  void markMeshUnknowns(const Mesh * mesh);
+  void markMeshUnknowns(mesh::Mesh * mesh);
 
 private:
   std::size_t mTotalBoundaryUnknowns;
   std::size_t mTotalUnknowns;
-  std::vector<const Face*> mBoundaryFaces;
+  std::vector<mesh::Face*> mBoundaryFaces;
+  std::map<mesh::Face*, mesh::Element*> mFaceToElement;
 };
 
-inline const std::vector<const Face*> & MeshInformation::boundaryFaces() const
+inline const std::vector<mesh::Face*> & MeshInformation::boundaryFaces() const
 {
   return mBoundaryFaces;
 }
@@ -44,6 +53,8 @@ inline std::size_t MeshInformation::totalBoundaryUnknowns() const
 inline std::size_t MeshInformation::totalUnknowns() const
 {
   return mTotalUnknowns;
+}
+
 }
 
 #endif // MESHINFORMATION_H

@@ -1,5 +1,8 @@
 #include "node.h"
 
+namespace Morfeus {
+namespace mesh {
+
 Node::Node(int32_t number)
   : MorfeusObject("Node")
   , mNumber(number)
@@ -170,4 +173,7 @@ void Node::setY(double value)
 void Node::setZ(double value)
 {
   mZ = value;
+}
+
+}
 }

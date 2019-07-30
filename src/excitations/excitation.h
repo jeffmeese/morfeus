@@ -5,10 +5,17 @@
 #include "morfeusobject.h"
 
 #include "factory.h"
+#include "rapidxml.hpp"
+#include "xmlutils.h"
 
 #include <boost/numeric/ublas/vector.hpp>
 
-class Mesh;
+namespace Morfeus {
+
+namespace mesh {
+  class Mesh;
+}
+
 class MeshInformation;
 
 class Excitation
@@ -20,11 +27,13 @@ protected:
   typedef boost::numeric::ublas::vector<dcomplex> vector;
 
 public:
+  MORFEUS_LIB_DECL bool angleDependent() const;
   MORFEUS_LIB_DECL std::string name() const;
+  MORFEUS_LIB_DECL void setAngleDependent(bool value);
   MORFEUS_LIB_DECL void setName(const std::string & name);
 
 public:
-  MORFEUS_LIB_DECL void excite(double freqGHz, const Mesh * mesh, const MeshInformation * meshInfo, vector & rhs) const;
+  MORFEUS_LIB_DECL void excite(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const MeshInformation * meshInfo, vector & rhs) const;
   MORFEUS_LIB_DECL void print(std::ostream & output, int tabPos = 0) const;
   MORFEUS_LIB_DECL void print(int tabPos = 0) const;
   MORFEUS_LIB_DECL void readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node);
@@ -40,7 +49,7 @@ protected:
   Excitation(const std::string & type, const std::string & id, const std::string & name);
 
 protected:
-  virtual void doExcite(double freqGHz, const Mesh * mesh, const MeshInformation * meshInfo, vector & rhs) const = 0;
+  virtual void doExcite(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const MeshInformation * meshInfo, vector & rhs) const = 0;
   virtual void doPrint(std::ostream & output, int tabPos = 0) const = 0;
   virtual void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) = 0;
   virtual void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const = 0;
@@ -59,18 +68,31 @@ private:
   };
 
 private:
+  bool mAngleDependent;
   std::string mName;
   static ExcitationFactory mFactory;
 };
+
+inline bool Excitation::angleDependent() const
+{
+  return mAngleDependent;
+}
 
 inline std::string Excitation::name() const
 {
   return mName;
 }
 
+inline void Excitation::setAngleDependent(bool value)
+{
+  mAngleDependent = value;
+}
+
 inline void Excitation::setName(const std::string &name)
 {
   mName = name;
+}
+
 }
 
 #endif // EXCITATION_H

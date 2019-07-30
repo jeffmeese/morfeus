@@ -3,6 +3,8 @@
 
 #include "morfeusobject.h"
 
+namespace Morfeus {
+
 class BoundaryCondition
     : public MorfeusObject
 {
@@ -25,6 +27,8 @@ inline int BoundaryCondition::attribute() const
 inline void BoundaryCondition::setAttribute(int attribute)
 {
   mAttribute = attribute;
+}
+
 }
 
 #endif // BOUNDARYCONDITION_H

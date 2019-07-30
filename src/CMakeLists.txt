@@ -33,11 +33,13 @@ set(SRC_FILES
   geometry/box.cpp
   geometry/circle.cpp
   geometry/cylinder.cpp
-  geometry/geometry.cpp
+  geometry/face.cpp
   geometry/hole.cpp
+  geometry/model.cpp
+  geometry/plane.cpp
   geometry/point2d.cpp
   geometry/point3d.cpp
-  geometry/polygonshape.cpp
+  geometry/polygon.cpp
   geometry/rectangle.cpp
   geometry/region.cpp
   geometry/segment.cpp
@@ -48,6 +50,7 @@ set(SRC_FILES
   material/material.cpp
   material/materialdatabase.cpp
   math/functions.cpp
+  math/gaussquad.cpp
   mesh/edge.cpp
   mesh/element.cpp
   mesh/face.cpp
@@ -58,12 +61,11 @@ set(SRC_FILES
   mesh/tetelement.cpp
   mesh/triangleelement.cpp
   mesh/triangleface.cpp
-  mesher/mesherfacet.cpp
   mesher/mesher.cpp
-  mesher/mesherpolygon.cpp
   mesher/meshrefinement.cpp
   observations/farfield.cpp
   observations/observation.cpp
+  project/morfeusproject.cpp
   solution/solution.cpp
   solution/directsolver.cpp
   solution/iterativesolver.cpp
@@ -83,11 +85,13 @@ set(HDR_FILES
   geometry/box.h
   geometry/circle.h
   geometry/cylinder.h
-  geometry/geometry.h
+  geometry/face.h
   geometry/hole.h
+  geometry/model.h
+  geometry/plane.h
   geometry/point2d.h
   geometry/point3d.h
-  geometry/polygonshape.h
+  geometry/polygon.h
   geometry/rectangle.h
   geometry/region.h
   geometry/segment.h
@@ -99,6 +103,7 @@ set(HDR_FILES
   material/materialdatabase.h
   math/constants.h
   math/functions.h
+  math/gaussquad.h
   mesh/edge.h
   mesh/element.h
   mesh/face.h
@@ -109,22 +114,21 @@ set(HDR_FILES
   mesh/tetelement.h
   mesh/triangleelement.h
   mesh/triangleface.h
-  mesher/mesherfacet.h
   mesher/mesher.h
-  mesher/mesherpolygon.h
   mesher/meshrefinement.h
   observations/farfield.h
   observations/observation.h
-  xml/rapidxml.hpp
-  xml/rapidxml_iterators.hpp
-  xml/rapidxml_print.hpp
-  xml/rapidxml_utils.hpp
-  xml/xmlutils.h
+  project/morfeusproject.h
   solution/solution.h
   solution/directsolver.h
   solution/iterativesolver.h
   solution/meshinformation.h
   solution/solver.h
+  xml/rapidxml.hpp
+  xml/rapidxml_iterators.hpp
+  xml/rapidxml_print.hpp
+  xml/rapidxml_utils.hpp
+  xml/xmlutils.h
 )
 
 # Create target
@@ -154,6 +158,7 @@ target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/mat
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/mesh)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/mesher)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/observations)
+target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/project)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/solution)
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/xml)
 target_include_directories(${TARGET_NAME} PUBLIC ${Boost_INCLUDE_DIRS})

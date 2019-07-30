@@ -2,28 +2,39 @@
 #define SHAPE_H
 
 #include "morfeus.h"
-#include "morfeusobject.h"
 
-#include "factory.h"
-#include "mesherpolygon.h"
-#include "segment.h"
-#include "vertex.h"
+#include "core/morfeusobject.h"
+#include "core/factory.h"
+#include "geometry/face.h"
+#include "geometry/segment.h"
+#include "geometry/vertex.h"
+#include "xml/rapidxml.hpp"
+#include "xml/xmlutils.h"
 
 #include <string>
 #include <vector>
 
-class Polygon;
+class BoundaryCondition;
+
+namespace Morfeus {
+namespace Geometry {
+
 class Shape
     : public MorfeusObject
 {
   class ShapeFactory;
 
 public:
+  MORFEUS_LIB_DECL BoundaryCondition * boundaryCondition();
+  MORFEUS_LIB_DECL const BoundaryCondition * boundaryCondition() const;
   MORFEUS_LIB_DECL std::string name() const;
+  MORFEUS_LIB_DECL void setBoundaryCondition(BoundaryCondition * condition);
   MORFEUS_LIB_DECL void setName(const std::string & name);
 
 public:
-  MORFEUS_LIB_DECL std::vector<MesherPolygon> getMesherPolygons() const;
+  MORFEUS_LIB_DECL std::vector<Face> getFacetList() const;
+  MORFEUS_LIB_DECL std::vector<Segment> getSegmentList() const;
+  MORFEUS_LIB_DECL std::vector<Vertex> getVertexList() const;
   MORFEUS_LIB_DECL void print(std::ostream & output, int tabPos = 0) const;
   MORFEUS_LIB_DECL void print(int tabPos = 0) const;
   MORFEUS_LIB_DECL void readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node);
@@ -39,7 +50,9 @@ protected:
   Shape(const std::string & type, const std::string & id, const std::string & name);
 
 protected:
-  virtual std::vector<MesherPolygon> doGetMesherPolygons() const = 0;
+  virtual std::vector<Face> doGetFacetList() const = 0;
+  virtual std::vector<Segment> doGetSegmentList() const = 0;
+  virtual std::vector<Vertex> doGetVertexList() const = 0;
   virtual void doPrint(std::ostream & output, int tabPos = 0) const = 0;
   virtual void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) = 0;
   virtual void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const = 0;
@@ -64,6 +77,7 @@ private:
   };
 
 private:
+  BoundaryCondition * mBoundaryCondition;
   std::string mName;
 };
 
@@ -75,6 +89,9 @@ inline std::string Shape::name() const
 inline void Shape::setName(const std::string &name)
 {
   mName = name;
+}
+
+}
 }
 
 #endif // SHAPE_H

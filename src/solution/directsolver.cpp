@@ -5,6 +5,8 @@
 #include <boost/bind.hpp>
 #include <boost/functional/factory.hpp>
 
+namespace Morfeus {
+
 static const std::string OBJECT_ID("Direct Solver");
 
 DirectSolver::DirectSolver()
@@ -18,7 +20,7 @@ void DirectSolver::allocateMatrices(const MeshInformation * meshInfo)
   std::size_t totalUnknowns = meshInfo->totalUnknowns();
 }
 
-void DirectSolver::clearMatrices(const Mesh *mesh, const MeshInformation *meshInfo)
+void DirectSolver::clearMatrices(const mesh::Mesh *mesh, const MeshInformation *meshInfo)
 {
 
 }
@@ -56,4 +58,6 @@ void DirectSolver::updateFiniteElementMatrix(std::size_t row, std::size_t col, c
 
 namespace  {
   const bool r = Solver::factory().registerType(OBJECT_ID, boost::bind(boost::factory<DirectSolver*>()));
+}
+
 }

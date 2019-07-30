@@ -3,12 +3,14 @@
 #include "constants.h"
 #include "edge.h"
 #include "functions.h"
-#include "mesh.h"
+#include "mesh/mesh.h"
 #include "node.h"
 #include "xmlutils.h"
 
 #include <boost/bind.hpp>
 #include <boost/functional/factory.hpp>
+
+namespace Morfeus {
 
 static const std::string OBJECT_ID("Probe Feed");
 
@@ -30,7 +32,7 @@ ProbeFeed::ProbeFeed(const std::string & id, const std::string & name)
   init(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, dcomplex(1.0, 0.0));
 }
 
-void ProbeFeed::doExcite(double freqGHz, const Mesh * mesh, const MeshInformation * meshInfo, vector & rhs) const
+void ProbeFeed::doExcite(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const MeshInformation * meshInfo, vector & rhs) const
 {
   double k0 = math::frequencyToWavenumber(freqGHz);
 
@@ -42,7 +44,7 @@ void ProbeFeed::doExcite(double freqGHz, const Mesh * mesh, const MeshInformatio
 
   int32_t n1 = mesh->findNearestNode(mX1, mY1, mZ1);
   int32_t n2 = mesh->findNearestNode(mX2, mY2, mZ2);
-  const Edge * edge = mesh->findEdge(n1, n2);
+  const mesh::Edge * edge = mesh->edge(1);
   int unknown = edge->unknownNumber();
 
   rhs[unknown-1] = -(math::cj * k0 * math::z0 * mVoltage * edge->computeLength(mesh));
@@ -109,4 +111,6 @@ void ProbeFeed::setPosition(double x1, double y1, double z1, double x2, double y
 
 namespace  {
   const bool r = Excitation::factory().registerType(OBJECT_ID, boost::bind(boost::factory<ProbeFeed*>()));
+}
+
 }

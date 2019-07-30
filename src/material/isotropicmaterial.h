@@ -3,6 +3,8 @@
 
 #include "material.h"
 
+namespace Morfeus {
+
 class IsotropicMaterial
     : public Material
 {
@@ -48,6 +50,8 @@ inline void IsotropicMaterial::setPermeability(dcomplex value)
 inline void IsotropicMaterial::setPermittivity(dcomplex value)
 {
   mPermittivity = value;
+}
+
 }
 
 #endif // ISOTROPICMATERIAL_H

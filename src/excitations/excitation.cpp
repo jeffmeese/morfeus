@@ -1,19 +1,24 @@
 #include "excitation.h"
 
+namespace Morfeus {
+
 Excitation::Excitation(const std::string & type)
   : MorfeusObject (type)
+  , mAngleDependent(false)
 {
 }
 
 Excitation::Excitation(const std::string & type, const std::string & name)
   : MorfeusObject (type)
   , mName(name)
+  , mAngleDependent(false)
 {
 }
 
 Excitation::Excitation(const std::string & type, const std::string & id, const std::string & name)
   : MorfeusObject (type, id)
   , mName(name)
+  , mAngleDependent(false)
 {
 }
 
@@ -34,9 +39,9 @@ bool Excitation::ExcitationFactory::registerType(const std::string &type, boost:
   return true;
 }
 
-void Excitation::excite(double freqGHz, const Mesh *mesh, const MeshInformation *meshInfo, vector &rhs) const
+void Excitation::excite(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh *mesh, const MeshInformation *meshInfo, vector &rhs) const
 {
-  doExcite(freqGHz, mesh, meshInfo, rhs);
+  doExcite(freqGHz, thetaInc, phiInc, mesh, meshInfo, rhs);
 }
 
 void Excitation::print(std::ostream & output, int tabPos) const
@@ -58,14 +63,14 @@ void Excitation::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_
 
 void Excitation::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
-  rapidxml::xml_node<> * childNode = xmlutils::createNode(document, "Excitation");
-  xmlutils::writeAttribute(document, childNode, "name", mName);
-  doXmlWrite(document, childNode);
-  node->append_node(childNode);
+  xmlutils::writeAttribute(document, node, "name", mName);
+  doXmlWrite(document, node);
 }
 
 std::ostream & operator<<(std::ostream & output, const Excitation & object)
 {
   object.print(output);
   return output;
+}
+
 }

@@ -1,6 +1,9 @@
 #include "triangleelement.h"
 #include "triangleface.h"
 
+namespace Morfeus {
+namespace mesh {
+
 TriangleElement::TriangleElement()
   : Element("TriangleElement", 3, 3, 1)
 {
@@ -33,4 +36,7 @@ void TriangleElement::doEdgeNodes(std::size_t index, int32_t & localNode1, int32
   static const int edge_node2[] = {1, 2, 0};
   localNode1 = edge_node1[index];
   localNode2 = edge_node2[index];
+}
+
+}
 }

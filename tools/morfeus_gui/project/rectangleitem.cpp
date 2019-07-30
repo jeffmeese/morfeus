@@ -2,7 +2,7 @@
 
 #include "rectangle.h"
 
-RectangleItem::RectangleItem(std::unique_ptr<Rectangle> rectangle)
+RectangleItem::RectangleItem(std::unique_ptr<Morfeus::Geometry::Rectangle> rectangle)
   : ProjectItem ("Rectangle")
   , mRectangle(std::move(rectangle))
 {
@@ -20,7 +20,7 @@ bool RectangleItem::loadAttributes(QXmlStreamReader & reader)
   return !reader.hasError();
 }
 
-std::unique_ptr<Rectangle> RectangleItem::removeRectangle()
+std::unique_ptr<Morfeus::Geometry::Rectangle> RectangleItem::removeRectangle()
 {
   return std::move(mRectangle);
 }

@@ -1,5 +1,8 @@
 #include "segment.h"
 
+namespace Morfeus {
+namespace Geometry {
+
 static const std::string OBJECT_ID("Segment");
 
 Segment::Segment()
@@ -99,4 +102,7 @@ void Segment::setNodes(int32_t node1, int32_t node2)
 {
   setNode1(node1);
   setNode2(node2);
+}
+
+}
 }

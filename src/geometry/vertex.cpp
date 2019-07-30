@@ -1,5 +1,8 @@
 #include "vertex.h"
 
+namespace Morfeus {
+namespace Geometry {
+
 static const std::string OBJECT_ID("Vertex");
 
 Vertex::Vertex()
@@ -63,4 +66,7 @@ void Vertex::setPosition(double x, double y, double z)
   setX(x);
   setY(y);
   setZ(z);
+}
+
+}
 }

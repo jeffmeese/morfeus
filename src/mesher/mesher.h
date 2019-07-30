@@ -4,14 +4,30 @@
 #include "morfeus.h"
 #include "morfeusobject.h"
 
-#include "mesherfacet.h"
+#include "rapidxml.hpp"
+#include "xmlutils.h"
 #include "vertex.h"
 
 #include <vector>
 
-class Geometry;
-class Mesh;
-class MeshRefinement;
+#include <boost/qvm/vec.hpp>
+
+class tetgenio;
+
+namespace Morfeus {
+namespace Geometry {
+  class Model;
+}
+}
+
+namespace Morfeus {
+  namespace mesh {
+    class Mesh;
+  }
+  class MeshRefinement;
+}
+
+namespace Morfeus {
 
 class Mesher
     : public MorfeusObject
@@ -31,16 +47,51 @@ public:
   MORFEUS_LIB_DECL void setMinEdgeLength(double value);
 
 public:
-  MORFEUS_LIB_DECL void createMesh(const Geometry * geometry, double cavityHeight, Mesh * mesh) const;
+  MORFEUS_LIB_DECL void createMesh(const Geometry::Model * model, mesh::Mesh * mesh) const;
   MORFEUS_LIB_DECL void print(std::ostream & output, int tabPos = 0) const;
   MORFEUS_LIB_DECL void print(int tabPos = 0) const;
   MORFEUS_LIB_DECL void readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node);
   MORFEUS_LIB_DECL void writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const;
   MORFEUS_LIB_DECL friend std::ostream & operator<<(std::ostream & output, const Mesher & object);
 
-public:
-  void formVertexList(std::vector<Vertex> & vertices, const Geometry & geometry);
-  MORFEUS_LIB_DECL void formFacets(std::vector<MesherFacet> & facets, const Geometry * geometry);
+private:
+  void addFacets(const Geometry::Model * model, tetgenio * in) const;
+  void addHoles(const Geometry::Model * model, tetgenio * in) const;
+  void addMeshElements(const tetgenio * out, mesh::Mesh * mesh) const;
+  void addMeshNodes(const tetgenio * out, mesh::Mesh * mesh) const;
+  void addPoints(const Geometry::Model * model, tetgenio * in) const;
+  void addRegions(const Geometry::Model * model, tetgenio * in) const;
+  void writePolyFile(const std::string & fileName, const tetgenio * in) const;
+
+private:
+  class Polygon
+  {
+  public:
+    const Geometry::Vertex & vertex(std::size_t index) const;
+    std::size_t totalVertices() const;
+
+  public:
+    void addVertex(const Geometry::Vertex & vertex);
+    void clearVertices();
+    boost::qvm::vec<double, 3> computeNormal() const;
+    bool isCoplanar(const Mesher::Polygon & polygon, double tolerance = 1e-8) const;
+
+  private:
+    std::vector<Geometry::Vertex> mVertices;
+  };
+
+  class Facet
+  {
+  public:
+    const Mesher::Polygon & polygon(std::size_t index) const;
+    std::size_t totalPolygons() const;
+
+  public:
+    void addPolygon(const Mesher::Polygon & polygon);
+
+  private:
+    std::vector<Mesher::Polygon> mPolygons;
+  };
 
 private:
   double mMaxEdgeLength;
@@ -87,6 +138,8 @@ inline void Mesher::setMaxEdgeLength(double value)
 inline void Mesher::setMinEdgeLength(double value)
 {
   mMinEdgeLength = value;
+}
+
 }
 
 #endif // MESHER_H

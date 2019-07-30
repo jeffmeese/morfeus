@@ -5,6 +5,9 @@
 #include "mesh.h"
 #include "node.h"
 
+namespace Morfeus {
+namespace mesh {
+
 PrismElement::PrismElement()
   : Element("PrismElement", 6, 9, 5)
 {
@@ -325,4 +328,7 @@ double PrismElement::sxy(double const * x, double const * y) const
 
   ret = math::triangleArea(x,y) / 12.0*ret;
   return ret;
+}
+
+}
 }

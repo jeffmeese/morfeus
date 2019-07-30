@@ -5,9 +5,16 @@
 #include <string>
 
 class CommandLine;
-class Geometry;
-class InputData;
-class Mesh;
+namespace Morfeus {
+class MeshInformation;
+class MorfeusProject;
+namespace mesh {
+  class Mesh;
+}
+namespace observation {
+class Observation;
+}
+}
 
 class Application
 {
@@ -19,16 +26,16 @@ public:
   void execute();
 
 private:
-  void createMesh();
+  void createMesh(Morfeus::mesh::Mesh * mesh);
   void parseCommandLine(int argc, char ** argv);
   void readInput();
-  void runSolution();
+  void reportObservation(const Morfeus::observation::Observation * observation);
+  void runSolution(const Morfeus::mesh::Mesh * mesh, const Morfeus::MeshInformation * meshInfo);
 
 private:
   std::string mFileName;
   std::unique_ptr<CommandLine> mCommandLine;
-  std::unique_ptr<InputData> mInputData;
-  std::unique_ptr<Mesh> mMesh;
+  std::unique_ptr<Morfeus::MorfeusProject> mProject;
 };
 
 #endif // APPLICATION_H

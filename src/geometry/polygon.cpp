@@ -3,6 +3,9 @@
 #include <boost/bind.hpp>
 #include <boost/functional/factory.hpp>
 
+namespace Morfeus {
+namespace Geometry {
+
 static const std::string OBJECT_ID("Polygon");
 
 Polygon::Polygon()
@@ -23,29 +26,31 @@ Polygon::Polygon(const std::string & id, const std::string & name)
 
 }
 
-void Polygon::addPoint(double x, double y)
+void Polygon::addPoint(double x, double y, double z)
 {
-  addPoint(Point2D(x, y));
+  addPoint(Point3D(x, y, z));
 }
 
-void Polygon::addPoint(const Point2D & point)
+void Polygon::addPoint(const Point3D & point)
 {
   mPoints.push_back(point);
 }
 
+std::vector<Face> Polygon::doGetFacetList() const
+{
+  std::vector<Face> facets;
+  return facets;
+}
+
 std::vector<Segment> Polygon::doGetSegmentList() const
 {
-  std::vector<Segment> segmentList;
-  return segmentList;
+  std::vector<Segment> segments;
+  return segments;
 }
 
 std::vector<Vertex> Polygon::doGetVertexList() const
 {
   std::vector<Vertex> vertexList;
-  for (std::size_t i = 0; i < mPoints.size(); i++) {
-    const Point2D & pt = mPoints.at(i);
-    vertexList.push_back(Vertex(static_cast<int32_t>(i), pt.x(), pt.y()));
-  }
   return vertexList;
 }
 
@@ -58,7 +63,7 @@ void Polygon::doPrint(std::ostream &output, int tabPos) const
   }
 }
 
-void Polygon::doXmlRead(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
+void Polygon::doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
 {
   mPoints.clear();
 
@@ -66,9 +71,9 @@ void Polygon::doXmlRead(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
   if (pointsNode != nullptr) {
     rapidxml::xml_node<> * pointNode = pointsNode->first_node("Point", 0, false);
     while (pointNode != nullptr) {
-      double x = xmlutils::readAttribute<double>(pointNode, "x");
-      double y = xmlutils::readAttribute<double>(pointNode, "y");
-      mPoints.push_back(Point2D(x,y));
+      Point3D pt;
+      pt.readFromXml(document, pointNode);
+      mPoints.push_back(pt);
     }
   }
 }
@@ -77,13 +82,16 @@ void Polygon::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node
 {
   xmlutils::writeAttribute(document, node, "type", OBJECT_ID);
   for (std::size_t i = 0; i < mPoints.size(); i++) {
+    const Point3D & pt = mPoints.at(i);
     rapidxml::xml_node<> * pointNode = xmlutils::createNode(document, "point");
-    xmlutils::writeAttribute(document, pointNode, "x", mPoints.at(i).x());
-    xmlutils::writeAttribute(document, pointNode, "y", mPoints.at(i).y());
+    pt.writeToXml(document, pointNode);
     node->append_node(pointNode);
   }
 }
 
 namespace  {
   const bool r = Shape::factory().registerType(OBJECT_ID, boost::bind(boost::factory<Polygon*>()));
+}
+
+}
 }

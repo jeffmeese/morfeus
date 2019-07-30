@@ -46,7 +46,7 @@ void WorkspaceView::handleAddRectangle()
   QModelIndex index = indexList.at(0);
   WorkspaceModelItem * modelItem = dynamic_cast<WorkspaceModelItem*>(workspaceModel->itemFromIndex(index));
 
-  std::unique_ptr<Rectangle> rectangle(new Rectangle);
+  std::unique_ptr<Morfeus::Geometry::Rectangle> rectangle(new Morfeus::Geometry::Rectangle);
   AddRectangleCommand * command = new AddRectangleCommand(mProject, std::move(rectangle));
   Application::commandStack().push(command);
   mProject->setModified(true);

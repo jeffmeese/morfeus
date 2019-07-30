@@ -1,11 +1,14 @@
 #include "rectangle.h"
 
-#include "geometry.h"
-#include "segment.h"
-#include "vertex.h"
+#include "geometry/model.h"
+#include "geometry/segment.h"
+#include "geometry/vertex.h"
 
 #include <boost/bind.hpp>
 #include <boost/functional/factory.hpp>
+
+namespace Morfeus {
+namespace Geometry {
 
 static const std::string OBJECT_ID("Rectangle");
 
@@ -51,18 +54,22 @@ Rectangle::Rectangle(const std::string & id, const std::string & name, double xl
   setZ(0.0);
 }
 
-std::vector<MesherPolygon> Rectangle::doGetMesherPolygons() const
+std::vector<Face> Rectangle::doGetFacetList() const
 {
-  std::vector<MesherPolygon> polygons;
+  std::vector<Face> facets;
+  return facets;
+}
 
-  MesherPolygon p;
-  p.addPoint(mXl, mYl, mZ);
-  p.addPoint(mXu, mYl, mZ);
-  p.addPoint(mXu, mYu, mZ);
-  p.addPoint(mXl, mYu, mZ);
+std::vector<Segment> Rectangle::doGetSegmentList() const
+{
+  std::vector<Segment> segments;
+  return segments;
+}
 
-  polygons.push_back(p);
-  return polygons;
+std::vector<Vertex> Rectangle::doGetVertexList() const
+{
+  std::vector<Vertex> vertexList;
+  return vertexList;
 }
 
 void Rectangle::doPrint(std::ostream &output, int tabPos) const
@@ -120,4 +127,7 @@ void Rectangle::setPosition(Point2D lowerLeft, Point2D upperRight)
 
 namespace  {
   const bool r = Shape::factory().registerType(OBJECT_ID, boost::bind(boost::factory<Rectangle*>()));
+}
+
+}
 }

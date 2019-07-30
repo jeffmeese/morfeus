@@ -1,5 +1,8 @@
 #include "shape.h"
 
+namespace Morfeus {
+namespace Geometry {
+
 Shape::Shape(const std::string & type)
   : MorfeusObject (type)
 {
@@ -23,15 +26,26 @@ Shape::ShapeFactory & Shape::factory()
   return f;
 }
 
-std::vector<MesherPolygon> Shape::getMesherPolygons() const
+std::vector<Face> Shape::getFacetList() const
 {
-  return doGetMesherPolygons();
+  return doGetFacetList();
+}
+
+std::vector<Segment> Shape::getSegmentList() const
+{
+  return doGetSegmentList();
+}
+
+std::vector<Vertex> Shape::getVertexList() const
+{
+  return doGetVertexList();
 }
 
 void Shape::print(std::ostream & output, int tabPos) const
 {
+  xmlutils::printValue(output, tabPos, "Type: ", type());
   xmlutils::printValue(output, tabPos, "Name: ", mName);
-  doPrint(output, tabPos);
+  doPrint(output, tabPos+2);
 }
 
 void Shape::print(int tabPos) const
@@ -47,10 +61,9 @@ void Shape::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<
 
 void Shape::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
-  rapidxml::xml_node<> * childNode = xmlutils::createNode(document, "Shape");
-  xmlutils::writeAttribute(document, childNode, "name", mName);
-  doXmlWrite(document, childNode);
-  node->append_node(childNode);
+  xmlutils::writeAttribute(document, node, "type", type());
+  xmlutils::writeAttribute(document, node, "name", mName);
+  doXmlWrite(document, node);
 }
 
 std::ostream & operator<<(std::ostream & output, const Shape & object)
@@ -59,4 +72,5 @@ std::ostream & operator<<(std::ostream & output, const Shape & object)
   return output;
 }
 
-
+}
+}

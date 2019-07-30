@@ -3,6 +3,9 @@
 
 #include "face.h"
 
+namespace Morfeus {
+namespace mesh {
+
 class TriangleFace
     : public Face
 {
@@ -13,7 +16,10 @@ public:
 protected:
   double doComputeArea(const Mesh * mesh) const override;
   dcomplex doComputeMomEntry(const Face * otherFace, const Mesh * mesh, std::size_t localEdge) const override;
-  dcomplex doComputePlanewaveEntry(std::size_t edge, double freq, const Planewave * planewave, const Mesh * mesh) const override;
+  dcomplex doComputePlanewaveEntry(std::size_t edge, double freq, double alpha, double theta, double phi, const Mesh * mesh) const override;
 };
+
+}
+}
 
 #endif // TRIANGLEFACE_H
