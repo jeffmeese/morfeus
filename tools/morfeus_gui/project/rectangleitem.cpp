@@ -1,6 +1,6 @@
 #include "rectangleitem.h"
 
-#include "rectangle.h"
+#include <geometry/rectangle.h>
 
 RectangleItem::RectangleItem(std::unique_ptr<morfeus::geometry::Rectangle> rectangle)
   : ProjectItem ("Rectangle")

@@ -6,6 +6,7 @@
 #include <boost/functional/factory.hpp>
 
 namespace morfeus {
+namespace solution {
 
 static const std::string OBJECT_ID("Direct Solver");
 
@@ -60,4 +61,5 @@ namespace  {
   const bool r = Solver::factory().registerType(OBJECT_ID, boost::bind(boost::factory<DirectSolver*>()));
 }
 
+}
 }

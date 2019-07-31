@@ -1,19 +1,24 @@
-#ifndef ELEMENT_H
-#define ELEMENT_H
+#ifndef MORFEUS_MESH_ELEMENT_H
+#define MORFEUS_MESH_ELEMENT_H
 
 #include "morfeus.h"
-#include "morfeusobject.h"
+
+#include "core/morfeusobject.h"
 
 #include <vector>
 
 namespace morfeus {
+  namespace mesh {
+    class Face;
+    class Mesh;
+  }
+}
+
+namespace morfeus {
 namespace mesh {
 
-class Face;
-class Mesh;
-
 class Element
-    : MorfeusObject
+    : core::MorfeusObject
 {
 public:
   // Element attributes
@@ -42,13 +47,13 @@ public:
 
 public:
   MORFEUS_LIB_DECL void edgeNodes(std::size_t index, int32_t & localNode1, int32_t & localNode2) const;
-  MORFEUS_LIB_DECL Face * constructFace(std::size_t index) const;
   MORFEUS_LIB_DECL void computeFeEntry(const Mesh * mesh, std::size_t localEdge1, std::size_t localEdge2, dcomplex & i1, dcomplex & i2) const;
+  MORFEUS_LIB_DECL Face * getFace(std::size_t index) const;
 
 protected:
   virtual void doComputeFeEntry(const Mesh * mesh, std::size_t localEdge1, std::size_t localEdge2, dcomplex & i1, dcomplex & i2) const = 0;
   virtual void doEdgeNodes(std::size_t index, int32_t & node1, int32_t & node2) const = 0;
-  virtual Face * doConstructFace(std::size_t index) const = 0;
+  virtual Face * doGetFace(std::size_t index) const = 0;
 
 protected:
   Element(const std::string & type, std::size_t nodes, std::size_t edges, std::size_t faces);
@@ -156,4 +161,4 @@ inline std::size_t Element::totalNodes() const
 }
 }
 
-#endif // ELEMENT_H
+#endif // MORFEUS_MESH_ELEMENT_H

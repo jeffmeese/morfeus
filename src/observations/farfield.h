@@ -1,5 +1,5 @@
-#ifndef FARFIELD_H
-#define FARFIELD_H
+#ifndef MORFEUS_OBSERVATION_FARFIELD_H
+#define MORFEUS_OBSERVATION_FARFIELD_H
 
 #include "observation.h"
 
@@ -31,7 +31,7 @@ public:
   MORFEUS_LIB_DECL void setThetaStop(double value);
 
 protected:
-  void doCalculate(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const MeshInformation * meshInfo, const vector & efield) override;
+  void doCalculate(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const solution::MeshInformation * meshInfo, const vector & efield) override;
   void doPrint(std::ostream & output, int tabPos) const override;
   void doReport(std::ostream & output) const override;
   void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
@@ -123,4 +123,4 @@ inline void FarField::setThetaStop(double value)
 }
 }
 
-#endif // FARFIELD_H
+#endif // MORFEUS_OBSERVATION_FARFIELD_H

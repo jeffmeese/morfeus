@@ -1,12 +1,16 @@
 #include "solution.h"
 
-#include "iterativesolver.h"
-#include "excitation.h"
-#include "materialdatabase.h"
-#include "observation.h"
 #include "solver.h"
+#include "iterativesolver.h"
+
+#include "excitations/excitation.h"
+
+#include "media/medialibrary.h"
+
+#include "observations/observation.h"
 
 namespace morfeus {
+namespace solution {
 
 Solution::Solution()
   : MorfeusObject("Solution")
@@ -15,7 +19,7 @@ Solution::Solution()
   mFreqIncr = mFreqStop = mFreqStart = 0.0;
 }
 
-void Solution::addExcitation(std::unique_ptr<Excitation> excitation)
+void Solution::addExcitation(std::unique_ptr<excitation::Excitation> excitation)
 {
   mExcitations.push_back(std::move(excitation));
 }
@@ -25,7 +29,7 @@ void Solution::addObservation(std::unique_ptr<observation::Observation> observat
   mObservations.push_back(std::move(observation));
 }
 
-void Solution::print(std::ostream &output, int tabPos) const
+void Solution::doPrint(std::ostream &output, int tabPos) const
 {
   xmlutils::printHeader(output, tabPos, "Solution");
   xmlutils::printValue(output, tabPos, "Freq Start: ", mFreqStart);
@@ -53,12 +57,7 @@ void Solution::print(std::ostream &output, int tabPos) const
   output << "\n";
 }
 
-void Solution::print(int tabPos) const
-{
-  print(std::cout, tabPos);
-}
-
-void Solution::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
+void Solution::doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
 {
   setFrequencyStart(xmlutils::readAttribute<double>(node, "freq-start"));
   setFrequencyStop(xmlutils::readAttribute<double>(node, "freq-stop"));
@@ -100,7 +99,7 @@ void Solution::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_no
     rapidxml::xml_node<> * excitationNode = excitationsNode->first_node("Excitation", 0, false);
     while (excitationNode != nullptr) {
       std::string type = xmlutils::readAttribute<std::string>(excitationNode, "type");
-      std::unique_ptr<Excitation> excitation(Excitation::factory().create(type));
+      std::unique_ptr<excitation::Excitation> excitation(excitation::Excitation::factory().create(type));
       if (excitation != nullptr) {
         excitation->readFromXml(document, excitationNode);
         addExcitation(std::move(excitation));
@@ -147,7 +146,7 @@ void Solution::setSolver(std::unique_ptr<Solver> solver)
   mSolver = std::move(solver);
 }
 
-void Solution::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+void Solution::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
   xmlutils::writeAttribute(document, node, "freq-start", mFreqStart);
   xmlutils::writeAttribute(document, node, "freq-stop", mFreqStop);
@@ -165,7 +164,7 @@ void Solution::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_nod
 
   rapidxml::xml_node<> * excitationsNode = xmlutils::createNode(document, "Excitations");
   for (std::size_t i = 0; i < mExcitations.size(); i++) {
-    const Excitation * excitation = mExcitations.at(i).get();
+    const excitation::Excitation * excitation = mExcitations.at(i).get();
     excitation->writeToXml(document, excitationsNode);
   }
   node->append_node(excitationsNode);
@@ -178,4 +177,5 @@ void Solution::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_nod
   node->append_node(observationsNode);
 }
 
+}
 }

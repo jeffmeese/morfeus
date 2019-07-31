@@ -1,5 +1,5 @@
-#ifndef XMLUTILS_H
-#define XMLUTILS_H
+#ifndef MORFEUS_XML_XMLUTILS_H
+#define MORFEUS_XML_XMLUTILS_H
 
 #include "rapidxml.hpp"
 
@@ -223,4 +223,4 @@ namespace xmlutils
   }
 
 }
-#endif // XMLUTILS_H
+#endif // MORFEUS_XML_XMLUTILS_H

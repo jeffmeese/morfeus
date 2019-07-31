@@ -1,134 +1,77 @@
-#ifndef RECTANGLE_H
-#define RECTANGLE_H
+#ifndef MORFEUS_GEOMETRY_RECTANGLE_H
+#define MORFEUS_GEOMETRY_RECTANGLE_H
 
-#include "shape.h"
-#include "point2d.h"
+#include "surface.h"
+#include "point.h"
 
 namespace morfeus {
 namespace geometry {
 
 class Rectangle
-    : public Shape
+    : public Surface
 {
 public:
   MORFEUS_LIB_DECL Rectangle();
   MORFEUS_LIB_DECL Rectangle(const std::string & name);
   MORFEUS_LIB_DECL Rectangle(const std::string & id, const std::string & name);
-  MORFEUS_LIB_DECL Rectangle(double xl, double xu, double yl, double yu);
-  MORFEUS_LIB_DECL Rectangle(const std::string & name, double xl, double xu, double yl, double yu);
-  MORFEUS_LIB_DECL Rectangle(const std::string & id, const std::string & name, double xl, double xu, double yl, double yu);
+  MORFEUS_LIB_DECL Rectangle(const Point & center, double length, double width);
+  MORFEUS_LIB_DECL Rectangle(const std::string & name, const Point & center, double length, double width);
+  MORFEUS_LIB_DECL Rectangle(const std::string & id, const std::string & name, const Point & center, double length, double width);
 
 public:
-  MORFEUS_LIB_DECL Point2D lowerLeft() const;
-  MORFEUS_LIB_DECL Point2D upperRight() const;
-  MORFEUS_LIB_DECL double xl() const;
-  MORFEUS_LIB_DECL double xu() const;
-  MORFEUS_LIB_DECL double yl() const;
-  MORFEUS_LIB_DECL double yu() const;
-  MORFEUS_LIB_DECL double z() const;
-  MORFEUS_LIB_DECL void setLowerLeft(Point2D value);
-  MORFEUS_LIB_DECL void setUpperRight(Point2D value);
-  MORFEUS_LIB_DECL void setPosition(double xl, double xu, double yl, double yu);
-  MORFEUS_LIB_DECL void setPosition(Point2D lowerLeft, Point2D upperRight);
-  MORFEUS_LIB_DECL void setXl(double value);
-  MORFEUS_LIB_DECL void setXu(double value);
-  MORFEUS_LIB_DECL void setYl(double value);
-  MORFEUS_LIB_DECL void setYu(double value);
-  MORFEUS_LIB_DECL void setZ(double value);
-
-public:
-  MORFEUS_LIB_DECL double height() const;
+  MORFEUS_LIB_DECL Point center() const;
+  MORFEUS_LIB_DECL double length() const;
   MORFEUS_LIB_DECL double width() const;
+  MORFEUS_LIB_DECL void setCenter(Point center);
+  MORFEUS_LIB_DECL void setLength(double value);
+  MORFEUS_LIB_DECL void setWidth(double value);
 
 protected:
-  std::vector<Face> doGetFacetList() const override;
-  std::vector<Segment> doGetSegmentList() const override;
-  std::vector<Vertex> doGetVertexList() const override;
+  std::vector<Face*> doGetFaceList() const override;
+  std::vector<Segment*> doGetSegmentList() const override;
   void doPrint(std::ostream & output, int tabPos) const override;
   void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
   void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
 
 private:
-  double mXl;
-  double mXu;
-  double mYl;
-  double mYu;
-  double mZ;
+  Point mCenter;
+  double mLength;
+  double mWidth;
+  std::vector<std::unique_ptr<Face>> mFaces;
 };
 
-inline Point2D Rectangle::lowerLeft() const
+inline Point Rectangle::center() const
 {
-  return Point2D(mXl, mYl);
+  return mCenter;
 }
 
-inline Point2D Rectangle::upperRight() const
+inline double Rectangle::length() const
 {
-  return Point2D(mXu, mYu);
+  return mLength;
 }
 
-inline double Rectangle::xl() const
+inline double Rectangle::width() const
 {
-  return mXl;
+  return mWidth;
 }
 
-inline double Rectangle::xu() const
+
+inline void Rectangle::setCenter(Point value)
 {
-  return mXu;
+  mCenter = value;
 }
 
-inline double Rectangle::yl() const
+inline void Rectangle::setLength(double value)
 {
-  return mYl;
+  mLength = value;
 }
 
-inline double Rectangle::yu() const
+inline void Rectangle::setWidth(double value)
 {
-  return mYu;
-}
-
-inline double Rectangle::z() const
-{
-  return mZ;
-}
-
-inline void Rectangle::setLowerLeft(Point2D value)
-{
-  mXl = value.x();
-  mYl = value.y();
-}
-
-inline void Rectangle::setUpperRight(Point2D value)
-{
-  mXu = value.x();
-  mYu = value.y();
-}
-
-inline void Rectangle::setXl(double value)
-{
-  mXl = value;
-}
-
-inline void Rectangle::setXu(double value)
-{
-  mXu = value;
-}
-
-inline void Rectangle::setYl(double value)
-{
-  mYl = value;
-}
-
-inline void Rectangle::setYu(double value)
-{
-  mYu = value;
-}
-
-inline void Rectangle::setZ(double value)
-{
-  mZ = value;
+  mWidth = value;
 }
 
 }
 }
 
-#endif // RECTANGLE_H
+#endif // MORFEUS_GEOMETRY_RECTANGLE_H

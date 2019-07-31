@@ -1,15 +1,18 @@
 #include "iterativesolver.h"
 
-#include "edge.h"
-#include "element.h"
-#include "mesh.h"
 #include "meshinformation.h"
-#include "xmlutils.h"
+
+#include "mesh/edge.h"
+#include "mesh/element.h"
+#include "mesh/mesh.h"
+
+#include "xml/xmlutils.h"
 
 #include <boost/bind.hpp>
 #include <boost/functional/factory.hpp>
 
 namespace morfeus {
+namespace solution {
 
 static const std::string OBJECT_ID("Iterative Solver");
 
@@ -169,4 +172,5 @@ namespace  {
   const bool r = Solver::factory().registerType(OBJECT_ID, boost::bind(boost::factory<IterativeSolver*>()));
 }
 
+}
 }

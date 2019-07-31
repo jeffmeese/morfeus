@@ -1,8 +1,9 @@
 #include "gaussquad.h"
 
 namespace morfeus {
+namespace math {
 
-size_t math::gaussQuadTriangle(size_t numPoints, std::vector<math::TrianglePoint> & points)
+size_t gaussQuadTriangle(size_t numPoints, std::vector<math::TrianglePoint> & points)
 {
 	if (numPoints == 2) numPoints = 3;
 	if (numPoints == 5) numPoints = 6;
@@ -131,4 +132,5 @@ size_t math::gaussQuadTriangle(size_t numPoints, std::vector<math::TrianglePoint
 	return numPoints;
 }
 
+}
 }

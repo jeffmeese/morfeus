@@ -1,33 +1,40 @@
 #include "solver.h"
 
-#include "edge.h"
-#include "element.h"
-#include "excitation.h"
-#include "mesh/face.h"
-#include "functions.h"
-#include "isotropicmaterial.h"
-#include "material.h"
-#include "materialdatabase.h"
-#include "mesh.h"
 #include "meshinformation.h"
-#include "observation.h"
 #include "solution.h"
 
+#include "excitations/excitation.h"
+
+#include "media/dielectricmedium.h"
+#include "media/medialibrary.h"
+
+#include "math/functions.h"
+
+#include "mesh/edge.h"
+#include "mesh/element.h"
+#include "mesh/face.h"
+#include "mesh/mesh.h"
+
+#include "observations/observation.h"
+
 namespace morfeus {
+namespace solution {
 
 Solver::Solver(const std::string & type)
   : MorfeusObject(type)
   , mAllocated(false)
+  , mMediaLibrary(nullptr)
 {
 }
 
 Solver::Solver(const std::string & type, const std::string & id)
   : MorfeusObject (type, id)
   , mAllocated(false)
+  , mMediaLibrary(nullptr)
 {
 }
 
-void Solver::buildBiMatrix(double freqGHz, const mesh::Mesh *mesh, const MeshInformation *meshInfo)
+void Solver::buildBiMatrix(double freqGHz, const mesh::Mesh *mesh, const solution::MeshInformation *meshInfo)
 {
   std::vector<mesh::Face*> boundaryFaces = meshInfo->boundaryFaces();
   for (std::size_t i = 0; i < boundaryFaces.size(); i++) {
@@ -52,11 +59,10 @@ void Solver::buildBiMatrix(double freqGHz, const mesh::Mesh *mesh, const MeshInf
 
 void Solver::buildFeMatrix(double freqGHz, const mesh::Mesh *mesh, const MeshInformation *meshInfo)
 {
-  const MaterialDatabase * materialDatabase = mesh->materialDatabase();
   double k0 = math::frequencyToWavenumber(freqGHz);
 
   // Default material if one is not specified for an element
-  IsotropicMaterial air(0, dcomplex(1.0, 0.0), dcomplex(0.0, 0.0));
+  media::DielectricMedium freeSpace(0, dcomplex(1.0, 0.0), dcomplex(0.0, 0.0));
 
   // Loop through each element and calculate the finite element entry for each pair
   // of edges if both edges have unknown values
@@ -65,14 +71,14 @@ void Solver::buildFeMatrix(double freqGHz, const mesh::Mesh *mesh, const MeshInf
     int32_t epsId = element->epsilonId();
     int32_t muId = element->muId();
 
-    const Material * eps = &air;
-    if (epsId >= 0) {
-      eps = materialDatabase->material(epsId);
+    const media::Medium * eps = &freeSpace;
+    if (epsId >= 0 && mMediaLibrary != nullptr) {
+      eps = mMediaLibrary->medium(epsId);
     }
 
-    const Material * mu = &air;
-    if (muId >= 0) {
-      mu = materialDatabase->material(muId);
+    const media::Medium * mu = &freeSpace;
+    if (muId >= 0 && mMediaLibrary != nullptr) {
+      mu = mMediaLibrary->medium(muId);
     }
 
     for (std::size_t j = 1; j <= element->totalEdges(); j++) {
@@ -90,8 +96,8 @@ void Solver::buildFeMatrix(double freqGHz, const mesh::Mesh *mesh, const MeshInf
           // Assume symmetry
           std::size_t row = sourceUnknown - 1;
           std::size_t col = testUnknown - 1;
-          dcomplex epsValue = eps->value(Material::Direction::xx);
-          dcomplex muValue = mu->value(Material::Direction::xx);
+          dcomplex epsValue = eps->value(freqGHz);
+          dcomplex muValue = mu->value(freqGHz);
           dcomplex entry = i1/muValue - k0*k0*i2*epsValue;
           updateFiniteElementMatrix(row, col, i1, i2);
         }
@@ -119,32 +125,6 @@ Solver * Solver::SolverFactory::create(const std::string & type)
   return true;
 }
 
-void Solver::print(std::ostream & output, int tabPos) const
-{
-  doPrint(output, tabPos);
-}
-
-void Solver::print(int tabPos) const
-{
-  print(std::cout);
-}
-
-void Solver::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
-{
-  doXmlRead(document, node);
-}
-
-void Solver::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
-{
-  doXmlWrite(document, node);
-}
-
-std::ostream & operator<<(std::ostream & output, const Solver & object)
-{
-  object.print(output);
-  return output;
-}
-
 Solver::vector Solver::runSolver(double freqGHz, const mesh::Mesh * mesh, const MeshInformation * meshInfo, const vector & rhs)
 {
   if (mAllocated) {
@@ -165,4 +145,5 @@ Solver::vector Solver::runSolver(double freqGHz, const mesh::Mesh * mesh, const 
   return efield;
 }
 
+}
 }

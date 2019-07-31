@@ -1,9 +1,10 @@
-#ifndef ITERATIVESOLVER_H
-#define ITERATIVESOLVER_H
+#ifndef MORFEUS_SOLUTION_ITERATIVESOLVER_H
+#define MORFEUS_SOLUTION_ITERATIVESOLVER_H
 
 #include "solver.h"
 
 namespace morfeus {
+namespace solution {
 
 class IterativeSolver
     : public Solver
@@ -97,5 +98,6 @@ inline void IterativeSolver::setTolerance(double value)
 }
 
 }
+}
 
-#endif // ITERATIVESOLVER_H
+#endif // MORFEUS_SOLUTION_ITERATIVESOLVER_H

@@ -3,7 +3,7 @@
 
 #include "projectitem.h"
 
-#include "geometry/rectangle.h"
+#include <geometry/rectangle.h>
 
 class RectangleItem
     : public ProjectItem

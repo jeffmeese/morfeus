@@ -8,54 +8,59 @@ namespace geometry {
 Region::Region()
   : MorfeusObject (OBJECT_ID)
 {
-  setPosition(Point3D(0.0, 0.0, 0.0));
+  setPosition(Point(0.0, 0.0, 0.0));
   setAttribute(0.0);
   setMaxArea(-1.0);
+  setMedium(nullptr);
 }
 
 Region::Region(const std::string & name)
   : MorfeusObject (OBJECT_ID)
   , mName(name)
 {
-  setPosition(Point3D(0.0, 0.0, 0.0));
+  setPosition(Point(0.0, 0.0, 0.0));
   setAttribute(0.0);
   setMaxArea(-1.0);
+  setMedium(nullptr);
 }
 
 Region::Region(const std::string & id, const std::string & name)
   : MorfeusObject (OBJECT_ID, id)
   , mName(name)
 {
-  setPosition(Point3D(0.0, 0.0, 0.0));
+  setPosition(Point(0.0, 0.0, 0.0));
   setAttribute(0.0);
   setMaxArea(-1.0);
+  setMedium(nullptr);
 }
 
-Region::Region(const Point3D & pt)
+Region::Region(const Point & pt)
   : MorfeusObject (OBJECT_ID)
 {
   setPosition(pt);
   setAttribute(0.0);
   setMaxArea(-1.0);
+  setMedium(nullptr);
 }
 
-Region::Region(const std::string & name, const Point3D & pt)
+Region::Region(const std::string & name, const Point & pt)
   : MorfeusObject (OBJECT_ID)
   , mName(name)
 {
   setPosition(pt);
   setAttribute(0.0);
   setMaxArea(-1.0);
+  setMedium(nullptr);
 }
 
-
-Region::Region(const std::string & id, const std::string & name, const Point3D & pt)
+Region::Region(const std::string & id, const std::string & name, const Point & pt)
   : MorfeusObject (OBJECT_ID, id)
   , mName(name)
 {
   setPosition(pt);
   setAttribute(0.0);
   setMaxArea(-1.0);
+  setMedium(nullptr);
 }
 
 double Region::attribute() const
@@ -63,7 +68,7 @@ double Region::attribute() const
   return mAttribute;
 }
 
-void Region::print(std::ostream &output, int tabPos) const
+void Region::doPrint(std::ostream &output, int tabPos) const
 {
   xmlutils::printValue(output, tabPos, "Name: ", mName);
   xmlutils::printValue(output, tabPos+2, "x: ", mPosition.x());
@@ -73,12 +78,7 @@ void Region::print(std::ostream &output, int tabPos) const
   xmlutils::printValue(output, tabPos+2, "Max Area: ", mMaxArea);
 }
 
-void Region::print(int tabPos) const
-{
-  print(std::cout, tabPos);
-}
-
-void Region::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
+void Region::doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
 {
   setName(xmlutils::readAttribute<std::string>(node, "name"));
   setAttribute(xmlutils::readAttribute<double>(node, "attribute"));
@@ -89,7 +89,7 @@ void Region::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node
   }
 }
 
-void Region::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+void Region::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
   xmlutils::writeAttribute(document, node, "type", OBJECT_ID);
   xmlutils::writeAttribute(document, node, "name", mName);

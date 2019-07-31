@@ -19,9 +19,9 @@ Element::Element(const std::string & type, int32_t number, std::size_t nodes, st
   init(nodes, edges, faces);
 }
 
-Face * Element::constructFace(std::size_t index) const
+Face * Element::getFace(std::size_t index) const
 {
-  return doConstructFace(index);
+  return doGetFace(index);
 }
 
 void Element::computeFeEntry(const Mesh * mesh, std::size_t localEdge1, std::size_t localEdge2, dcomplex & i1, dcomplex & i2) const

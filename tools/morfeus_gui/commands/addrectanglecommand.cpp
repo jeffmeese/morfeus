@@ -1,8 +1,9 @@
 #include "addrectanglecommand.h"
 
 #include "guiproject.h"
-#include "rectangle.h"
 #include "rectangleitem.h"
+
+#include <geometry/rectangle.h>
 
 #include <QDebug>
 

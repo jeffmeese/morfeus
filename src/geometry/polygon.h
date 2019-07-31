@@ -1,9 +1,10 @@
-#ifndef POLYGON_H
-#define POLYGON_H
+#ifndef MORFEUS_GEOMETRY_POLYGON_H
+#define MORFEUS_GEOMETRY_POLYGON_H
 
 #include "morfeus.h"
-#include "shape.h"
-#include "point3d.h"
+
+#include "surface.h"
+#include "point.h"
 
 #include <vector>
 
@@ -11,7 +12,7 @@ namespace morfeus {
 namespace geometry {
 
 class Polygon
-    : public Shape
+    : public Surface
 {
 public:
   MORFEUS_LIB_DECL Polygon();
@@ -20,21 +21,20 @@ public:
 
 public:
   MORFEUS_LIB_DECL void addPoint(double x, double y, double z);
-  MORFEUS_LIB_DECL void addPoint(const Point3D & point);
+  MORFEUS_LIB_DECL void addPoint(const Point & point);
 
 protected:
-  std::vector<Face> doGetFacetList() const override;
-  std::vector<Segment> doGetSegmentList() const override;
-  std::vector<Vertex> doGetVertexList() const override;
+  std::vector<Face*> doGetFaceList() const override;
+  std::vector<Segment*> doGetSegmentList() const override;
   void doPrint(std::ostream & output, int tabPos) const override;
   void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
   void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
 
 private:
-  std::vector<Point3D> mPoints;
+  std::vector<Point> mPoints;
 };
 
 }
 }
 
-#endif // POLYGONSHAPE_H
+#endif // MORFEUS_GEOMETRY_POLYGONSHAPE_H

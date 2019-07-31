@@ -1,9 +1,10 @@
-#ifndef DIRECTSOLVER_H
-#define DIRECTSOLVER_H
+#ifndef MORFEUS_SOLUTION_DIRECTSOLVER_H
+#define MORFEUS_SOLUTION_DIRECTSOLVER_H
 
 #include "solver.h"
 
 namespace morfeus {
+namespace solution {
 
 class DirectSolver
     : public Solver
@@ -23,5 +24,6 @@ protected:
 };
 
 }
+}
 
-#endif // DIRECTSOLVER_H
+#endif // MORFEUS_SOLUTION_DIRECTSOLVER_H

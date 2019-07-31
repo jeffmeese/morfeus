@@ -1,16 +1,19 @@
 #include "probefeed.h"
 
-#include "constants.h"
-#include "edge.h"
-#include "functions.h"
+#include "math/constants.h"
+#include "math/functions.h"
+
+#include "mesh/edge.h"
 #include "mesh/mesh.h"
-#include "node.h"
-#include "xmlutils.h"
+#include "mesh/node.h"
+
+#include "xml/xmlutils.h"
 
 #include <boost/bind.hpp>
 #include <boost/functional/factory.hpp>
 
 namespace morfeus {
+namespace excitation {
 
 static const std::string OBJECT_ID("Probe Feed");
 
@@ -32,7 +35,8 @@ ProbeFeed::ProbeFeed(const std::string & id, const std::string & name)
   init(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, dcomplex(1.0, 0.0));
 }
 
-void ProbeFeed::doExcite(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const MeshInformation * meshInfo, vector & rhs) const
+void ProbeFeed::doExcite(double freqGHz, double thetaInc, double phiInc,
+                         const mesh::Mesh * mesh, const solution::MeshInformation * meshInfo, vector & rhs) const
 {
   double k0 = math::frequencyToWavenumber(freqGHz);
 
@@ -113,4 +117,5 @@ namespace  {
   const bool r = Excitation::factory().registerType(OBJECT_ID, boost::bind(boost::factory<ProbeFeed*>()));
 }
 
+}
 }

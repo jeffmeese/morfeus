@@ -1,7 +1,8 @@
 #include "farfield.h"
 
-#include "mesh.h"
-#include "meshinformation.h"
+#include "mesh/mesh.h"
+
+#include "solution/meshinformation.h"
 
 #include <boost/bind.hpp>
 #include <boost/functional/factory.hpp>
@@ -29,7 +30,8 @@ FarField::FarField(const std::string & id, const std::string & name)
   init();
 }
 
-void FarField::doCalculate(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const MeshInformation * meshInfo, const vector & efield)
+void FarField::doCalculate(double freqGHz, double thetaInc, double phiInc,
+                           const mesh::Mesh * mesh, const solution::MeshInformation * meshInfo, const vector & efield)
 {
 }
 

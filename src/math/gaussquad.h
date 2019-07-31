@@ -1,12 +1,11 @@
-#ifndef GAUSSQUAD_H
-#define GAUSSQUAD_H
+#ifndef MORFEUS_MATH_GAUSSQUAD_H
+#define MORFEUS_MATH_GAUSSQUAD_H
 
 #include "morfeus.h"
 
 #include <vector>
 
 namespace morfeus {
-
 namespace math {
 
 	struct TrianglePoint
@@ -18,8 +17,8 @@ namespace math {
 	};
 
 	MORFEUS_LIB_DECL size_t gaussQuadTriangle(std::size_t numPoints, std::vector<TrianglePoint> & points);
-}
 
 }
+}
 
-#endif // #ifndef GAUSSQUAD_H
+#endif // #ifndef MORFEUS_MATH_GAUSSQUAD_H

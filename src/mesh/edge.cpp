@@ -42,5 +42,17 @@ double Edge::computeLength(const Mesh *mesh) const
   return sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) );
 }
 
+void Edge::doPrint(std::ostream &output, int tabPos) const
+{
+}
+
+void Edge::doXmlRead(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
+{
+}
+
+void Edge::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+{
+}
+
 }
 }

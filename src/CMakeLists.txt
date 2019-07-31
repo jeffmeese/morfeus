@@ -24,48 +24,44 @@ add_subdirectory(3rdparty)
 find_package(Boost COMPONENTS system thread REQUIRED)
 
 set(SRC_FILES
-  conditions/boundarycondition.cpp
-  conditions/perfectelectricconductor.cpp
   core/morfeusobject.cpp
+  core/morfeusproject.cpp
   excitations/excitation.cpp
   excitations/planewave.cpp
   excitations/probefeed.cpp
-  geometry/box.cpp
-  geometry/circle.cpp
+  geometry/cuboid.cpp
   geometry/cylinder.cpp
+  geometry/ellipse.cpp
   geometry/face.cpp
   geometry/hole.cpp
   geometry/model.cpp
-  geometry/plane.cpp
-  geometry/point2d.cpp
-  geometry/point3d.cpp
+  geometry/part.cpp
+  geometry/point.cpp
   geometry/polygon.cpp
   geometry/rectangle.cpp
   geometry/region.cpp
   geometry/segment.cpp
-  geometry/shape.cpp
-  geometry/triangleshape.cpp
+  geometry/solid.cpp
+  geometry/surface.cpp
   geometry/vertex.cpp
-  material/isotropicmaterial.cpp
-  material/material.cpp
-  material/materialdatabase.cpp
   math/functions.cpp
   math/gaussquad.cpp
+  media/dielectricmedium.cpp
+  media/medium.cpp
+  media/medialibrary.cpp
+  media/perfectelectricconductor.cpp
   mesh/edge.cpp
   mesh/element.cpp
   mesh/face.cpp
   mesh/mesh.cpp
   mesh/node.cpp
-  mesh/prismelement.cpp
-  mesh/rectangleface.cpp
-  mesh/tetelement.cpp
-  mesh/triangleelement.cpp
-  mesh/triangleface.cpp
+  mesh/prism.cpp
+  mesh/rectangle.cpp
+  mesh/tetrahedron.cpp
+  mesh/triangle.cpp
   mesher/mesher.cpp
-  mesher/meshrefinement.cpp
   observations/farfield.cpp
   observations/observation.cpp
-  project/morfeusproject.cpp
   solution/solution.cpp
   solution/directsolver.cpp
   solution/iterativesolver.cpp
@@ -75,50 +71,46 @@ set(SRC_FILES
 
 set(HDR_FILES
   morfeus.h
-  conditions/boundarycondition.h
-  conditions/perfectelectricconductor.h
-  core/morfeusobject.h
   core/factory.h
+  core/morfeusobject.h
+  core/morfeusproject.h
   excitations/excitation.h
   excitations/planewave.h
   excitations/probefeed.h
-  geometry/box.h
-  geometry/circle.h
+  geometry/cuboid.h
   geometry/cylinder.h
+  geometry/ellipse.h
   geometry/face.h
   geometry/hole.h
   geometry/model.h
-  geometry/plane.h
-  geometry/point2d.h
-  geometry/point3d.h
+  geometry/part.h
+  geometry/point.h
   geometry/polygon.h
   geometry/rectangle.h
   geometry/region.h
   geometry/segment.h
-  geometry/shape.h
-  geometry/triangleshape.h
+  geometry/solid.h
+  geometry/surface.h
   geometry/vertex.h
-  material/isotropicmaterial.h
-  material/material.h
-  material/materialdatabase.h
   math/constants.h
   math/functions.h
   math/gaussquad.h
+  media/dielectricmedium.h
+  media/medium.h
+  media/medialibrary.h
+  media/perfectelectricconductor.h
   mesh/edge.h
   mesh/element.h
   mesh/face.h
   mesh/mesh.h
   mesh/node.h
-  mesh/prismelement.h
-  mesh/rectangleface.h
-  mesh/tetelement.h
-  mesh/triangleelement.h
-  mesh/triangleface.h
+  mesh/prism.h
+  mesh/rectangle.h
+  mesh/tetrahedron.h
+  mesh/triangle.h
   mesher/mesher.h
-  mesher/meshrefinement.h
   observations/farfield.h
   observations/observation.h
-  project/morfeusproject.h
   solution/solution.h
   solution/directsolver.h
   solution/iterativesolver.h
@@ -149,18 +141,6 @@ if (MORFEUS_BUILD_SHARED)
 endif()
 
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/conditions)
-target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/core)
-target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/excitations)
-target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/geometry)
-target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/material)
-target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/math)
-target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/mesh)
-target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/mesher)
-target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/observations)
-target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/project)
-target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/solution)
-target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/xml)
 target_include_directories(${TARGET_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
 
 #target_link_libraries(${TARGET_NAME} loki)

@@ -1,26 +1,32 @@
-#ifndef OBSERVATION_H
-#define OBSERVATION_H
+#ifndef MORFEUS_OBSERVATION_OBSERVATION_H
+#define MORFEUS_OBSERVATION_OBSERVATION_H
 
 #include "morfeus.h"
-#include "morfeusobject.h"
 
-#include "factory.h"
-#include "rapidxml.hpp"
-#include "xmlutils.h"
+#include "core/morfeusobject.h"
+#include "core/factory.h"
+
+#include "xml/rapidxml.hpp"
+#include "xml/xmlutils.h"
 
 #include <boost/numeric/ublas/vector.hpp>
 
 namespace morfeus {
 
-class MeshInformation;
-namespace mesh {
-  class Mesh;
+  namespace mesh {
+    class Mesh;
+  }
+
+  namespace solution {
+    class MeshInformation;
+  }
 }
 
+namespace morfeus {
 namespace observation {
 
 class Observation
-    : public MorfeusObject
+    : public core::MorfeusObject
 {
   class ObservationFactory;
 
@@ -32,7 +38,7 @@ public:
   MORFEUS_LIB_DECL void setName(const std::string & name);
 
 public:
-  MORFEUS_LIB_DECL void calculate(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const MeshInformation * meshInfo, const vector & efield);
+  MORFEUS_LIB_DECL void calculate(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const solution::MeshInformation * meshInfo, const vector & efield);
   MORFEUS_LIB_DECL void print(std::ostream & output, int tabPos = 0) const;
   MORFEUS_LIB_DECL void print(int tabPos = 0) const;
   MORFEUS_LIB_DECL void report(std::ostream & output) const;
@@ -49,7 +55,7 @@ protected:
   Observation(const std::string & type, const std::string & id, const std::string & name);
 
 protected:
-  virtual void doCalculate(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const MeshInformation * meshInfo, const vector & efield) = 0;
+  virtual void doCalculate(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const solution::MeshInformation * meshInfo, const vector & efield) = 0;
   virtual void doPrint(std::ostream & output, int tabPos = 0) const = 0;
   virtual void doReport(std::ostream & output) const = 0;
   virtual void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) = 0;
@@ -63,7 +69,7 @@ private:
     MORFEUS_LIB_DECL bool registerType(const std::string & type, boost::function<Observation*()> creator);
 
   private:
-    Factory<Observation*, std::string, boost::function<Observation*()> > mFactory;
+    core::Factory<Observation*, std::string, boost::function<Observation*()> > mFactory;
   };
 
 private:
@@ -83,4 +89,4 @@ inline void Observation::setName(const std::string & name)
 }
 }
 
-#endif // OBSERVATION_H
+#endif // MORFEUS_OBSERVATION_OBSERVATION_H

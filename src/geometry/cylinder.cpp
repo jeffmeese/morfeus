@@ -9,34 +9,34 @@ namespace geometry {
 static const std::string OBJECT_ID("Cylinder");
 
 Cylinder::Cylinder()
-  : Shape(OBJECT_ID)
+  : Solid(OBJECT_ID)
 {
-  setCenter(Point3D(0.0,0.0,0.0));
+  setCenter(Point(0.0,0.0,0.0));
   setRadius(0.5);
   setHeight(1.0);
-  setResolution(6);
-}
-
-Cylinder::Cylinder(const Point3D & center, double radius, double height)
-  : Shape(OBJECT_ID)
-{
-  setCenter(center);
-  setRadius(radius);
-  setHeight(height);
   setResolution(6);
 }
 
 Cylinder::Cylinder(const std::string & name)
-  : Shape(OBJECT_ID, name)
+  : Solid(OBJECT_ID, name)
 {
-  setCenter(Point3D(0.0,0.0,0.0));
+  setCenter(Point(0.0,0.0,0.0));
   setRadius(0.5);
   setHeight(1.0);
   setResolution(6);
 }
 
-Cylinder::Cylinder(const std::string & name, const Point3D & center, double radius, double height)
-  : Shape(OBJECT_ID, name)
+Cylinder::Cylinder(const std::string & id, const std::string & name)
+  : Solid(OBJECT_ID, id, name)
+{
+  setCenter(Point(0.0,0.0,0.0));
+  setRadius(0.5);
+  setHeight(1.0);
+  setResolution(6);
+}
+
+Cylinder::Cylinder(const Point & center, double radius, double height)
+  : Solid(OBJECT_ID)
 {
   setCenter(center);
   setRadius(radius);
@@ -44,22 +44,40 @@ Cylinder::Cylinder(const std::string & name, const Point3D & center, double radi
   setResolution(6);
 }
 
-std::vector<Face> Cylinder::doGetFacetList() const
+Cylinder::Cylinder(const std::string & name, const Point & center, double radius, double height)
+  : Solid(OBJECT_ID, name)
 {
-  std::vector<Face> facets;
-  return facets;
+  setCenter(center);
+  setRadius(radius);
+  setHeight(height);
+  setResolution(6);
 }
 
-std::vector<Segment> Cylinder::doGetSegmentList() const
+Cylinder::Cylinder(const std::string & id, const std::string & name, const Point & center, double radius, double height)
+  : Solid(OBJECT_ID, id, name)
 {
-  std::vector<Segment> segments;
-  return segments;
+  setCenter(center);
+  setRadius(radius);
+  setHeight(height);
+  setResolution(6);
 }
 
-std::vector<Vertex> Cylinder::doGetVertexList() const
+std::vector<Face*> Cylinder::doGetFaceList() const
 {
-  std::vector<Vertex> vertexList;
-  return vertexList;
+  std::vector<Face*> faceList;
+  return faceList;
+}
+
+std::vector<Region*> Cylinder::doGetRegionList() const
+{
+  std::vector<Region*> regionList;
+  return regionList;
+}
+
+std::vector<Segment*> Cylinder::doGetSegmentList() const
+{
+  std::vector<Segment*> segmentList;
+  return segmentList;
 }
 
 void Cylinder::doPrint(std::ostream &output, int tabPos) const
@@ -79,7 +97,7 @@ void Cylinder::doXmlRead(rapidxml::xml_document<> &, rapidxml::xml_node<> * node
   double y = xmlutils::readAttribute<double>(node, "y");
   double z = xmlutils::readAttribute<double>(node, "z");
 
-  setCenter(Point3D(x, y, z));
+  setCenter(Point(x, y, z));
   setRadius(xmlutils::readAttribute<double>(node, "radius"));
   setHeight(xmlutils::readAttribute<double>(node, "height"));
   setResolution(xmlutils::readAttribute<std::size_t>(node, "resolution"));
@@ -96,7 +114,7 @@ void Cylinder::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_nod
 }
 
 namespace  {
-  const bool r = Shape::factory().registerType(OBJECT_ID, boost::bind(boost::factory<Cylinder*>()));
+  const bool r = Part::factory().registerType(OBJECT_ID, boost::bind(boost::factory<Cylinder*>()));
 }
 
 }

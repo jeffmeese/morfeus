@@ -1,6 +1,7 @@
 #include "excitation.h"
 
 namespace morfeus {
+namespace excitation {
 
 Excitation::Excitation(const std::string & type)
   : MorfeusObject (type)
@@ -39,7 +40,8 @@ bool Excitation::ExcitationFactory::registerType(const std::string &type, boost:
   return true;
 }
 
-void Excitation::excite(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh *mesh, const MeshInformation *meshInfo, vector &rhs) const
+void Excitation::excite(double freqGHz, double thetaInc, double phiInc,
+                        const mesh::Mesh *mesh, const solution::MeshInformation *meshInfo, vector &rhs) const
 {
   doExcite(freqGHz, thetaInc, phiInc, mesh, meshInfo, rhs);
 }
@@ -73,4 +75,5 @@ std::ostream & operator<<(std::ostream & output, const Excitation & object)
   return output;
 }
 
+}
 }

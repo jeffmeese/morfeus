@@ -1,5 +1,5 @@
-#ifndef FACTORY_H
-#define FACTORY_H
+#ifndef MORFEUS_CORE_FACTORY_H
+#define MORFEUS_CORE_FACTORY_H
 
 #include <boost/function.hpp>
 #include <boost/container/flat_map.hpp>
@@ -8,6 +8,7 @@
 #include <string>
 
 namespace morfeus {
+namespace core {
 
 template <class AbstractProduct, class IdType=std::string,
           class Creator=boost::function<typename std::remove_pointer<AbstractProduct>::type*()> >
@@ -35,5 +36,6 @@ private:
 };
 
 }
+}
 
-#endif // FACTORY_H
+#endif // MORFEUS_CORE_FACTORY_H

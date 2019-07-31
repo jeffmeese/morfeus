@@ -4,8 +4,9 @@
 #include "application.h"
 #include "addrectanglecommand.h"
 #include "guiproject.h"
-#include "rectangle.h"
 #include "workspacemodel.h"
+
+#include <geometry/rectangle.h>
 
 #include <action.h>
 #include <actionmanager.h>

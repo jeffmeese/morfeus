@@ -1,24 +1,26 @@
-#ifndef FACE_H
-#define FACE_H
+#ifndef MORFEUS_MESH_FACE_H
+#define MORFEUS_MESH_FACE_H
 
 #include "morfeus.h"
-#include "morfeusobject.h"
+
+#include "core/morfeusobject.h"
 
 #include <vector>
 
 #include <boost/numeric/ublas/vector.hpp>
 
 namespace morfeus {
-  class Planewave;
+
+  namespace mesh {
+    class Mesh;
+  }
 }
 
 namespace morfeus {
 namespace mesh {
 
-class Mesh;
-
 class Face
-    : public MorfeusObject
+    : public core::MorfeusObject
 {
 public:
   struct FarFieldEntry
@@ -123,4 +125,4 @@ inline std::size_t Face::totalNodes() const
 }
 }
 
-#endif // FACE_H
+#endif // MORFEUS_MESH_FACE_H

@@ -70,7 +70,7 @@ bool Segment::boundary() const
   return mBoundary;
 }
 
-void Segment::print(std::ostream &output, int tabPos) const
+void Segment::doPrint(std::ostream &output, int tabPos) const
 {
   xmlutils::printHeader(output, tabPos, OBJECT_ID);
   xmlutils::printValue(output, tabPos, "Number: ", mNumber);
@@ -78,19 +78,14 @@ void Segment::print(std::ostream &output, int tabPos) const
   xmlutils::printValue(output, tabPos, "Node 2: ", mNode2);
 }
 
-void Segment::print(int tabPos) const
-{
-  print(std::cout, tabPos);
-}
-
-void Segment::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
+void Segment::doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
 {
   setNumber(xmlutils::readAttribute<int32_t>(node, "number"));
   setNode1(xmlutils::readAttribute<int32_t>(node, "node1"));
   setNode2(xmlutils::readAttribute<int32_t>(node, "node2"));
 }
 
-void Segment::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+void Segment::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
   xmlutils::writeAttribute(document, node, "type", OBJECT_ID);
   xmlutils::writeAttribute(document, node, "number", mNumber);

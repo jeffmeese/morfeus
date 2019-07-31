@@ -10,44 +10,44 @@ namespace geometry {
 Hole::Hole()
   : MorfeusObject (OBJECT_ID)
 {
-  setPosition(Point3D(0.0, 0.0, 0.0));
+  setPosition(Point(0.0, 0.0, 0.0));
 }
 
 Hole::Hole(const std::string & name)
   : MorfeusObject (OBJECT_ID)
   , mName(name)
 {
-  setPosition(Point3D(0.0, 0.0, 0.0));
+  setPosition(Point(0.0, 0.0, 0.0));
 }
 
 Hole::Hole(const std::string & id, const std::string & name)
   : MorfeusObject (OBJECT_ID, id)
   , mName(name)
 {
-  setPosition(Point3D(0.0, 0.0, 0.0));
+  setPosition(Point(0.0, 0.0, 0.0));
 }
 
-Hole::Hole(const Point3D & pt)
+Hole::Hole(const Point & pt)
   : MorfeusObject (OBJECT_ID)
 {
   setPosition(pt);
 }
 
-Hole::Hole(const std::string & name, const Point3D & pt)
+Hole::Hole(const std::string & name, const Point & pt)
   : MorfeusObject (OBJECT_ID)
   , mName(name)
 {
   setPosition(pt);
 }
 
-Hole::Hole(const std::string & id, const std::string & name, const Point3D & pt)
+Hole::Hole(const std::string & id, const std::string & name, const Point & pt)
   : MorfeusObject (OBJECT_ID, id)
   , mName(name)
 {
   setPosition(pt);
 }
 
-void Hole::print(std::ostream &output, int tabPos) const
+void Hole::doPrint(std::ostream &output, int tabPos) const
 {
   xmlutils::printHeader(output, tabPos, OBJECT_ID);
   xmlutils::printValue(output, tabPos, "Name: ", mName);
@@ -56,12 +56,7 @@ void Hole::print(std::ostream &output, int tabPos) const
   xmlutils::printValue(output, tabPos, "z: ", mPosition.z());
 }
 
-void Hole::print(int tabPos) const
-{
-  print(std::cout, tabPos);
-}
-
-void Hole::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
+void Hole::doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
 {
   setName(xmlutils::readAttribute<std::string>(node, "name"));
   rapidxml::xml_node<> * posNode = node->first_node("Position", 0, false);
@@ -70,7 +65,7 @@ void Hole::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<>
   }
 }
 
-void Hole::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+void Hole::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
   xmlutils::writeAttribute(document, node, "type", OBJECT_ID);
   xmlutils::writeAttribute(document, node, "name", mName);

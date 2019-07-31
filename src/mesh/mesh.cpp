@@ -1,8 +1,9 @@
 #include "mesh.h"
 #include "edge.h"
 #include "element.h"
-#include "material.h"
 #include "node.h"
+
+#include "media/medium.h"
 
 #include <fstream>
 #include <sstream>
@@ -12,7 +13,6 @@ namespace mesh {
 
 Mesh::Mesh()
   : MorfeusObject("Mesh")
-  , mMaterialDatabase(nullptr)
 {
   mNodeTolerance = 1e-6;
 }
@@ -57,37 +57,24 @@ void Mesh::createEdges(Element *element)
       addEdge(std::move(edge));
     }
     element->setEdge(i, edgeNumber);
-
-
-//    int edgeNumber = -1;
-//    EdgeList & edgeList1 = mEdgeTable[node1];
-//    for (EdgeList::iterator itr = edgeList1.begin(); itr != edgeList1.end(); ++itr) {
-//      if (itr->first == node2) {
-//        edgeNumber = itr->second;
-//        break;
-//      }
-//    }
-
-//    EdgeList & edgeList2 = mEdgeTable[node2];
-//    for (EdgeList::iterator itr = edgeList2.begin(); itr != edgeList2.end(); ++itr) {
-//      if (itr->first == node1) {
-//        edgeNumber = itr->second;
-//        break;
-//      }
-//    }
-
-//    if (edgeNumber == -1) {
-//      edgeNumber = static_cast<int32_t>(mEdges.size());
-//      EdgePtr edge(new Edge(edgeNumber, node1, node2));
-//      addEdge(std::move(edge));
-//    }
-
   }
 }
 
 Edge * Mesh::edge(std::size_t index)
 {
   return mEdges.at(index).get();
+}
+
+void Mesh::doPrint(std::ostream &output, int tabPos) const
+{
+}
+
+void Mesh::doXmlRead(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
+{
+}
+
+void Mesh::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+{
 }
 
 const Edge * Mesh::edge(std::size_t index) const

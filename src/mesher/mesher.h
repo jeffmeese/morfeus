@@ -1,12 +1,14 @@
-#ifndef MESHER_H
-#define MESHER_H
+#ifndef MORFEUS_MESHER_MESHER_H
+#define MORFEUS_MESHER_MESHER_H
 
 #include "morfeus.h"
-#include "morfeusobject.h"
 
-#include "rapidxml.hpp"
-#include "xmlutils.h"
-#include "vertex.h"
+#include "core/morfeusobject.h"
+
+#include "geometry/vertex.h"
+
+#include "xml/rapidxml.hpp"
+#include "xml/xmlutils.h"
 
 #include <vector>
 
@@ -15,22 +17,21 @@
 class tetgenio;
 
 namespace morfeus {
-namespace geometry {
-  class Model;
-}
-}
 
-namespace morfeus {
+  namespace geometry {
+    class Model;
+  }
+
   namespace mesh {
     class Mesh;
   }
-  class MeshRefinement;
 }
 
 namespace morfeus {
+namespace mesher {
 
 class Mesher
-    : public MorfeusObject
+    : public core::MorfeusObject
 {
 public:
   MORFEUS_LIB_DECL Mesher();
@@ -48,11 +49,11 @@ public:
 
 public:
   MORFEUS_LIB_DECL void createMesh(const geometry::Model * model, mesh::Mesh * mesh) const;
-  MORFEUS_LIB_DECL void print(std::ostream & output, int tabPos = 0) const;
-  MORFEUS_LIB_DECL void print(int tabPos = 0) const;
-  MORFEUS_LIB_DECL void readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node);
-  MORFEUS_LIB_DECL void writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const;
-  MORFEUS_LIB_DECL friend std::ostream & operator<<(std::ostream & output, const Mesher & object);
+
+protected:
+  void doPrint(std::ostream & output, int tabPos) const override;
+  void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
+  void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
 
 private:
   void addFacets(const geometry::Model * model, tetgenio * in) const;
@@ -141,5 +142,6 @@ inline void Mesher::setMinEdgeLength(double value)
 }
 
 }
+}
 
-#endif // MESHER_H
+#endif // MORFEUS_MESHER_MESHER_H

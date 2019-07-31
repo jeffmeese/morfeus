@@ -3,10 +3,11 @@
 #include "addrectanglecommand.h"
 #include "application.h"
 #include "guiproject.h"
-#include "rectangle.h"
 #include "renamecommand.h"
 #include "workspacemodel.h"
 #include "workspacemodelitem.h"
+
+#include <geometry/rectangle.h>
 
 #include <action.h>
 #include <actionmanager.h>

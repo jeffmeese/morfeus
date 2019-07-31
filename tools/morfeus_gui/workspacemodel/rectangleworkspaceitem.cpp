@@ -2,9 +2,11 @@
 
 #include "actionmanager.h"
 #include "rectangleitem.h"
-#include "rectangle.h"
+
 #include "renamecommand.h"
 #include "workspaceview.h"
+
+#include <geometry/rectangle.h>
 
 #include "action.h"
 

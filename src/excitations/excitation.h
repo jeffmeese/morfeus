@@ -1,25 +1,32 @@
-#ifndef EXCITATION_H
-#define EXCITATION_H
+#ifndef MORFEUS_EXCITATION_EXCITATION_H
+#define MORFEUS_EXCITATION_EXCITATION_H
 
 #include "morfeus.h"
-#include "morfeusobject.h"
 
-#include "factory.h"
-#include "rapidxml.hpp"
-#include "xmlutils.h"
+#include "core/morfeusobject.h"
+#include "core/factory.h"
+
+#include "xml/rapidxml.hpp"
+#include "xml/xmlutils.h"
 
 #include <boost/numeric/ublas/vector.hpp>
 
 namespace morfeus {
 
-namespace mesh {
-  class Mesh;
+  namespace mesh {
+    class Mesh;
+  }
+
+  namespace solution {
+    class MeshInformation;
+  }
 }
 
-class MeshInformation;
+namespace morfeus {
+namespace excitation {
 
 class Excitation
-    : public MorfeusObject
+    : public core::MorfeusObject
 {
   class ExcitationFactory;
 
@@ -33,7 +40,7 @@ public:
   MORFEUS_LIB_DECL void setName(const std::string & name);
 
 public:
-  MORFEUS_LIB_DECL void excite(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const MeshInformation * meshInfo, vector & rhs) const;
+  MORFEUS_LIB_DECL void excite(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const solution::MeshInformation * meshInfo, vector & rhs) const;
   MORFEUS_LIB_DECL void print(std::ostream & output, int tabPos = 0) const;
   MORFEUS_LIB_DECL void print(int tabPos = 0) const;
   MORFEUS_LIB_DECL void readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node);
@@ -49,7 +56,7 @@ protected:
   Excitation(const std::string & type, const std::string & id, const std::string & name);
 
 protected:
-  virtual void doExcite(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const MeshInformation * meshInfo, vector & rhs) const = 0;
+  virtual void doExcite(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const solution::MeshInformation * meshInfo, vector & rhs) const = 0;
   virtual void doPrint(std::ostream & output, int tabPos = 0) const = 0;
   virtual void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) = 0;
   virtual void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const = 0;
@@ -64,7 +71,7 @@ private:
     MORFEUS_LIB_DECL bool registerType(const std::string & type, boost::function<Excitation*()> creator);
 
   private:
-    Factory<Excitation*, std::string, boost::function<Excitation*()> > mFactory;
+    core::Factory<Excitation*, std::string, boost::function<Excitation*()> > mFactory;
   };
 
 private:
@@ -94,5 +101,6 @@ inline void Excitation::setName(const std::string &name)
 }
 
 }
+}
 
-#endif // EXCITATION_H
+#endif // MORFEUS_EXCITATION_EXCITATION_H

@@ -9,50 +9,62 @@ namespace geometry {
 static const std::string OBJECT_ID("Polygon");
 
 Polygon::Polygon()
-  : Shape(OBJECT_ID)
+  : Surface(OBJECT_ID)
 {
 
 }
 
 Polygon::Polygon(const std::string & name)
-  : Shape(OBJECT_ID, name)
+  : Surface(OBJECT_ID, name)
 {
 
 }
 
 Polygon::Polygon(const std::string & id, const std::string & name)
-  : Shape(OBJECT_ID, id, name)
+  : Surface(OBJECT_ID, id, name)
 {
 
 }
 
 void Polygon::addPoint(double x, double y, double z)
 {
-  addPoint(Point3D(x, y, z));
+  addPoint(Point(x, y, z));
 }
 
-void Polygon::addPoint(const Point3D & point)
+void Polygon::addPoint(const Point & point)
 {
   mPoints.push_back(point);
 }
 
-std::vector<Face> Polygon::doGetFacetList() const
+std::vector<Face*> Polygon::doGetFaceList() const
 {
-  std::vector<Face> facets;
-  return facets;
+  std::vector<Face*> faceList;
+  return faceList;
 }
 
-std::vector<Segment> Polygon::doGetSegmentList() const
+std::vector<Segment*> Polygon::doGetSegmentList() const
 {
-  std::vector<Segment> segments;
-  return segments;
+  std::vector<Segment*> segmentList;
+  return segmentList;
 }
 
-std::vector<Vertex> Polygon::doGetVertexList() const
-{
-  std::vector<Vertex> vertexList;
-  return vertexList;
-}
+//std::vector<Face> Polygon::doGetFacetList() const
+//{
+//  std::vector<Face> facets;
+//  return facets;
+//}
+
+//std::vector<Segment> Polygon::doGetSegmentList() const
+//{
+//  std::vector<Segment> segments;
+//  return segments;
+//}
+
+//std::vector<Vertex> Polygon::doGetVertexList() const
+//{
+//  std::vector<Vertex> vertexList;
+//  return vertexList;
+//}
 
 void Polygon::doPrint(std::ostream &output, int tabPos) const
 {
@@ -71,7 +83,7 @@ void Polygon::doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<
   if (pointsNode != nullptr) {
     rapidxml::xml_node<> * pointNode = pointsNode->first_node("Point", 0, false);
     while (pointNode != nullptr) {
-      Point3D pt;
+      Point pt;
       pt.readFromXml(document, pointNode);
       mPoints.push_back(pt);
     }
@@ -82,7 +94,7 @@ void Polygon::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node
 {
   xmlutils::writeAttribute(document, node, "type", OBJECT_ID);
   for (std::size_t i = 0; i < mPoints.size(); i++) {
-    const Point3D & pt = mPoints.at(i);
+    const Point & pt = mPoints.at(i);
     rapidxml::xml_node<> * pointNode = xmlutils::createNode(document, "point");
     pt.writeToXml(document, pointNode);
     node->append_node(pointNode);
@@ -90,7 +102,7 @@ void Polygon::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node
 }
 
 namespace  {
-  const bool r = Shape::factory().registerType(OBJECT_ID, boost::bind(boost::factory<Polygon*>()));
+  const bool r = Part::factory().registerType(OBJECT_ID, boost::bind(boost::factory<Polygon*>()));
 }
 
 }

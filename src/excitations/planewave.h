@@ -1,9 +1,10 @@
-#ifndef PLANEWAVE_H
-#define PLANEWAVE_H
+#ifndef MORFEUS_EXCITATION_PLANEWAVE_H
+#define MORFEUS_EXCITATION_PLANEWAVE_H
 
 #include "excitation.h"
 
 namespace morfeus {
+namespace excitation {
 
 class Planewave
     : public Excitation
@@ -18,7 +19,7 @@ public:
   MORFEUS_LIB_DECL void setFieldPolarization(double fieldPolarization);
 
 protected:
-  void doExcite(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const MeshInformation * meshInfo, vector & rhs) const override;
+  void doExcite(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const solution::MeshInformation * meshInfo, vector & rhs) const override;
   void doPrint(std::ostream & output, int tabPos) const override;
   void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
   void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
@@ -38,5 +39,6 @@ inline void Planewave::setFieldPolarization(double fieldPolarization)
 }
 
 }
+}
 
-#endif // PLANEWAVE_H
+#endif // MORFEUS_EXCITATION_PLANEWAVE_H

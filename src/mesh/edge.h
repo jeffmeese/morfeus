@@ -1,16 +1,21 @@
-#ifndef EDGE_H
-#define EDGE_H
+#ifndef MORFEUS_MESH_EDGE_H
+#define MORFEUS_MESH_EDGE_H
 
 #include "morfeus.h"
-#include "morfeusobject.h"
+
+#include "core/morfeusobject.h"
+
+namespace morfeus {
+  namespace mesh {
+    class Mesh;
+  }
+}
 
 namespace morfeus {
 namespace mesh {
 
-  class Mesh;
-
 class Edge
-    : public MorfeusObject
+    : public core::MorfeusObject
 {
 public:
   MORFEUS_LIB_DECL Edge(int32_t number);
@@ -27,6 +32,11 @@ public:
 
 public:
   MORFEUS_LIB_DECL double computeLength(const Mesh * mesh) const;
+
+protected:
+  void doPrint(std::ostream & output, int tabPos) const override;
+  void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
+  void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
 
 private:
   int32_t mNumber;
@@ -73,4 +83,4 @@ inline int32_t Edge::unknownNumber() const
 }
 }
 
-#endif // EDGE_H
+#endif // MORFEUS_MESH_EDGE_H

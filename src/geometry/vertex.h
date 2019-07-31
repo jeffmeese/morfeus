@@ -1,10 +1,9 @@
-#ifndef VERTEX_H
-#define VERTEX_H
+#ifndef MORFEUS_GEOMETRY_VERTEX_H
+#define MORFEUS_GEOMETRY_VERTEX_H
 
 #include "morfeus.h"
-#include "morfeusobject.h"
-#include "rapidxml.hpp"
-#include "xmlutils.h"
+
+#include "core/morfeusobject.h"
 
 #include <vector>
 
@@ -12,7 +11,7 @@ namespace morfeus {
 namespace geometry {
 
 class Vertex
-    : public MorfeusObject
+    : public core::MorfeusObject
 {
 public:
   MORFEUS_LIB_DECL Vertex();
@@ -37,15 +36,10 @@ public:
   MORFEUS_LIB_DECL void setY(double value);
   MORFEUS_LIB_DECL void setZ(double value);
 
-public:
-  MORFEUS_LIB_DECL void addAttribute(double value);
-
-public:
-  MORFEUS_LIB_DECL void print(std::ostream & output, int tabPos = 0) const;
-  MORFEUS_LIB_DECL void print(int tabPos = 0) const;
-  MORFEUS_LIB_DECL void readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node);
-  MORFEUS_LIB_DECL void writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const;
-  MORFEUS_LIB_DECL friend std::ostream & operator<<(std::ostream & output, const Vertex & object);
+protected:
+  void doPrint(std::ostream & output, int tabPos) const override;
+  void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
+  void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
 
 private:
   bool mBoundary;
@@ -53,7 +47,6 @@ private:
   double mX;
   double mY;
   double mZ;
-  std::vector<double> mAttributes;
 };
 
 inline bool Vertex::boundary() const
@@ -109,4 +102,4 @@ inline double Vertex::z() const
 }
 }
 
-#endif // VERTEX_H
+#endif // MORFEUS_GEOMETRY_VERTEX_H

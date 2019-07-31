@@ -1,12 +1,11 @@
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#ifndef MORFEUS_MATH_CONSTANTS_H
+#define MORFEUS_MATH_CONSTANTS_H
 
 #include <boost/math/constants/constants.hpp>
 
 namespace morfeus {
+namespace math {
 
-namespace math
-{
   static const double deg2rad = boost::math::double_constants::pi / 180.0;
   const double rad2deg = 180.0 / boost::math::double_constants::pi;
   const double z0 = 377.0;
@@ -15,8 +14,8 @@ namespace math
   const std::complex<double> cj(0.0,1.0);
   const std::complex<double> zero(0.0,0.0);
   const std::complex<double> one(1.0,0.0);
-}
 
 }
+}
 
-#endif // CONSTANTS_H
+#endif // MORFEUS_MATH_CONSTANTS_H

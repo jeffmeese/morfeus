@@ -7,45 +7,64 @@
 #include <vector>
 
 namespace morfeus {
+  namespace media {
+    class Medium;
+  }
+}
+
+namespace morfeus {
 namespace geometry {
 
 class Face
+    : public core::MorfeusObject
 {
 public:
   MORFEUS_LIB_DECL Face();
+  MORFEUS_LIB_DECL Face(const std::string & name);
+  MORFEUS_LIB_DECL Face(const std::string & id, const std::string & name);
 
 public:
-  MORFEUS_LIB_DECL int marker() const;
-  MORFEUS_LIB_DECL void setMarker(int value);
+  MORFEUS_LIB_DECL std::string name() const;
+  MORFEUS_LIB_DECL void setName(const std::string & name);
 
 public:
-  MORFEUS_LIB_DECL void addSegment(const Segment & s);
-  MORFEUS_LIB_DECL const Segment & segment(std::size_t index) const;
-  MORFEUS_LIB_DECL std::size_t totalSegments() const;
+  MORFEUS_LIB_DECL media::Medium * medium();
+  MORFEUS_LIB_DECL const media::Medium * medium() const;
+  MORFEUS_LIB_DECL void setMedium(media::Medium * condition);
+
+protected:
+  void doPrint(std::ostream & output, int tabPos = 0) const override;
+  void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
+  void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
 
 private:
-  int mMarker;
-  std::vector<Segment> mSegments;
+  std::string mName;
+  media::Medium * mMedium;
 };
 
-inline int Face::marker() const
+inline std::string Face::name() const
 {
-  return mMarker;
+  return mName;
 }
 
-inline const Segment & Face::segment(std::size_t index) const
+inline void Face::setName(const std::string & name)
 {
-  return mSegments.at(index);
+  mName = name;
 }
 
-inline void Face::setMarker(int value)
+inline media::Medium * Face::medium()
 {
-  mMarker = value;
+  return mMedium;
 }
 
-inline std::size_t Face::totalSegments() const
+inline const media::Medium * Face::medium() const
 {
-  return mSegments.size();
+  return mMedium;
+}
+
+inline void Face::setMedium(media::Medium *medium)
+{
+  mMedium = medium;
 }
 
 }

@@ -8,6 +8,7 @@
 #include <vector>
 
 namespace morfeus {
+namespace solution {
 
 MeshInformation::MeshInformation()
 {
@@ -36,7 +37,7 @@ void MeshInformation::identifyBoundaryFaces(mesh::Mesh *mesh)
   for (std::size_t i = 0; i < mesh->totalElements(); i++) {
     mesh::Element * element = mesh->element(i);
     for (std::size_t j = 0; j < element->totalFaces(); j++) {
-      mesh::Face * face = element->constructFace(j);
+      mesh::Face * face = element->getFace(j);
       int32_t nodeSum = 0;
       for (std::size_t k = 0; k < face->totalNodes(); k++) {
         nodeSum += face->node(k);
@@ -117,4 +118,5 @@ void MeshInformation::markMeshUnknowns(mesh::Mesh *mesh)
   }
 }
 
+}
 }

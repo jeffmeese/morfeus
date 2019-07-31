@@ -21,7 +21,8 @@ Observation::Observation(const std::string & type, const std::string & id, const
 {
 }
 
-void Observation::calculate(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh *mesh, const MeshInformation *meshInfo, const vector &efield)
+void Observation::calculate(double freqGHz, double thetaInc, double phiInc,
+                            const mesh::Mesh *mesh, const solution::MeshInformation *meshInfo, const vector &efield)
 {
   doCalculate(freqGHz, thetaInc, phiInc, mesh, meshInfo, efield);
 }

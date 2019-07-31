@@ -1,5 +1,5 @@
-#ifndef MESHINFORMATION_H
-#define MESHINFORMATION_H
+#ifndef MORFEUS_SOLUTION_MESHINFORMATION_H
+#define MORFEUS_SOLUTION_MESHINFORMATION_H
 
 #include "morfeus.h"
 
@@ -15,6 +15,7 @@ namespace morfeus {
 }
 
 namespace morfeus {
+namespace solution {
 
 class MeshInformation
 {
@@ -56,5 +57,6 @@ inline std::size_t MeshInformation::totalUnknowns() const
 }
 
 }
+}
 
-#endif // MESHINFORMATION_H
+#endif // MORFEUS_SOLUTION_MESHINFORMATION_H

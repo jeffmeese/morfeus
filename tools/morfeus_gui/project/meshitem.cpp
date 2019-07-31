@@ -1,6 +1,6 @@
 #include "meshitem.h"
 
-#include <mesh.h>
+#include <mesh/mesh.h>
 
 MeshItem::MeshItem(std::unique_ptr<morfeus::mesh::Mesh> mesh)
   : ProjectItem ("Mesh")

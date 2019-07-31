@@ -1,26 +1,30 @@
 #include "mesher.h"
 
-#include "edge.h"
 #include "geometry/model.h"
-#include "hole.h"
-#include "mesh.h"
-#include "meshrefinement.h"
-#include "node.h"
-#include "region.h"
-#include "segment.h"
-#include "triangleelement.h"
-#include "tetelement.h"
-#include "vertex.h"
-#include "xmlutils.h"
+#include "geometry/hole.h"
+#include "geometry/part.h"
+#include "geometry/region.h"
+#include "geometry/segment.h"
+#include "geometry/vertex.h"
+
+#include "mesh/edge.h"
+#include "mesh/mesh.h"
+#include "mesh/node.h"
+#include "mesh/triangle.h"
+#include "mesh/tetrahedron.h"
+
+#include "xml/xmlutils.h"
 
 #include <boost/qvm/vec_operations.hpp>
+
 #include <fstream>
 #include <iostream>
 #include <set>
 
-#include "tetgen.h"
+#include <tetgen.h>
 
 namespace morfeus {
+namespace mesher {
 
 static const std::string OBJECT_ID("Mesher");
 
@@ -53,127 +57,127 @@ Mesher::~Mesher()
 //
 void Mesher::addFacets(const geometry::Model *geometry, tetgenio *in) const
 {
-  std::size_t vertexOffset = 0;
+//  int32_t vertexOffset = 0;
 
-  // Make a list of all mesher polygons from the geometry
-  std::vector<Mesher::Polygon> polygons;
-  for (std::size_t i = 0; i < geometry->totalShapes(); i++) {
-    const geometry::Shape * shape = geometry->shape(i);
+//  // Make a list of all mesher polygons from the geometry
+//  std::vector<Mesher::Polygon> polygons;
+//  for (std::size_t i = 0; i < geometry->totalShapes(); i++) {
+//    const geometry::Shape * shape = geometry->shape(i);
 
-    // The global specification ::Facet below is required to
-    // make sure the compiler doesn't try to use Mesher::Facet
-    std::vector<geometry::Vertex> vertexList = shape->getVertexList();
-    std::vector<geometry::Face> facetList = shape->getFacetList();
-    for (std::size_t j = 0; j < facetList.size(); j++) {
-      const geometry::Face & facet = facetList.at(j);
+//    // The global specification ::Facet below is required to
+//    // make sure the compiler doesn't try to use Mesher::Facet
+//    std::vector<geometry::Vertex> vertexList = shape->getVertexList();
+//    std::vector<geometry::Face> facetList = shape->getFacetList();
+//    for (std::size_t j = 0; j < facetList.size(); j++) {
+//      const geometry::Face & facet = facetList.at(j);
 
-      Mesher::Polygon p;
-      for (std::size_t k = 0; k < facet.totalSegments(); k++) {
-        const geometry::Segment & segment = facet.segment(k);
-        int32_t node1 = segment.node1();
-        geometry::Vertex v1 = vertexList.at(node1);
-        v1.setNumber(v1.number()+vertexOffset);
-        p.addVertex(v1);
-      }
-      polygons.push_back(p);
-    }
+//      Mesher::Polygon p;
+//      for (std::size_t k = 0; k < facet.totalSegments(); k++) {
+//        const geometry::Segment & segment = facet.segment(k);
+//        int32_t node1 = segment.node1();
+//        geometry::Vertex v1 = vertexList.at(node1);
+//        v1.setNumber(v1.number()+vertexOffset);
+//        p.addVertex(v1);
+//      }
+//      polygons.push_back(p);
+//    }
 
-    vertexOffset += vertexList.size();
-  }
+//    vertexOffset += static_cast<int32_t>(vertexList.size());
+//  }
 
-  // Determine the number of facets taking into account the coplanar polygons
-  std::vector<Mesher::Facet> facets;
-  for (std::size_t i = 0; i < polygons.size(); i++) {
-    const Mesher::Polygon & p1 = polygons.at(i);
+//  // Determine the number of facets taking into account the coplanar polygons
+//  std::vector<Mesher::Facet> facets;
+//  for (std::size_t i = 0; i < polygons.size(); i++) {
+//    const Mesher::Polygon & p1 = polygons.at(i);
 
-    Mesher::Facet facet;
-    facet.addPolygon(p1);
+//    Mesher::Facet facet;
+//    facet.addPolygon(p1);
 
-    // Figure out which other polygons, if any, are coplanar to this one
-    std::vector<std::size_t> ids;
-    for (std::size_t j = i+1; j < polygons.size(); j++) {
-      const Mesher::Polygon & p2 = polygons.at(j);
-      if (p1.isCoplanar(p2)) {
-        ids.push_back(j);
-        facet.addPolygon(p2);
-      }
-    }
+//    // Figure out which other polygons, if any, are coplanar to this one
+//    std::vector<std::size_t> ids;
+//    for (std::size_t j = i+1; j < polygons.size(); j++) {
+//      const Mesher::Polygon & p2 = polygons.at(j);
+//      if (p1.isCoplanar(p2)) {
+//        ids.push_back(j);
+//        facet.addPolygon(p2);
+//      }
+//    }
 
-    // Remove any coplanar polygons from the list
-    // since they are already included in a facet
-    while (ids.size() > 0) {
-      std::size_t id = ids.back();
-      polygons.erase(polygons.begin()+id);
-      ids.pop_back();
-    }
+//    // Remove any coplanar polygons from the list
+//    // since they are already included in a facet
+//    while (ids.size() > 0) {
+//      std::size_t id = ids.back();
+//      polygons.erase(polygons.begin()+id);
+//      ids.pop_back();
+//    }
 
-    // Add this facet to the list
-    facets.push_back(facet);
-  }
+//    // Add this facet to the list
+//    facets.push_back(facet);
+//  }
 
-  // Allocate the facets
-  in->numberoffacets = static_cast<int>(facets.size());
-  if (in->numberoffacets > 0) {
-    in->facetlist = new tetgenio::facet[in->numberoffacets];
-    in->facetmarkerlist = new int[in->numberoffacets];
-  }
+//  // Allocate the facets
+//  in->numberoffacets = static_cast<int>(facets.size());
+//  if (in->numberoffacets > 0) {
+//    in->facetlist = new tetgenio::facet[in->numberoffacets];
+//    in->facetmarkerlist = new int[in->numberoffacets];
+//  }
 
-  // Write the facets to the input structure
-  for (std::size_t i = 0; i < in->numberoffacets; i++) {
-    const Mesher::Facet & facet = facets.at(i);
-    tetgenio::facet * f = &in->facetlist[i];
+//  // Write the facets to the input structure
+//  for (std::size_t i = 0; i < in->numberoffacets; i++) {
+//    const Mesher::Facet & facet = facets.at(i);
+//    tetgenio::facet * f = &in->facetlist[i];
 
-    f->numberofholes = 0;
-    f->holelist = nullptr;
+//    f->numberofholes = 0;
+//    f->holelist = nullptr;
 
-    f->numberofpolygons = static_cast<int>(facet.totalPolygons());
-    f->polygonlist = new tetgenio::tetgenio::polygon[f->numberofpolygons];
+//    f->numberofpolygons = static_cast<int>(facet.totalPolygons());
+//    f->polygonlist = new tetgenio::tetgenio::polygon[f->numberofpolygons];
 
-    for (std::size_t j = 0; j < facet.totalPolygons(); j++) {
-      const Mesher::Polygon & polygon = facet.polygon(j);
-      tetgenio::polygon * p = &f->polygonlist[j];
-      p->numberofvertices = static_cast<int>(polygon.totalVertices());
-      p->vertexlist = new int[p->numberofvertices];
-      for (std::size_t k = 0; k < polygon.totalVertices(); k++) {
-        const geometry::Vertex & v = polygon.vertex(k);
-        p->vertexlist[k] = v.number();
-      }
-    }
-  }
+//    for (std::size_t j = 0; j < facet.totalPolygons(); j++) {
+//      const Mesher::Polygon & polygon = facet.polygon(j);
+//      tetgenio::polygon * p = &f->polygonlist[j];
+//      p->numberofvertices = static_cast<int>(polygon.totalVertices());
+//      p->vertexlist = new int[p->numberofvertices];
+//      for (std::size_t k = 0; k < polygon.totalVertices(); k++) {
+//        const geometry::Vertex & v = polygon.vertex(k);
+//        p->vertexlist[k] = v.number();
+//      }
+//    }
+//  }
 }
 
-// Add the holes to the tetgenio structure
-//
-// This is fairly straigtforward. The only slight complication
-// is that we must properly index the values into the holelist strcture
-// Essentially, for each hole there are three numbers, the x, y, and z
-// position of the hole. So, for each hole we just increment our
-// counter by 3.
-void Mesher::addHoles(const geometry::Model *model, tetgenio *in) const
-{
-  // Allocate holes
-  in->numberofholes = static_cast<int>(model->totalHoles());
-  if (in->numberofholes > 0) {
-    in->holelist = new double[in->numberofholes*3];
+//// Add the holes to the tetgenio structure
+////
+//// This is fairly straigtforward. The only slight complication
+//// is that we must properly index the values into the holelist strcture
+//// Essentially, for each hole there are three numbers, the x, y, and z
+//// position of the hole. So, for each hole we just increment our
+//// counter by 3.
+//void Mesher::addHoles(const geometry::Model *model, tetgenio *in) const
+//{
+//  // Allocate holes
+//  in->numberofholes = static_cast<int>(model->totalHoles());
+//  if (in->numberofholes > 0) {
+//    in->holelist = new double[in->numberofholes*3];
 
-    // Write holes to input structure
-    std::size_t holeIndex = 0;
-    for (std::size_t i = 0; i < model->totalHoles(); i++) {
-      const geometry::Hole * hole = model->hole(i);
-      in->holelist[holeIndex] = hole->position().x();
-      in->holelist[holeIndex+1] = hole->position().y();
-      in->holelist[holeIndex+2] = hole->position().z();
-      holeIndex += 3;
-    }
-  }
-}
+//    // Write holes to input structure
+//    std::size_t holeIndex = 0;
+//    for (std::size_t i = 0; i < model->totalHoles(); i++) {
+//      const geometry::Hole * hole = model->hole(i);
+//      in->holelist[holeIndex] = hole->position().x();
+//      in->holelist[holeIndex+1] = hole->position().y();
+//      in->holelist[holeIndex+2] = hole->position().z();
+//      holeIndex += 3;
+//    }
+//  }
+//}
 
 // Add the tet elements created by tetgen to the mesh
 void Mesher::addMeshElements(const tetgenio *out, mesh::Mesh *mesh) const
 {
   std::size_t tetIndex = 0;
   for (std::size_t i = 0; i < out->numberoftetrahedra; i++) {
-    std::unique_ptr<mesh::TetElement> tet(new mesh::TetElement(i));
+    std::unique_ptr<mesh::Tetrahedron> tet(new mesh::Tetrahedron(static_cast<int32_t>(i)));
     int32_t attribute = out->tetrahedronattributelist[i];
     for (std::size_t j = 0; j < out->numberofcorners; j++) {
       tet->setNode(j, out->tetrahedronlist[tetIndex+j]);
@@ -193,7 +197,7 @@ void Mesher::addMeshNodes(const tetgenio *out, mesh::Mesh *mesh) const
     double y = out->pointlist[pointIndex+1];
     double z = out->pointlist[pointIndex+2];
 
-    std::unique_ptr<mesh::Node> node(new mesh::Node(i, x, y, z));
+    std::unique_ptr<mesh::Node> node(new mesh::Node(static_cast<int32_t>(i), x, y, z));
     mesh->addNode(std::move(node));
     pointIndex += 3;
   }
@@ -211,36 +215,36 @@ void Mesher::addMeshNodes(const tetgenio *out, mesh::Mesh *mesh) const
 //
 void Mesher::addPoints(const geometry::Model *model, tetgenio *in) const
 {
-  // Determine the number of points for all shapes
-  in->numberofpointattributes = 0;
-  std::vector<geometry::Vertex> allVertexList;
-  for (std::size_t i = 0; i < model->totalShapes(); i++) {
-    const geometry::Shape * shape = model->shape(i);
-    std::vector<geometry::Vertex> vertexList = shape->getVertexList();
-    for (std::size_t j = 0; j < vertexList.size(); j++)
-      allVertexList.push_back(vertexList.at(j));
-  }
-  in->numberofpoints = static_cast<int>(allVertexList.size());
+//  // Determine the number of points for all shapes
+//  in->numberofpointattributes = 0;
+//  std::vector<geometry::Vertex> allVertexList;
+//  for (std::size_t i = 0; i < model->totalShapes(); i++) {
+//    const geometry::Shape * shape = model->shape(i);
+//    std::vector<geometry::Vertex> vertexList = shape->getVertexList();
+//    for (std::size_t j = 0; j < vertexList.size(); j++)
+//      allVertexList.push_back(vertexList.at(j));
+//  }
+//  in->numberofpoints = static_cast<int>(allVertexList.size());
 
-  // Allocate points
-  if (in->numberofpoints > 0) {
-    in->pointlist = new double[static_cast<uint64_t>(in->numberofpoints*3)];
-    in->pointmarkerlist = new int[in->numberofpoints];
-  }
+//  // Allocate points
+//  if (in->numberofpoints > 0) {
+//    in->pointlist = new double[static_cast<uint64_t>(in->numberofpoints*3)];
+//    in->pointmarkerlist = new int[in->numberofpoints];
+//  }
 
-  // Write points to input structure
-  std::size_t pointIndex = 0;
-  std::size_t pointMarkerIndex = 0;
-  int32_t vertexOffset = 0;
-  for (std::size_t j = 0; j < allVertexList.size(); j++) {
-    const geometry::Vertex & v = allVertexList.at(j);
-    in->pointlist[pointIndex] = v.x();
-    in->pointlist[pointIndex+1] = v.y();
-    in->pointlist[pointIndex+2] = v.z();
-    in->pointmarkerlist[pointMarkerIndex] = 0;
-    pointIndex += 3;
-    pointMarkerIndex++;
-  }
+//  // Write points to input structure
+//  std::size_t pointIndex = 0;
+//  std::size_t pointMarkerIndex = 0;
+//  int32_t vertexOffset = 0;
+//  for (std::size_t j = 0; j < allVertexList.size(); j++) {
+//    const geometry::Vertex & v = allVertexList.at(j);
+//    in->pointlist[pointIndex] = v.x();
+//    in->pointlist[pointIndex+1] = v.y();
+//    in->pointlist[pointIndex+2] = v.z();
+//    in->pointmarkerlist[pointMarkerIndex] = 0;
+//    pointIndex += 3;
+//    pointMarkerIndex++;
+//  }
 }
 
 // Add the regions to the tetgenio structure
@@ -251,26 +255,26 @@ void Mesher::addPoints(const geometry::Model *model, tetgenio *in) const
 // position of the region along with an attrbute and maximum tet area.
 // So, for each hole we just increment our counter by 5.
 //
-void Mesher::addRegions(const geometry::Model *model, tetgenio *in) const
-{
-  // Allocate regions
-  in->numberofregions = static_cast<int>(model->totalRegions());
-  if (in->numberofregions > 0) {
-    in->regionlist = new double[in->numberofregions*5];
+//void Mesher::addRegions(const geometry::Model *model, tetgenio *in) const
+//{
+//  // Allocate regions
+//  in->numberofregions = static_cast<int>(model->totalRegions());
+//  if (in->numberofregions > 0) {
+//    in->regionlist = new double[in->numberofregions*5];
 
-    // Write regions to input structure
-    std::size_t regionIndex = 0;
-    for (std::size_t i = 0; i < model->totalRegions(); i++) {
-      const geometry::Region * region = model->region(i);
-      in->regionlist[regionIndex] = region->position().x();
-      in->regionlist[regionIndex+1] = region->position().y();
-      in->regionlist[regionIndex+2] = region->position().z();
-      in->regionlist[regionIndex+3] = region->attribute();
-      in->regionlist[regionIndex+4] = region->maxArea();
-      regionIndex += 5;
-    }
-  }
-}
+//    // Write regions to input structure
+//    std::size_t regionIndex = 0;
+//    for (std::size_t i = 0; i < model->totalRegions(); i++) {
+//      const geometry::Region * region = model->region(i);
+//      in->regionlist[regionIndex] = region->position().x();
+//      in->regionlist[regionIndex+1] = region->position().y();
+//      in->regionlist[regionIndex+2] = region->position().z();
+//      in->regionlist[regionIndex+3] = region->attribute();
+//      in->regionlist[regionIndex+4] = region->maxArea();
+//      regionIndex += 5;
+//    }
+//  }
+//}
 
 //! Creates the volume mesh from the geometry specification
 //!
@@ -296,8 +300,8 @@ void Mesher::createMesh(const geometry::Model * model, mesh::Mesh * mesh) const
   tetgenio in;
   addPoints(model, &in);
   addFacets(model, &in);
-  addHoles(model, &in);
-  addRegions(model, &in);
+  //addHoles(model, &in);
+  //addRegions(model, &in);
   writePolyFile("temp.poly", &in);
 
   // Run the tetgen mesher to populate the output structure
@@ -323,7 +327,7 @@ void Mesher::createMesh(const geometry::Model * model, mesh::Mesh * mesh) const
 }
 
 //! Print the mesher information to the output stream
-void Mesher::print(std::ostream & output, int tabPos) const
+void Mesher::doPrint(std::ostream & output, int tabPos) const
 {
   xmlutils::printHeader(output, tabPos, "Mesher");
   xmlutils::printValue(output, tabPos+2, "Min Edge Length: ", mMinEdgeLength);
@@ -334,13 +338,8 @@ void Mesher::print(std::ostream & output, int tabPos) const
   output << "\n";
 }
 
-void Mesher::print(int tabPos) const
-{
-  print(std::cout, tabPos);
-}
-
 //! Read the mesher specification from a XML file
-void Mesher::readFromXml(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
+void Mesher::doXmlRead(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
 {
   setMinEdgeLength(xmlutils::readAttribute<double>(node, "min-edge-length"));
   setMaxEdgeLength(xmlutils::readAttribute<double>(node, "max-edge-length"));
@@ -349,7 +348,7 @@ void Mesher::readFromXml(rapidxml::xml_document<> &, rapidxml::xml_node<> * node
 }
 
 //! Write the mesher specification to a XML file
-void Mesher::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+void Mesher::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
   xmlutils::writeAttribute(document, node, "min-edge-length", mMinEdgeLength);
   xmlutils::writeAttribute(document, node, "max-edge-length", mMaxEdgeLength);
@@ -516,4 +515,5 @@ const geometry::Vertex & Mesher::Polygon::vertex(std::size_t index) const
   return mVertices.at(index);
 }
 
+}
 }

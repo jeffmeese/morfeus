@@ -1,8 +1,9 @@
-#ifndef MESH_H
-#define MESH_H
+#ifndef MORFEUS_MESH_MESH_H
+#define MORFEUS_MESH_MESH_H
 
 #include "morfeus.h"
-#include "morfeusobject.h"
+
+#include "core/morfeusobject.h"
 
 #include <list>
 #include <map>
@@ -10,7 +11,7 @@
 #include <vector>
 
 namespace morfeus {
-  class MaterialDatabase;
+
   namespace mesh {
     class Edge;
     class Element;
@@ -22,15 +23,13 @@ namespace morfeus {
 namespace mesh {
 
 class Mesh
-    : public MorfeusObject
+    : public core::MorfeusObject
 {
 public:
   MORFEUS_LIB_DECL Mesh();
   MORFEUS_LIB_DECL virtual ~Mesh();
 
 public:
-  MORFEUS_LIB_DECL const MaterialDatabase * materialDatabase() const;
-  MORFEUS_LIB_DECL void setMaterialDatabase(const MaterialDatabase * database);
   MORFEUS_LIB_DECL std::size_t totalEdges() const;
   MORFEUS_LIB_DECL std::size_t totalElements() const;
   MORFEUS_LIB_DECL std::size_t totalNodes() const;
@@ -52,6 +51,11 @@ public:
   MORFEUS_LIB_DECL std::unique_ptr<Node> takeNode(std::size_t index);
   MORFEUS_LIB_DECL void writeGeomFile(const std::string & fileName) const;
   MORFEUS_LIB_DECL void writeVtkFile(const std::string & fileName) const;
+
+protected:
+  void doPrint(std::ostream & output, int tabPos) const override;
+  void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
+  void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
 
   // Implementation
 private:
@@ -75,20 +79,9 @@ private:
   ElementVector mElements;
   NodeVector mNodes;
   EdgeTable mEdgeTable;
-  const MaterialDatabase * mMaterialDatabase;
 };
 
-inline const MaterialDatabase * Mesh::materialDatabase() const
-{
-  return mMaterialDatabase;
-}
-
-inline void Mesh::setMaterialDatabase(const MaterialDatabase *database)
-{
-  mMaterialDatabase = database;
-}
-
 }
 }
 
-#endif // MESH_H
+#endif // MORFEUS_MESH_MESH_H

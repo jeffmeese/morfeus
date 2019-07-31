@@ -9,6 +9,7 @@
 #include <boost/functional/factory.hpp>
 
 namespace morfeus {
+namespace excitation {
 
 static const std::string OBJECT_ID("Planewave");
 
@@ -33,7 +34,8 @@ Planewave::Planewave(const std::string & id, const std::string & name)
   setAngleDependent(true);
 }
 
-void Planewave::doExcite(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh *mesh, const MeshInformation *meshInfo, vector &rhs) const
+void Planewave::doExcite(double freqGHz, double thetaInc, double phiInc,
+                         const mesh::Mesh *mesh, const solution::MeshInformation *meshInfo, vector &rhs) const
 {
   std::vector<mesh::Face *> boundaryFaces = meshInfo->boundaryFaces();
 
@@ -72,4 +74,5 @@ namespace  {
   const bool r = Excitation::factory().registerType(OBJECT_ID, boost::bind(boost::factory<Planewave*>()));
 }
 
+}
 }

@@ -5,15 +5,24 @@
 #include <string>
 
 class CommandLine;
+
 namespace morfeus {
-class MeshInformation;
-class MorfeusProject;
-namespace mesh {
-  class Mesh;
-}
-namespace observation {
-class Observation;
-}
+
+  namespace core {
+    class MorfeusProject;
+  }
+
+  namespace mesh {
+    class Mesh;
+  }
+
+  namespace observation {
+    class Observation;
+  }
+
+  namespace solution {
+    class MeshInformation;
+  }
 }
 
 class Application
@@ -30,12 +39,12 @@ private:
   void parseCommandLine(int argc, char ** argv);
   void readInput();
   void reportObservation(const morfeus::observation::Observation * observation);
-  void runSolution(const morfeus::mesh::Mesh * mesh, const morfeus::MeshInformation * meshInfo);
+  void runSolution(const morfeus::mesh::Mesh * mesh, const morfeus::solution::MeshInformation * meshInfo);
 
 private:
   std::string mFileName;
   std::unique_ptr<CommandLine> mCommandLine;
-  std::unique_ptr<morfeus::MorfeusProject> mProject;
+  std::unique_ptr<morfeus::core::MorfeusProject> mProject;
 };
 
 #endif // APPLICATION_H

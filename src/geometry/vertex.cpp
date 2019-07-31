@@ -27,12 +27,7 @@ Vertex::Vertex(int32_t number, double x, double y, double z)
   setBoundary(false);
 }
 
-void Vertex::addAttribute(double value)
-{
-  mAttributes.push_back(value);
-}
-
-void Vertex::print(std::ostream &output, int tabPos) const
+void Vertex::doPrint(std::ostream &output, int tabPos) const
 {
   xmlutils::printValue(output, tabPos, "Number: ", mNumber);
   xmlutils::printValue(output, tabPos, "x", mX);
@@ -40,12 +35,7 @@ void Vertex::print(std::ostream &output, int tabPos) const
   xmlutils::printValue(output, tabPos, "z", mZ);
 }
 
-void Vertex::print(int tabPos) const
-{
-  print(std::cout, tabPos);
-}
-
-void Vertex::readFromXml(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
+void Vertex::doXmlRead(rapidxml::xml_document<> &, rapidxml::xml_node<> * node)
 {
   setNumber(xmlutils::readAttribute<int32_t>(node, "number"));
   setX(xmlutils::readAttribute<double>(node, "x"));
@@ -53,7 +43,7 @@ void Vertex::readFromXml(rapidxml::xml_document<> &, rapidxml::xml_node<> * node
   setZ(xmlutils::readAttribute<double>(node, "z"));
 }
 
-void Vertex::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+void Vertex::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
   xmlutils::writeAttribute(document, node, "number", mNumber);
   xmlutils::writeAttribute(document, node, "x", mX);

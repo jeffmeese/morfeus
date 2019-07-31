@@ -7,6 +7,7 @@
 #include <iostream>
 
 namespace morfeus {
+namespace core {
 
 MorfeusObject::MorfeusObject(const std::string & type)
   : mId(createId())
@@ -31,4 +32,31 @@ std::string MorfeusObject::createId()
   return boost::uuids::to_string(uuid);
 }
 
+void MorfeusObject::print(std::ostream & output, int tabPos) const
+{
+  doPrint(output, tabPos);
+}
+
+void MorfeusObject::print(int tabPos) const
+{
+  print(std::cout);
+}
+
+void MorfeusObject::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
+{
+  doXmlRead(document, node);
+}
+
+void MorfeusObject::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
+{
+  doXmlWrite(document, node);
+}
+
+std::ostream & operator<<(std::ostream & output, const MorfeusObject & object)
+{
+  object.print(output);
+  return output;
+}
+
+}
 }
