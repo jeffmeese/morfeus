@@ -3,8 +3,10 @@
 namespace morfeus {
 namespace mesh {
 
+static const std::string OBJECT_ID("Node");
+
 Node::Node(int32_t number)
-  : MorfeusObject("Node")
+  : MorfeusObject(OBJECT_ID)
   , mNumber(number)
 {
   setPosition(0.0, 0.0, 0.0);
@@ -14,7 +16,7 @@ Node::Node(int32_t number)
 }
 
 Node::Node(int32_t number, double x, double y, double z)
-  : MorfeusObject("Node")
+  : MorfeusObject(OBJECT_ID)
   , mNumber(number)
 {
   setPosition(x, y, z);

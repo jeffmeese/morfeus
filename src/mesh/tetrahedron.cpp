@@ -4,14 +4,16 @@
 namespace morfeus {
 namespace mesh {
 
+static const std::string OBJECT_ID("Tetrahedron");
+
 Tetrahedron::Tetrahedron()
-  : Element("TetElement", 4, 6, 4)
+  : Element(OBJECT_ID, 4, 6, 4)
 {
   createFaces();
 }
 
 Tetrahedron::Tetrahedron(int32_t number)
-  : Element("TetElement", number, 4, 6, 4)
+  : Element(OBJECT_ID, number, 4, 6, 4)
 {
   createFaces();
 }
@@ -24,7 +26,7 @@ void Tetrahedron::createFaces()
   mFaces.push_back(TrianglePtr(new Triangle));
 }
 
-void Tetrahedron::doComputeFeEntry(const Mesh * mesh, std::size_t localEdge1, std::size_t localEdge2, dcomplex & i1, dcomplex & i2) const
+void Tetrahedron::doComputeFeEntry(const Mesh * mesh, std::size_t localEdge1, std::size_t localEdge2, math::dcomplex & i1, math::dcomplex & i2) const
 {
 
 }

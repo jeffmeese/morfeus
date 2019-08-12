@@ -3,9 +3,16 @@
 
 #include <QStandardItemModel>
 
+#include <model/geometry/part.h>
+#include <model/media/medium.h>
+#include <model/ports/port.h>
+
+#include <core/morfeusproject.h>
+
 class ActionManager;
 class ExcitationsWorkspaceItem;
 class GeometryWorkspaceItem;
+class ModelGroup;
 class MeshWorkspaceItem;
 class ObservationsWorkspaceItem;
 class GuiProject;
@@ -21,22 +28,21 @@ public:
   WorkspaceModel();
 
 public:
-  GeometryWorkspaceItem * geometryItem();
-  void setProject(GuiProject * project);
-
-private slots:
-  void handleAddRectangle(ProjectItem * rectItem);
-  void handleAboutToRemoveItem(ProjectItem * projectItem);
+  void addPart(std::unique_ptr<morfeus::model::geometry::Part> part);
+  void addPort(std::unique_ptr<morfeus::model::ports::Port> part);
 
 private:
   void createDefaultItems();
   void loadProject();
 
+signals:
+  void partAdded(morfeus::model::geometry::Part * part);
+  void portAdded(morfeus::model::ports::Port * port);
+
 private:
-  GuiProject * mProject;
+  std::unique_ptr<morfeus::core::MorfeusProject> mProject;
   ExcitationsWorkspaceItem * mExcitationsItems;
-  GeometryWorkspaceItem * mGeometryItem;
-  MeshWorkspaceItem * mMeshItem;
+  ModelGroup * mModelGroup;
   ObservationsWorkspaceItem * mObservationsItem;
 };
 

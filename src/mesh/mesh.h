@@ -13,8 +13,10 @@
 namespace morfeus {
 
   namespace mesh {
+    class ConvexHull;
     class Edge;
     class Element;
+    class Face;
     class Node;
   }
 }
@@ -44,6 +46,7 @@ public:
   MORFEUS_LIB_DECL const mesh::Element * element(std::size_t index) const;
   MORFEUS_LIB_DECL mesh::Edge * findEdge(int32_t node1, int32_t node2) const;
   MORFEUS_LIB_DECL int32_t findNearestNode(double x, double y, double z) const;
+  MORFEUS_LIB_DECL void computeConvexHull(ConvexHull * convexHull) const;
   MORFEUS_LIB_DECL Node * node(std::size_t index);
   MORFEUS_LIB_DECL const Node * node(std::size_t index) const;
   MORFEUS_LIB_DECL std::unique_ptr<Edge> takeEdge(std::size_t index);

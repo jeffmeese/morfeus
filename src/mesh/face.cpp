@@ -68,18 +68,19 @@ double Face::computeNormal(const Mesh * mesh) const
 //  return normalVector;
 }
 
-dcomplex Face::computeMomEntry(const Face * otherFace, const Mesh * mesh, std::size_t localEdge) const
+math::dcomplex Face::computeMomEntry(const Face * otherFace, const Mesh * mesh, std::size_t localEdge) const
 {
   return doComputeMomEntry(otherFace, mesh, localEdge);
 }
 
-dcomplex Face::computePlanewaveEntry(std::size_t edge, double freq, double alpha, double theta, double phi, const Mesh * mesh) const
+math::dcomplex Face::computePlanewaveEntry(std::size_t edge, double freq, double alpha, double theta, double phi, const Mesh * mesh) const
 {
   return doComputePlanewaveEntry(edge, freq, alpha, theta, phi, mesh);
 }
 
 void Face::init(std::size_t totalNodes, std::size_t totalEdges)
 {
+  mMedium = nullptr;
   mNodes.resize(totalNodes);
   mEdges.resize(totalEdges);
   mEdgeSigns.resize(totalEdges);

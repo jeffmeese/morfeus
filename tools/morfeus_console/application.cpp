@@ -3,23 +3,28 @@
 
 #include <core/morfeusproject.h>
 
-#include <excitations/excitation.h>
+#include <model/model.h>
 
-#include <geometry/cuboid.h>
-#include <geometry/face.h>
-#include <geometry/model.h>
-#include <geometry/rectangle.h>
-#include <geometry/region.h>
-#include <media/dielectricmedium.h>
-#include <media/medialibrary.h>
-#include <media/perfectelectricconductor.h>
+#include <model/geometry/cuboid.h>
+#include <model/geometry/face.h>
+#include <model/geometry/rectangle.h>
+#include <model/geometry/region.h>
+
+#include <model/media/dielectric.h>
+#include <model/media/freespace.h>
+#include <model/media/medialibrary.h>
+#include <model/media/perfectelectricconductor.h>
+
 #include <math/constants.h>
 #include <mesh/mesh.h>
 #include <mesher/mesher.h>
 #include <observations/observation.h>
+
 #include <solution/meshinformation.h>
 #include <solution/solution.h>
 #include <solution/solver.h>
+
+#include <sources/source.h>
 
 Application::Application(int argc, char ** argv)
   : mCommandLine(new CommandLine)
@@ -42,24 +47,45 @@ void test()
   using namespace morfeus;
 
   std::unique_ptr<core::MorfeusProject> project(new core::MorfeusProject);
+//  media::MediaLibrary * mediaLibrary = project->mediaLibrary();
+  model::Model * model = project->model();
 
-  std::unique_ptr<media::DielectricMedium> freeSpace(new media::DielectricMedium("Free Space", dcomplex(1.0, 0.0), dcomplex(1.0, 0.0)));
-  project->mediaLibrary()->addMedium(std::move(freeSpace));
+  std::unique_ptr<model::media::Dielectric> medium(new model::media::Dielectric("Dielectric"));
+  medium->setAttribute(1);
+  medium->setPermittivity(morfeus::math::dcomplex(2.2, 0.0));
+  //mediaLibrary->addMedium(std::move(medium));
 
-  std::unique_ptr<media::PerfectElectricConductor> pec(new media::PerfectElectricConductor);
-  project->mediaLibrary()->addMedium(std::move(pec));
+  std::unique_ptr<model::media::PerfectElectricConductor> pec(new model::media::PerfectElectricConductor);
+  pec->setAttribute(2);
+  //mediaLibrary->addMedium(std::move(pec));
 
   // Add the cavity region
-  std::unique_ptr<geometry::Cuboid> cavity(new geometry::Cuboid("Cavity", geometry::Point(0.0, 0.0, -2.0), 2.0, 2.0, 2.0));
-  geometry::Region * region = cavity->getRegionList().at(0);
-  region->setMedium(project->mediaLibrary()->medium(0));
-  project->model()->addPart(std::move(cavity));
+  std::unique_ptr<model::geometry::Cuboid> cavity(new model::geometry::Cuboid("Cavity", model::geometry::Point(0.0, 0.0, -0.5), 2.0, 2.0, 0.5));
+  model::geometry::Region * region = cavity->getRegionList().at(0);
+  //region->setMedium(project->mediaLibrary()->medium(0));
+  region->setLocalMeshSize(0.001);
+  region->setPosition(0.0, 0.0, -0.25);
+
+  std::vector<model::geometry::Face*> faceList = cavity->getFaceList();
+//  faceList.at(1)->setMedium(mediaLibrary->medium(1));
+//  faceList.at(2)->setMedium(mediaLibrary->medium(1));
+//  faceList.at(3)->setMedium(mediaLibrary->medium(1));
+//  faceList.at(4)->setMedium(mediaLibrary->medium(1));
+//  faceList.at(5)->setMedium(mediaLibrary->medium(1));
+  model->addPart(std::move(cavity));
 
   // Add the patch region
-  std::unique_ptr<geometry::Rectangle> patch(new geometry::Rectangle("Patch", geometry::Point(0.0,0.0,0.0), 1.0, 1.0));
-  geometry::Face * face = patch->getFaceList().at(0);
-  face->setMedium(project->mediaLibrary()->medium(1));
-  project->model()->addPart(std::move(patch));
+  std::unique_ptr<model::geometry::Rectangle> patch(new model::geometry::Rectangle("Patch", model::geometry::Point(0.0,0.0,0.0), 1.0, 1.0));
+  model::geometry::Face * face = patch->getFaceList().at(0);
+  //face->setMedium(mediaLibrary->medium(1));
+  model->addPart(std::move(patch));
+
+  // Create the mesh
+  std::unique_ptr<mesh::Mesh> mesh(new mesh::Mesh);
+  mesher::Mesher mesher;
+  mesher.createMesh(model, mesh.get());
+
+  project->print();
 
   std::cout << "done\n";
 }
@@ -117,7 +143,7 @@ void Application::runSolution(const morfeus::mesh::Mesh * mesh, const morfeus::s
 {
   // Set the media library for the solver
   morfeus::solution::Solution * solution = mProject->solution();
-  solution->solver()->setMediaLibrary(mProject->mediaLibrary());
+  //solution->solver()->setMediaLibrary(mProject->mediaLibrary());
 
   // Calculate the total number of frequencies
   double freqStart = solution->frequencyStart();
@@ -148,11 +174,11 @@ void Application::runSolution(const morfeus::mesh::Mesh * mesh, const morfeus::s
     double freqGHz = freqStart + i*freqIncr;
 
     // Calculate non angle dependent excitations
-    morfeus::solution::Solver::vector rhs;
-    for (std::size_t i = 0; i < solution->totalExcitations(); i++) {
-      const morfeus::excitation::Excitation * excitation = solution->getExcitation(i);
-      if (!excitation->angleDependent()) {
-        excitation->excite(freqGHz, 0.0, 0.0, mesh, meshInfo, rhs);
+    morfeus::math::vector rhs;
+    for (std::size_t i = 0; i < solution->totalSources(); i++) {
+      const morfeus::sources::Source * source = solution->source(i);
+      if (!source->angleDependent()) {
+        source->excite(freqGHz, 0.0, 0.0, mesh, meshInfo, rhs);
       }
     }
 
@@ -163,19 +189,19 @@ void Application::runSolution(const morfeus::mesh::Mesh * mesh, const morfeus::s
         double phi = (phiStart + j*phiIncr) * morfeus::math::deg2rad;
 
         // Calculate angle dependent excitations
-        for (std::size_t i = 0; i < solution->totalExcitations(); i++) {
-          const morfeus::excitation::Excitation * excitation = solution->getExcitation(i);
-          if (excitation->angleDependent()) {
-            excitation->excite(freqGHz, theta, phi, mesh, meshInfo, rhs);
+        for (std::size_t i = 0; i < solution->totalSources(); i++) {
+          const morfeus::sources::Source * source = solution->source(i);
+          if (source->angleDependent()) {
+            source->excite(freqGHz, theta, phi, mesh, meshInfo, rhs);
           }
         }
 
         // Solve the system
-        morfeus::solution::Solver::vector efield = solution->solver()->runSolver(freqGHz, mesh, meshInfo, rhs);
+        morfeus::math::vector efield = solution->solver()->runSolver(freqGHz, mesh, meshInfo, rhs);
 
         // Solve the system and calculate the observations
         for (std::size_t i = 0; i < solution->totalObservations(); i++) {
-          morfeus::observation::Observation * observation = solution->getObservation(i);
+          morfeus::observation::Observation * observation = solution->observation(i);
           observation->calculate(freqGHz, theta, phi, mesh, meshInfo, efield);
           reportObservation(observation);
         }

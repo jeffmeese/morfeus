@@ -31,7 +31,7 @@ FarField::FarField(const std::string & id, const std::string & name)
 }
 
 void FarField::doCalculate(double freqGHz, double thetaInc, double phiInc,
-                           const mesh::Mesh * mesh, const solution::MeshInformation * meshInfo, const vector & efield)
+                           const mesh::Mesh * mesh, const solution::MeshInformation * meshInfo, const math::vector & efield)
 {
 }
 

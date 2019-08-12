@@ -87,26 +87,26 @@ void MeshInformation::markMeshUnknowns(mesh::Mesh *mesh)
   for (std::size_t i = 0; i < mesh->totalElements(); i++) {
     mesh::Element * element = mesh->element(i);
 
-    int32_t attribute = element->attribute();
-    if (attribute == mesh::Element::MetallicElement) {
-      for (std::size_t j = 0; j < element->totalEdges(); j++) {
-        mesh::Edge * edge = mesh->edge(element->edge(j));
-        edge->setUnknownNumber(0);
-      }
-    }
+//    int32_t attribute = element->attribute();
+//    if (attribute == mesh::Element::MetallicElement) {
+//      for (std::size_t j = 0; j < element->totalEdges(); j++) {
+//        mesh::Edge * edge = mesh->edge(element->edge(j));
+//        edge->setUnknownNumber(0);
+//      }
+//    }
   }
 
   // Mark boundary face edges
   for (std::size_t i = 0; i < mBoundaryFaces.size(); i++) {
     mesh::Face * face = mBoundaryFaces.at(i);
     mesh::Element * element = mFaceToElement[face];
-    if (element->attribute() == mesh::Element::MetallicBoundary) {
-      for (std::size_t j = 0; j < face->totalEdges(); j++) {
-        int32_t edgeNumber = face->edge(j);
-        mesh::Edge * meshEdge = mesh->edge(edgeNumber);
-        meshEdge->setUnknownNumber(0);
-      }
-    }
+//    if (element->attribute() == mesh::Element::MetallicBoundary) {
+//      for (std::size_t j = 0; j < face->totalEdges(); j++) {
+//        int32_t edgeNumber = face->edge(j);
+//        mesh::Edge * meshEdge = mesh->edge(edgeNumber);
+//        meshEdge->setUnknownNumber(0);
+//      }
+//    }
   }
 
   mTotalUnknowns = 0;

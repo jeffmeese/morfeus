@@ -3,7 +3,7 @@
 
 #include "projectitem.h"
 
-#include <geometry/rectangle.h>
+#include <model/geometry/rectangle.h>
 
 class RectangleItem
     : public ProjectItem
@@ -11,12 +11,12 @@ class RectangleItem
   Q_OBJECT
 
 public:
-  RectangleItem(std::unique_ptr<morfeus::geometry::Rectangle> rectangle);
+  RectangleItem(std::unique_ptr<morfeus::model::geometry::Rectangle> rectangle);
 
 public:
-  const morfeus::geometry::Rectangle * rectangle() const;
-  morfeus::geometry::Rectangle * rectangle();
-  std::unique_ptr<morfeus::geometry::Rectangle> removeRectangle();
+  const morfeus::model::geometry::Rectangle * rectangle() const;
+  morfeus::model::geometry::Rectangle * rectangle();
+  std::unique_ptr<morfeus::model::geometry::Rectangle> removeRectangle();
 
 protected:
   bool loadAttributes(QXmlStreamReader & reader) override;
@@ -26,15 +26,15 @@ protected slots:
   void handleItemChanged();
 
 private:
-  std::unique_ptr<morfeus::geometry::Rectangle> mRectangle;
+  std::unique_ptr<morfeus::model::geometry::Rectangle> mRectangle;
 };
 
-inline const morfeus::geometry::Rectangle * RectangleItem::rectangle() const
+inline const morfeus::model::geometry::Rectangle * RectangleItem::rectangle() const
 {
   return mRectangle.get();
 }
 
-inline morfeus::geometry::Rectangle * RectangleItem::rectangle()
+inline morfeus::model::geometry::Rectangle * RectangleItem::rectangle()
 {
   return mRectangle.get();
 }

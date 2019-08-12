@@ -10,7 +10,7 @@
 
 namespace morfeus {
 
-  namespace geometry {
+  namespace model {
     class Model;
   }
 
@@ -34,12 +34,17 @@ class MorfeusProject
 {
 public:
   MORFEUS_LIB_DECL MorfeusProject();
+  MORFEUS_LIB_DECL virtual ~MorfeusProject();
 
 public:
-  MORFEUS_LIB_DECL geometry::Model * model();
-  MORFEUS_LIB_DECL const geometry::Model * model() const;
-  MORFEUS_LIB_DECL media::MediaLibrary * mediaLibrary();
-  MORFEUS_LIB_DECL const media::MediaLibrary * mediaLibrary() const;
+  MORFEUS_LIB_DECL bool modified() const;
+  MORFEUS_LIB_DECL std::string name() const;
+  MORFEUS_LIB_DECL void setModified(bool modified = true);
+  MORFEUS_LIB_DECL void setName(const std::string & name);
+
+public:
+  MORFEUS_LIB_DECL model::Model * model();
+  MORFEUS_LIB_DECL const model::Model * model() const;
   MORFEUS_LIB_DECL mesher::Mesher * mesher();
   MORFEUS_LIB_DECL const mesher::Mesher * mesher() const;
   MORFEUS_LIB_DECL solution::Solution * solution();
@@ -55,30 +60,26 @@ public:
   MORFEUS_LIB_DECL void writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const;
 
 private:
-  std::unique_ptr<geometry::Model> mModel;
-  std::unique_ptr<media::MediaLibrary> mMediaLibrary;
+  bool mModified;
+  std::string mName;
+  std::unique_ptr<model::Model> mModel;
   std::unique_ptr<mesher::Mesher> mMesher;
   std::unique_ptr<solution::Solution> mSolution;
 };
 
-inline geometry::Model * MorfeusProject::model()
+inline model::Model * MorfeusProject::model()
 {
   return mModel.get();
 }
 
-inline const geometry::Model * MorfeusProject::model() const
+inline const model::Model * MorfeusProject::model() const
 {
   return mModel.get();
 }
 
-inline media::MediaLibrary * MorfeusProject::mediaLibrary()
+inline bool MorfeusProject::modified() const
 {
-  return mMediaLibrary.get();
-}
-
-inline const media::MediaLibrary * MorfeusProject::mediaLibrary() const
-{
-  return mMediaLibrary.get();
+  return mModified;
 }
 
 inline mesher::Mesher * MorfeusProject::mesher()
@@ -89,6 +90,21 @@ inline mesher::Mesher * MorfeusProject::mesher()
 inline const mesher::Mesher * MorfeusProject::mesher() const
 {
   return mMesher.get();
+}
+
+inline std::string MorfeusProject::name() const
+{
+  return mName;
+}
+
+inline void MorfeusProject::setModified(bool value)
+{
+  mModified = value;
+}
+
+inline void MorfeusProject::setName(const std::string &name)
+{
+  mName = name;
 }
 
 inline solution::Solution * MorfeusProject::solution()

@@ -3,10 +3,10 @@
 #include "meshinformation.h"
 #include "solution.h"
 
-#include "excitations/excitation.h"
+#include "sources/source.h"
 
-#include "media/dielectricmedium.h"
-#include "media/medialibrary.h"
+#include "model/media/dielectric.h"
+#include "model/media/medialibrary.h"
 
 #include "math/functions.h"
 
@@ -49,8 +49,8 @@ void Solver::buildBiMatrix(double freqGHz, const mesh::Mesh *mesh, const solutio
         if (sourceUnknown >= 0 && sourceUnknown <= testUnknown) {
           std::size_t row = sourceUnknown - 1;
           std::size_t col = testUnknown - 1;
-          dcomplex i1, i2;
-          updateBoundaryIntegralMatrix(row, col, i1, i2);
+          math::dcomplex i1, i2;
+          updateMatrix(row, col, i1, i2);
         }
       }
     }
@@ -62,7 +62,7 @@ void Solver::buildFeMatrix(double freqGHz, const mesh::Mesh *mesh, const MeshInf
   double k0 = math::frequencyToWavenumber(freqGHz);
 
   // Default material if one is not specified for an element
-  media::DielectricMedium freeSpace(0, dcomplex(1.0, 0.0), dcomplex(0.0, 0.0));
+  model::media::Dielectric freeSpace(0, math::dcomplex(1.0, 0.0), math::dcomplex(0.0, 0.0));
 
   // Loop through each element and calculate the finite element entry for each pair
   // of edges if both edges have unknown values
@@ -71,15 +71,15 @@ void Solver::buildFeMatrix(double freqGHz, const mesh::Mesh *mesh, const MeshInf
     int32_t epsId = element->epsilonId();
     int32_t muId = element->muId();
 
-    const media::Medium * eps = &freeSpace;
-    if (epsId >= 0 && mMediaLibrary != nullptr) {
-      eps = mMediaLibrary->medium(epsId);
-    }
+    const model::media::Medium * eps = &freeSpace;
+//    if (epsId >= 0 && mMediaLibrary != nullptr) {
+//      eps = mMediaLibrary->medium(epsId);
+//    }
 
-    const media::Medium * mu = &freeSpace;
-    if (muId >= 0 && mMediaLibrary != nullptr) {
-      mu = mMediaLibrary->medium(muId);
-    }
+    const model::media::Medium * mu = &freeSpace;
+//    if (muId >= 0 && mMediaLibrary != nullptr) {
+//      mu = mMediaLibrary->medium(muId);
+//    }
 
     for (std::size_t j = 1; j <= element->totalEdges(); j++) {
       const mesh::Edge * sourceEdge = mesh->edge(element->edge(j));
@@ -90,16 +90,16 @@ void Solver::buildFeMatrix(double freqGHz, const mesh::Mesh *mesh, const MeshInf
 
         if (sourceUnknown >= 0 && sourceUnknown <= testUnknown) {
 
-          dcomplex i1(0.0, 0.0), i2(0.0, 0.0);
+          math::dcomplex i1(0.0, 0.0), i2(0.0, 0.0);
           element->computeFeEntry(mesh, j, k, i2, i2);
 
           // Assume symmetry
           std::size_t row = sourceUnknown - 1;
           std::size_t col = testUnknown - 1;
-          dcomplex epsValue = eps->value(freqGHz);
-          dcomplex muValue = mu->value(freqGHz);
-          dcomplex entry = i1/muValue - k0*k0*i2*epsValue;
-          updateFiniteElementMatrix(row, col, i1, i2);
+          math::dcomplex epsValue = eps->value(freqGHz);
+          math::dcomplex muValue = mu->value(freqGHz);
+          math::dcomplex entry = i1/muValue - k0*k0*i2*epsValue;
+          updateMatrix(row, col, i1, i2);
         }
       }
     }
@@ -125,7 +125,7 @@ Solver * Solver::SolverFactory::create(const std::string & type)
   return true;
 }
 
-Solver::vector Solver::runSolver(double freqGHz, const mesh::Mesh * mesh, const MeshInformation * meshInfo, const vector & rhs)
+math::vector Solver::runSolver(double freqGHz, const mesh::Mesh * mesh, const MeshInformation * meshInfo, const math::vector & rhs)
 {
   if (mAllocated) {
     allocateMatrices(meshInfo);
@@ -140,8 +140,7 @@ Solver::vector Solver::runSolver(double freqGHz, const mesh::Mesh * mesh, const 
   buildBiMatrix(freqGHz, mesh, meshInfo);
 
   // Allocate the efield matrix and solve the system
-  vector efield(meshInfo->totalUnknowns(), dcomplex(0.0, 0.0));
-  efield = solveSystem(rhs);
+  math::vector efield = solveSystem(rhs);
   return efield;
 }
 

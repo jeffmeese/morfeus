@@ -1,8 +1,6 @@
 #include "morfeusproject.h"
 
-#include "geometry/model.h"
-
-#include "media/medialibrary.h"
+#include "model/model.h"
 
 #include "mesher/mesher.h"
 
@@ -16,17 +14,21 @@ namespace morfeus {
 namespace core {
 
 MorfeusProject::MorfeusProject()
-  : mModel(new geometry::Model)
-  , mMediaLibrary(new media::MediaLibrary)
+  : mModified(false)
+  , mModel(new model::Model)
   , mMesher(new mesher::Mesher)
   , mSolution(new solution::Solution)
 {
 }
 
+MorfeusProject::~MorfeusProject()
+{
+
+}
+
 void MorfeusProject::print(std::ostream & output, int tabPos) const
 {
   mModel->print(output, tabPos);
-  mMediaLibrary->print(output, tabPos);
   mMesher->print(output, tabPos);
   mSolution->print(output, tabPos);
 }
@@ -64,6 +66,7 @@ void MorfeusProject::readFromFile(const std::string & fileName)
     throw std::invalid_argument(oss.str());
   }
   readFromXml(document, projectNode);
+
 }
 
 void MorfeusProject::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
@@ -71,11 +74,6 @@ void MorfeusProject::readFromXml(rapidxml::xml_document<> & document, rapidxml::
   rapidxml::xml_node<> * geomNode = node->first_node("Model");
   if (geomNode != nullptr) {
     mModel->readFromXml(document, geomNode);
-  }
-
-  rapidxml::xml_node<> * materialsNode = node->first_node("Media");
-  if (materialsNode != nullptr) {
-    mMediaLibrary->readFromXml(document, materialsNode);
   }
 
   rapidxml::xml_node<> * mesherNode = node->first_node("Mesher");
@@ -87,6 +85,8 @@ void MorfeusProject::readFromXml(rapidxml::xml_document<> & document, rapidxml::
   if (solutionNode != nullptr) {
     mSolution->readFromXml(document, solutionNode);
   }
+
+  setModified(false);
 }
 
 void MorfeusProject::saveToFile(const std::string &fileName)
@@ -115,9 +115,6 @@ void MorfeusProject::writeToXml(rapidxml::xml_document<> & document, rapidxml::x
 {
   rapidxml::xml_node<> * geomNode = xmlutils::createNode(document, "Model");
   mModel->writeToXml(document, geomNode);
-
-  rapidxml::xml_node<> * materialsNode = xmlutils::createNode(document, "Media");
-  mMediaLibrary->writeToXml(document, materialsNode);
 
   rapidxml::xml_node<> * mesherNode = xmlutils::createNode(document, "Mesher");
   mMesher->writeToXml(document, mesherNode);

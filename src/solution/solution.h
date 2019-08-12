@@ -15,14 +15,6 @@
 
 namespace morfeus {
 
-  namespace excitation {
-    class Excitation;
-  }
-
-  namespace material {
-    class MaterialDatabase;
-  }
-
   namespace mesh {
     class Mesh;
   }
@@ -33,6 +25,10 @@ namespace morfeus {
 
   namespace solution {
     class Solver;
+  }
+
+  namespace sources {
+    class Source;
   }
 }
 
@@ -69,16 +65,16 @@ public:
   MORFEUS_LIB_DECL void setThetaStart(double value);
   MORFEUS_LIB_DECL void setThetaStop(double value);
   MORFEUS_LIB_DECL void setSolver(std::unique_ptr<Solver> solver);
-  MORFEUS_LIB_DECL std::size_t totalExcitations() const;
   MORFEUS_LIB_DECL std::size_t totalObservations() const;
+  MORFEUS_LIB_DECL std::size_t totalSources() const;
 
 public:
-  MORFEUS_LIB_DECL void addExcitation(std::unique_ptr<excitation::Excitation> excitation);
   MORFEUS_LIB_DECL void addObservation(std::unique_ptr<observation::Observation> observation);
-  MORFEUS_LIB_DECL excitation::Excitation * getExcitation(std::size_t index);
-  MORFEUS_LIB_DECL const excitation::Excitation * getExcitation(std::size_t index) const;
-  MORFEUS_LIB_DECL observation::Observation * getObservation(std::size_t index);
-  MORFEUS_LIB_DECL const observation::Observation * getObservation(std::size_t index) const;
+  MORFEUS_LIB_DECL void addSource(std::unique_ptr<sources::Source> source);
+  MORFEUS_LIB_DECL observation::Observation * observation(std::size_t index);
+  MORFEUS_LIB_DECL const observation::Observation * observation(std::size_t index) const;
+  MORFEUS_LIB_DECL sources::Source * source(std::size_t index);
+  MORFEUS_LIB_DECL const sources::Source * source(std::size_t index) const;
 
 protected:
   void doPrint(std::ostream & output, int tabPos) const override;
@@ -86,8 +82,11 @@ protected:
   void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
 
 private:
-  typedef std::unique_ptr<excitation::Excitation> ExcitationPtr;
   typedef std::unique_ptr<observation::Observation> ObservationPtr;
+  typedef std::unique_ptr<solution::Solver> SolverPtr;
+  typedef std::unique_ptr<sources::Source> SourcePtr;
+  typedef std::vector<ObservationPtr> ObservationVector;
+  typedef std::vector<SourcePtr> SourceVector;
 
 private:
   const mesh::Mesh * mMesh;
@@ -100,9 +99,9 @@ private:
   double mThetaIncr;
   double mThetaStart;
   double mThetaStop;
-  std::vector<ExcitationPtr> mExcitations;
-  std::vector<ObservationPtr> mObservations;
-  std::unique_ptr<Solver> mSolver;
+  ObservationVector mObservations;
+  SourceVector mSources;
+  SolverPtr mSolver;
 };
 
 inline double Solution::frequencyIncrement() const
@@ -135,47 +134,12 @@ inline double Solution::phiStop() const
   return mPhiStop;
 }
 
-inline double Solution::thetaIncrement() const
-{
-  return mThetaIncr;
-}
-
-inline double Solution::thetaStart() const
-{
-  return mThetaStart;
-}
-
-inline double Solution::thetaStop() const
-{
-  return mThetaStop;
-}
-
-inline Solver * Solution::solver()
-{
-  return mSolver.get();
-}
-
-inline const Solver * Solution::solver() const
-{
-  return mSolver.get();
-}
-
-inline excitation::Excitation * Solution::getExcitation(std::size_t index)
-{
-  return mExcitations.at(index).get();
-}
-
-inline const excitation::Excitation * Solution::getExcitation(std::size_t index) const
-{
-  return mExcitations.at(index).get();
-}
-
-inline observation::Observation * Solution::getObservation(std::size_t index)
+inline observation::Observation * Solution::observation(std::size_t index)
 {
   return mObservations.at(index).get();
 }
 
-inline const observation::Observation * Solution::getObservation(std::size_t index) const
+inline const observation::Observation * Solution::observation(std::size_t index) const
 {
   return mObservations.at(index).get();
 }
@@ -225,9 +189,44 @@ inline void Solution::setThetaStop(double value)
   mThetaStop = value;
 }
 
-inline std::size_t Solution::totalExcitations() const
+inline Solver * Solution::solver()
 {
-  return mExcitations.size();
+  return mSolver.get();
+}
+
+inline const Solver * Solution::solver() const
+{
+  return mSolver.get();
+}
+
+inline sources::Source * Solution::source(std::size_t index)
+{
+  return mSources.at(index).get();
+}
+
+inline const sources::Source * Solution::source(std::size_t index) const
+{
+  return mSources.at(index).get();
+}
+
+inline double Solution::thetaIncrement() const
+{
+  return mThetaIncr;
+}
+
+inline double Solution::thetaStart() const
+{
+  return mThetaStart;
+}
+
+inline double Solution::thetaStop() const
+{
+  return mThetaStop;
+}
+
+inline std::size_t Solution::totalSources() const
+{
+  return mSources.size();
 }
 
 inline std::size_t Solution::totalObservations() const

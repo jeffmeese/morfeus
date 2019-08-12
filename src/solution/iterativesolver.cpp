@@ -8,6 +8,8 @@
 
 #include "xml/xmlutils.h"
 
+#include "Eigen/IterativeLinearSolvers"
+
 #include <boost/bind.hpp>
 #include <boost/functional/factory.hpp>
 
@@ -18,7 +20,7 @@ static const std::string OBJECT_ID("Iterative Solver");
 
 IterativeSolver::IterativeSolver()
   : Solver(OBJECT_ID)
-  , mAlgorithm(BiCG)
+  , mAlgorithm(BiCGStab)
   , mMaxIterations(100)
   , mMinIterations(1)
   , mTolerance(0.001)
@@ -36,63 +38,42 @@ IterativeSolver::IterativeSolver(Algorithm algorithm, std::size_t minIterations,
 
 void IterativeSolver::allocateMatrices(const MeshInformation * meshInfo)
 {
-  std::size_t boundaryUnknowns = meshInfo->totalBoundaryUnknowns();
-  std::size_t totalUnknowns = meshInfo->totalUnknowns();
-
-  mFeMatrix.resize(totalUnknowns, totalUnknowns);
-  mBiMatrix.resize(boundaryUnknowns, boundaryUnknowns);
+  mMatrix.resize(meshInfo->totalUnknowns(), meshInfo->totalUnknowns());
 }
 
-Solver::vector IterativeSolver::bicg(const vector & rhs)
+math::vector IterativeSolver::bicg(const math::vector & rhs)
 {
-  vector efield;
+  math::vector efield;
   return efield;
 }
 
-Solver::vector IterativeSolver::bicgStab(const vector & rhs)
+math::vector IterativeSolver::bicgStab(const math::vector & rhs)
 {
-  vector efield;
+  Eigen::BiCGSTAB<math::sparse_matrix> solver;
+  solver.setMaxIterations(mMaxIterations);
+  solver.setTolerance(mTolerance);
+  solver.compute(mMatrix);
+  math::vector efield = solver.solve(rhs);
   return efield;
 }
 
-Solver::vector IterativeSolver::cgs(const vector & rhs)
+math::vector IterativeSolver::cgs(const math::vector & rhs)
 {
-  vector efield;
+  Eigen::ConjugateGradient<math::sparse_matrix> solver;
+  solver.setMaxIterations(mMaxIterations);
+  solver.setTolerance(mTolerance);
+  solver.compute(mMatrix);
+  math::vector efield = solver.solve(rhs);
   return efield;
 }
 
 void IterativeSolver::clearMatrices(const mesh::Mesh *mesh, const MeshInformation *meshInfo)
 {
-  for (std::size_t i = 1; i <= mesh->totalElements(); i++) {
-    const mesh::Element * element = mesh->element(i);
-    for (std::size_t j = 1; j <= element->totalEdges(); j++) {
-      const mesh::Edge * sourceEdge = mesh->edge(element->edge(j));
-      int32_t sourceUnknown = sourceEdge->unknownNumber();
-      for (std::size_t k = 1; k <= element->totalEdges(); k++) {
-        const mesh::Edge * testEdge = mesh->edge(element->edge(k));
-        int32_t testUnknown = testEdge->unknownNumber();
-
-        if (sourceUnknown >= 0 && sourceUnknown <= testUnknown) {
-          std::size_t row = sourceUnknown-1;
-          std::size_t col = testUnknown-1;
-
-          mFeMatrix(row, col) = dcomplex(0.0,0.0);
-          mFeMatrix(col, row) = dcomplex(0.0,0.0);
-         }
-      }
-    }
-  }
-
-  for (std::size_t i = 0; i < meshInfo->totalBoundaryUnknowns(); i++) {
-    for (std::size_t j = i; j < meshInfo->totalBoundaryUnknowns(); j++) {
-      mBiMatrix(i, j) = dcomplex(0.0,0.0);
-    }
-  }
+  mMatrix.setZero();
 }
 
 void IterativeSolver::doPrint(std::ostream & output, int tabPos) const
 {
-  xmlutils::printHeader(output, tabPos, OBJECT_ID);
   xmlutils::printValue(output, tabPos, "Algorithm: ", formatAlgoString(mAlgorithm));
   xmlutils::printValue(output, tabPos, "Min Iterations: ", mMinIterations);
   xmlutils::printValue(output, tabPos, "Max Iterations: ", mMaxIterations);
@@ -109,7 +90,6 @@ void IterativeSolver::doXmlRead(rapidxml::xml_document<> & document, rapidxml::x
 
 void IterativeSolver::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
 {
-  xmlutils::writeAttribute(document, node, "type", OBJECT_ID);
   xmlutils::writeAttribute(document, node, "algorithm", formatAlgoString(mAlgorithm));
   xmlutils::writeAttribute(document, node, "min-iterations", mMinIterations);
   xmlutils::writeAttribute(document, node, "max-iterations", mMaxIterations);
@@ -118,9 +98,7 @@ void IterativeSolver::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::
 
 std::string IterativeSolver::formatAlgoString(Algorithm algorithm) const
 {
-  if (algorithm == BiCG)
-    return "bicg";
-  else if (algorithm == CGS)
+  if (algorithm == CGS)
     return "cgs";
   else if (algorithm == BiCGStab)
     return "bicg-stab";
@@ -132,32 +110,22 @@ IterativeSolver::Algorithm IterativeSolver::readAlgorithmAttribute(rapidxml::xml
 {
   std::string algoString = xmlutils::readAttribute<std::string>(node, "algorithm");
 
-  Algorithm algorithm = BiCG;
+  Algorithm algorithm = BiCGStab;
   if (algoString == "cgs")
     algorithm = CGS;
-  else if (algoString == "bicg-stab")
-    algorithm = BiCGStab;
 
   return algorithm;
 }
 
-void IterativeSolver::updateBoundaryIntegralMatrix(std::size_t row, std::size_t col, const dcomplex & i1, const dcomplex & i2)
+void IterativeSolver::updateMatrix(std::size_t row, std::size_t col, const math::dcomplex & i1, const math::dcomplex & i2)
 {
-  mBiMatrix(row, col) += i1 + i2;
+  mMatrix.coeffRef(row, col) += i1+i2;
 }
 
-void IterativeSolver::updateFiniteElementMatrix(std::size_t row, std::size_t col, const dcomplex & i1, const dcomplex & i2)
+math::vector IterativeSolver::solveSystem(const math::vector &rhs)
 {
-  mFeMatrix(row, col) += i1 + i2;
-}
-
-Solver::vector IterativeSolver::solveSystem(const vector &rhs)
-{
-  vector efield;
+  math::vector efield;
   switch (mAlgorithm) {
-  case BiCG:
-    efield = bicg(rhs);
-    break;
   case BiCGStab:
     efield = bicgStab(rhs);
     break;

@@ -26,30 +26,32 @@ find_package(Boost COMPONENTS system thread REQUIRED)
 set(SRC_FILES
   core/morfeusobject.cpp
   core/morfeusproject.cpp
-  excitations/excitation.cpp
-  excitations/planewave.cpp
-  excitations/probefeed.cpp
-  geometry/cuboid.cpp
-  geometry/cylinder.cpp
-  geometry/ellipse.cpp
-  geometry/face.cpp
-  geometry/hole.cpp
-  geometry/model.cpp
-  geometry/part.cpp
-  geometry/point.cpp
-  geometry/polygon.cpp
-  geometry/rectangle.cpp
-  geometry/region.cpp
-  geometry/segment.cpp
-  geometry/solid.cpp
-  geometry/surface.cpp
-  geometry/vertex.cpp
+  model/model.cpp
+  model/geometry/cuboid.cpp
+  model/geometry/cylinder.cpp
+  model/geometry/ellipse.cpp
+  model/geometry/face.cpp
+  model/geometry/facet.cpp
+  model/geometry/hole.cpp
+  model/geometry/line.cpp
+  model/geometry/part.cpp
+  model/geometry/part.cpp
+  model/geometry/point.cpp
+  model/geometry/polygon.cpp
+  model/geometry/rectangle.cpp
+  model/geometry/region.cpp
+  model/geometry/segment.cpp
+  model/geometry/vertex.cpp
+  model/geometry/wire.cpp
+  model/media/dielectric.cpp
+  model/media/freespace.cpp
+  model/media/medium.cpp
+  model/media/perfectelectricconductor.cpp
+  model/ports/port.cpp
+  model/ports/wireport.cpp
   math/functions.cpp
   math/gaussquad.cpp
-  media/dielectricmedium.cpp
-  media/medium.cpp
-  media/medialibrary.cpp
-  media/perfectelectricconductor.cpp
+  mesh/convexhull.cpp
   mesh/edge.cpp
   mesh/element.cpp
   mesh/face.cpp
@@ -67,6 +69,9 @@ set(SRC_FILES
   solution/iterativesolver.cpp
   solution/meshinformation.cpp
   solution/solver.cpp
+  sources/source.cpp
+  sources/planewave.cpp
+  sources/voltagesource.cpp
 )
 
 set(HDR_FILES
@@ -74,31 +79,33 @@ set(HDR_FILES
   core/factory.h
   core/morfeusobject.h
   core/morfeusproject.h
-  excitations/excitation.h
-  excitations/planewave.h
-  excitations/probefeed.h
-  geometry/cuboid.h
-  geometry/cylinder.h
-  geometry/ellipse.h
-  geometry/face.h
-  geometry/hole.h
-  geometry/model.h
-  geometry/part.h
-  geometry/point.h
-  geometry/polygon.h
-  geometry/rectangle.h
-  geometry/region.h
-  geometry/segment.h
-  geometry/solid.h
-  geometry/surface.h
-  geometry/vertex.h
+  model/model.h
+  model/geometry/cuboid.h
+  model/geometry/cylinder.h
+  model/geometry/ellipse.h
+  model/geometry/face.h
+  model/geometry/facet.h
+  model/geometry/hole.h
+  model/geometry/line.h
+  model/geometry/part.h
+  model/geometry/point.h
+  model/geometry/polygon.h
+  model/geometry/rectangle.h
+  model/geometry/region.h
+  model/geometry/segment.h
+  model/geometry/vertex.h
+  model/geometry/wire.h
+  model/media/dielectric.h
+  model/media/freespace.h
+  model/media/medium.h
+  model/media/perfectelectricconductor.h
+  model/ports/port.h
+  model/ports/wireport.h
   math/constants.h
   math/functions.h
   math/gaussquad.h
-  media/dielectricmedium.h
-  media/medium.h
-  media/medialibrary.h
-  media/perfectelectricconductor.h
+  math/types.h
+  mesh/convexhull.h
   mesh/edge.h
   mesh/element.h
   mesh/face.h
@@ -116,6 +123,9 @@ set(HDR_FILES
   solution/iterativesolver.h
   solution/meshinformation.h
   solution/solver.h
+  sources/planewave.h
+  sources/source.h
+  sources/voltagesource.h
   xml/rapidxml.hpp
   xml/rapidxml_iterators.hpp
   xml/rapidxml_print.hpp
@@ -142,6 +152,7 @@ endif()
 
 target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(${TARGET_NAME} PUBLIC ${Boost_INCLUDE_DIRS})
+target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/eigen)
 
 #target_link_libraries(${TARGET_NAME} loki)
 target_link_libraries(${TARGET_NAME} tet)

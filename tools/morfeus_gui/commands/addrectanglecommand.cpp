@@ -3,13 +3,11 @@
 #include "guiproject.h"
 #include "rectangleitem.h"
 
-#include <geometry/rectangle.h>
-
 #include <QDebug>
 
 static const QString commandIdentifier("Project.AddRectangle");
 
-AddRectangleCommand::AddRectangleCommand(GuiProject * project, std::unique_ptr<morfeus::geometry::Rectangle> rectangle)
+AddRectangleCommand::AddRectangleCommand(GuiProject * project, std::unique_ptr<morfeus::model::geometry::Rectangle> rectangle)
   : Command(commandIdentifier)
   , mProjectModified(false)
   , mProject(project)

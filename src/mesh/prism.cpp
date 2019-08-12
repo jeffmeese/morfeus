@@ -33,7 +33,7 @@ void Prism::createFaces()
   mFaces.push_back(TrianglePtr(new Triangle));
 }
 
-void Prism::doComputeFeEntry(const Mesh * mesh, std::size_t localEdge1, std::size_t localEdge2, dcomplex & i1, dcomplex & i2) const
+void Prism::doComputeFeEntry(const Mesh * mesh, std::size_t localEdge1, std::size_t localEdge2, math::dcomplex & i1, math::dcomplex & i2) const
 {
   const Edge * sourceEdge = mesh->edge(edge(localEdge1));
   const Edge * testEdge = mesh->edge(edge(localEdge2));

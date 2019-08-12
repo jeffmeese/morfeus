@@ -6,13 +6,12 @@
 #include "core/morfeusobject.h"
 #include "core/factory.h"
 
+#include "math/types.h"
+
 #include "xml/rapidxml.hpp"
 #include "xml/xmlutils.h"
 
 #include <boost/noncopyable.hpp>
-#include <boost/numeric/ublas/matrix_sparse.hpp>
-#include <boost/numeric/ublas/triangular.hpp>
-#include <boost/numeric/ublas/vector.hpp>
 
 namespace morfeus {
 
@@ -45,13 +44,11 @@ class Solver
   class SolverFactory;
 
 public:
-  typedef boost::numeric::ublas::vector<dcomplex> vector;
-
-public:
   MORFEUS_LIB_DECL const media::MediaLibrary * mediaLibrary() const;
   MORFEUS_LIB_DECL void setMediaLibrary(const media::MediaLibrary * library);
   MORFEUS_LIB_DECL bool allocated() const;
-  MORFEUS_LIB_DECL vector runSolver(double freqGhz, const mesh::Mesh * mesh, const solution::MeshInformation * meshInfo, const vector & rhs);
+  MORFEUS_LIB_DECL math::vector runSolver(double freqGhz, const mesh::Mesh * mesh,
+                                          const solution::MeshInformation * meshInfo, const math::vector & rhs);
   MORFEUS_LIB_DECL void setAllocated(bool value);
 
 public:
@@ -62,15 +59,13 @@ protected:
   Solver(const std::string & type, const std::string & id);
 
 protected:
-  typedef boost::numeric::ublas::mapped_matrix<dcomplex> sparse_matrix;
-  typedef boost::numeric::ublas::triangular_matrix<dcomplex> triangular_matrix;
+
 
 protected:
   virtual void allocateMatrices(const solution::MeshInformation * meshInfo) = 0;
   virtual void clearMatrices(const mesh::Mesh * mesh, const solution::MeshInformation * meshInfo) = 0;
-  virtual vector solveSystem(const vector & rhs) = 0;
-  virtual void updateBoundaryIntegralMatrix(std::size_t row, std::size_t col, const dcomplex & i1, const dcomplex & i2) = 0;
-  virtual void updateFiniteElementMatrix(std::size_t row, std::size_t col, const dcomplex & i1, const dcomplex & i2) = 0;
+  virtual math::vector solveSystem(const math::vector & rhs) = 0;
+  virtual void updateMatrix(std::size_t row, std::size_t col, const math::dcomplex & i1, const math::dcomplex & i2) = 0;
 
 private:
   void buildBiMatrix(double freqGHz, const mesh::Mesh * mesh, const solution::MeshInformation * meshInfo);
@@ -111,7 +106,6 @@ inline void Solver::setMediaLibrary(const media::MediaLibrary *library)
 {
 mMediaLibrary = library;
 }
-
 
 }
 }

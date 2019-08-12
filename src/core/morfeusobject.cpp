@@ -15,8 +15,16 @@ MorfeusObject::MorfeusObject(const std::string & type)
 {
 }
 
-MorfeusObject::MorfeusObject(const std::string & type, std::string id)
+MorfeusObject::MorfeusObject(const std::string & type, const std::string & name)
+  : mId(createId())
+  , mName(name)
+  , mType(type)
+{
+}
+
+MorfeusObject::MorfeusObject(const std::string & type, const std::string & id, const std::string & name)
   : mId(id)
+  , mName(name)
   , mType(type)
 {
 }
@@ -32,9 +40,20 @@ std::string MorfeusObject::createId()
   return boost::uuids::to_string(uuid);
 }
 
+std::string MorfeusObject::createName(int32_t number)
+{
+  std::ostringstream oss;
+  oss << mType << number;
+  return oss.str();
+}
+
 void MorfeusObject::print(std::ostream & output, int tabPos) const
 {
-  doPrint(output, tabPos);
+  xmlutils::printHeader(output, tabPos, mType);
+  if (!mName.empty())
+    xmlutils::printValue(output, tabPos+2, "Name: ", mName);
+
+  doPrint(output, tabPos+2);
 }
 
 void MorfeusObject::print(int tabPos) const

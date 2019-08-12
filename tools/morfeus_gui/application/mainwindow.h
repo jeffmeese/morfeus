@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QToolButton>
 
 #include <memory>
 
@@ -24,6 +25,10 @@ protected:
   void closeEvent(QCloseEvent * closeEvent) override;
 
 private slots:
+  void handleAddCube();
+  void handleAddCylinder();
+  void handleAddEllipse();
+  void handleAddPolygon();
   void handleAddRectangle();
   void handleCreateMesh();
   void handleExit();
@@ -35,12 +40,19 @@ private slots:
   void handleSaveProjectAs();
   void handleSettings();
   void handleUndo();
+  void handleWorkspaceSelection(const QModelIndex & current, const QModelIndex & previous);
   void updateToolsMenu();
 
 private:
+  void createToolButton(const QString & tabName, const QString & groupName, const QString & name,
+                        const QString & toolTip, const QIcon & icon, void (MainWindow::*recevier)());
+  void create3dView();
   void exitProgram();
+  void initialize();
   void initActions();
   void initUi();
+  void initRibbon();
+  void initToolBar();
   void loadSettings();
   void newProject();
   void openProject(const QString & fileName);

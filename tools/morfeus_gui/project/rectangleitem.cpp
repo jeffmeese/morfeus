@@ -1,8 +1,8 @@
 #include "rectangleitem.h"
 
-#include <geometry/rectangle.h>
+#include <model/geometry/rectangle.h>
 
-RectangleItem::RectangleItem(std::unique_ptr<morfeus::geometry::Rectangle> rectangle)
+RectangleItem::RectangleItem(std::unique_ptr<morfeus::model::geometry::Rectangle> rectangle)
   : ProjectItem ("Rectangle")
   , mRectangle(std::move(rectangle))
 {
@@ -20,7 +20,7 @@ bool RectangleItem::loadAttributes(QXmlStreamReader & reader)
   return !reader.hasError();
 }
 
-std::unique_ptr<morfeus::geometry::Rectangle> RectangleItem::removeRectangle()
+std::unique_ptr<morfeus::model::geometry::Rectangle> RectangleItem::removeRectangle()
 {
   return std::move(mRectangle);
 }

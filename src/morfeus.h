@@ -4,10 +4,6 @@
 #include <cstdint>
 #include <complex>
 
-// Type definitions
-typedef std::complex<double> dcomplex;
-typedef std::complex<float> fcomplex;
-
 #if defined(MORFEUS_COMPILE_LIBRARY)
 #  define MORFEUS_LIB_DECL __declspec(dllexport)
 #elif defined(MORFEUS_USE_LIBRARY)

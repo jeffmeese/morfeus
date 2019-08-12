@@ -1,9 +1,12 @@
 #include "mesh.h"
+
+#include "convexhull.h"
 #include "edge.h"
 #include "element.h"
+#include "face.h"
 #include "node.h"
 
-#include "media/medium.h"
+#include "model/media/medium.h"
 
 #include <fstream>
 #include <sstream>
@@ -11,8 +14,10 @@
 namespace morfeus {
 namespace mesh {
 
+static const std::string OBJECT_ID("Mesh");
+
 Mesh::Mesh()
-  : MorfeusObject("Mesh")
+  : MorfeusObject(OBJECT_ID)
 {
   mNodeTolerance = 1e-6;
 }
@@ -37,6 +42,58 @@ void Mesh::addElement(std::unique_ptr<Element> element)
 void Mesh::addNode(std::unique_ptr<Node> node)
 {
   mNodes.push_back(std::move(node));
+}
+
+void Mesh::computeConvexHull(ConvexHull * convexHull) const
+{
+  typedef std::list<mesh::Face*> FaceList;
+  typedef std::map<int32_t, FaceList> FaceMap;
+
+  std::vector<mesh::Face*> boundaryFaces;
+  for (std::size_t i = 0; i < totalNodes(); i++) {
+    const Node * node = this->node(i);
+    convexHull->addNode(node);
+  }
+
+  FaceMap faceMap;
+  for (std::size_t i = 0; i < totalElements(); i++) {
+    mesh::Element * element = mElements.at(i).get();
+    for (std::size_t j = 0; j < element->totalFaces(); j++) {
+      mesh::Face * face = element->getFace(j);
+      int32_t nodeSum = 0;
+      for (std::size_t k = 0; k < face->totalNodes(); k++) {
+        nodeSum += face->node(k);
+      }
+      faceMap[nodeSum].push_back(face);
+    }
+  }
+
+  for (FaceMap::iterator mapItr = faceMap.begin(); mapItr != faceMap.end(); ++mapItr) {
+    FaceList & v = mapItr->second;
+    while (v.size() > 0) {
+      mesh::Face * face1 = v.back();
+      v.pop_back();
+
+      bool isBoundaryFace = true;
+      for (FaceList::iterator listItr = v.begin(); listItr != v.end(); listItr++) {
+        mesh::Face * face2(*listItr);
+        if (face1->isCoincident(face2)) {
+          isBoundaryFace = false;
+          v.erase(listItr);
+          break;
+        }
+      }
+
+      if (isBoundaryFace) {
+        boundaryFaces.push_back(face1);
+      }
+    }
+  }
+
+  for (std::size_t i = 0; i < boundaryFaces.size(); i++) {
+    const Face * face = boundaryFaces.at(i);
+    convexHull->addFace(face);
+  }
 }
 
 void Mesh::createEdges(Element *element)
@@ -255,7 +312,12 @@ void Mesh::writeVtkFile(const std::string &fileName) const
   output << "LOOKUP_TABLE default\n";
   for (std::size_t i = 0; i < mElements.size(); i++) {
     const Element * element = mElements.at(i).get();
-    output << element->attribute() << "\n";
+    const model::media::Medium * medium = element->medium();
+    int32_t attribute = 0;
+    if (medium != nullptr) {
+      attribute = medium->attribute();
+    }
+    output << attribute << "\n";
   }
   output << "\n";
 }

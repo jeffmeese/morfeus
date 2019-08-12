@@ -3,6 +3,8 @@
 
 #include "solver.h"
 
+#include "Eigen/SparseCore"
+
 namespace morfeus {
 namespace solution {
 
@@ -12,7 +14,6 @@ class IterativeSolver
 public:
   enum Algorithm
   {
-    BiCG = 0,
     CGS = 1,
     BiCGStab = 2
   };
@@ -37,21 +38,19 @@ protected:
   void doPrint(std::ostream & output, int tabPos) const override;
   void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;
   void doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const override;
-  void updateBoundaryIntegralMatrix(std::size_t row, std::size_t col, const dcomplex & i1, const dcomplex & i2) override;
-  void updateFiniteElementMatrix(std::size_t row, std::size_t col, const dcomplex & i1, const dcomplex & i2) override;
-  vector solveSystem(const vector & rhs) override;
+  void updateMatrix(std::size_t row, std::size_t col, const math::dcomplex & i1, const math::dcomplex & i2) override;
+  math::vector solveSystem(const math::vector & rhs) override;
 
 private:
-  vector bicg(const vector & rhs);
-  vector bicgStab(const vector & rhs);
-  vector cgs(const vector & rhs);
+  math::vector bicg(const math::vector & rhs);
+  math::vector bicgStab(const math::vector & rhs);
+  math::vector cgs(const math::vector & rhs);
   Algorithm readAlgorithmAttribute(rapidxml::xml_node<> * node) const;
   std::string formatAlgoString(Algorithm algorithm) const;
 
 private:
   Algorithm mAlgorithm;
-  triangular_matrix mBiMatrix;
-  sparse_matrix mFeMatrix;
+  math::sparse_matrix mMatrix;
   std::size_t mMaxIterations;
   std::size_t mMinIterations;
   double mTolerance;

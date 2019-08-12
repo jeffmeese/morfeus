@@ -4,7 +4,7 @@
 #include "mesh.h"
 #include "node.h"
 
-#include "excitations/planewave.h"
+#include "sources/planewave.h"
 
 #include "math/constants.h"
 #include "math/functions.h"
@@ -13,13 +13,15 @@
 namespace morfeus {
 namespace mesh {
 
+static const std::string OBJECT_ID("Triangle");
+
 Triangle::Triangle()
-  : Face("TriangleFace", 3, 3)
+  : Face(OBJECT_ID, 3, 3)
 {
 }
 
 Triangle::Triangle(int32_t number)
-  : Face("TriangleFace", number, 3, 3)
+  : Face(OBJECT_ID, number, 3, 3)
 {
 }
 
@@ -28,15 +30,15 @@ double Triangle::doComputeArea(const Mesh * mesh) const
   return 0.0;
 }
 
-dcomplex Triangle::doComputeMomEntry(const Face *otherFace, const Mesh * mesh, std::size_t localEdge) const
+math::dcomplex Triangle::doComputeMomEntry(const Face *otherFace, const Mesh * mesh, std::size_t localEdge) const
 {
-  dcomplex value(0.0,0.0);
+  math::dcomplex value(0.0,0.0);
   return value;
 }
 
-dcomplex Triangle::doComputePlanewaveEntry(std::size_t localEdge, double freq, double alpha, double theta, double phi, const Mesh *mesh) const
+math::dcomplex Triangle::doComputePlanewaveEntry(std::size_t localEdge, double freq, double alpha, double theta, double phi, const Mesh *mesh) const
 {
-  dcomplex result(math::zero);
+  math::dcomplex result(math::zero);
 
   double k0 = math::frequencyToWavenumber(freq);
 
@@ -72,7 +74,7 @@ dcomplex Triangle::doComputePlanewaveEntry(std::size_t localEdge, double freq, d
     double y = yi[0]*a + yi[1]*b + yi[2]*c;
 
     double arg = x*cos(phi) + y*sin(phi);
-    dcomplex phase = std::exp(math::cj*k0*sin(theta)*arg);
+    math::dcomplex phase = std::exp(math::cj*k0*sin(theta)*arg);
     double vx = sin(alpha)*cos(theta)*cos(phi) + cos(alpha)*sin(phi);
     double vy = sin(alpha)*cos(theta)*sin(phi) - cos(alpha)*cos(phi);
     double argx = (x-xj)*vx;

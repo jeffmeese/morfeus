@@ -5,11 +5,19 @@
 
 #include "core/morfeusobject.h"
 
+#include "math/types.h"
+
+#include "model/geometry/point.h"
+
 #include <vector>
 
-#include <boost/numeric/ublas/vector.hpp>
-
 namespace morfeus {
+
+  namespace model {
+    namespace media {
+      class Medium;
+    }
+  }
 
   namespace mesh {
     class Mesh;
@@ -25,33 +33,31 @@ class Face
 public:
   struct FarFieldEntry
   {
-    dcomplex i1;
-    dcomplex i2;
+    math::dcomplex i1;
+    math::dcomplex i2;
   };
 
 public:
   MORFEUS_LIB_DECL int32_t edge(std::size_t index) const;
   MORFEUS_LIB_DECL int32_t edgeSign(std::size_t localEdge) const;
+  MORFEUS_LIB_DECL const model::media::Medium * medium() const;
   MORFEUS_LIB_DECL int32_t node(std::size_t index) const;
   MORFEUS_LIB_DECL int32_t number() const;
   MORFEUS_LIB_DECL void setEdge(std::size_t index, int32_t value);
   MORFEUS_LIB_DECL void setEdgeSign(std::size_t localEdge, int32_t edgeSign);
+  MORFEUS_LIB_DECL void setMedium(const model::media::Medium * medium);
   MORFEUS_LIB_DECL void setNode(std::size_t index, int32_t value);
   MORFEUS_LIB_DECL void setNumber(int32_t value);
   MORFEUS_LIB_DECL std::size_t totalEdges() const;
   MORFEUS_LIB_DECL std::size_t totalNodes() const;
 
-protected:
-  typedef boost::numeric::ublas::vector<dcomplex> vector;
-
 public:
   MORFEUS_LIB_DECL double computeArea(const Mesh * mesh) const;
   MORFEUS_LIB_DECL double computeNormal(const Mesh * mesh) const;
-  MORFEUS_LIB_DECL dcomplex computeMomEntry(const Face * otherFace, const Mesh * mesh, std::size_t localEdge) const;
-  MORFEUS_LIB_DECL FarFieldEntry computeFarFieldEntry(double freqGhz, double theta, double phi, const Mesh* mesh, const vector & efield) const;
-  MORFEUS_LIB_DECL dcomplex computePlanewaveEntry(std::size_t edge, double freq, double alpha, double thetaInc, double phiInc, const Mesh * mesh) const;
+  MORFEUS_LIB_DECL math::dcomplex computeMomEntry(const Face * otherFace, const Mesh * mesh, std::size_t localEdge) const;
+  MORFEUS_LIB_DECL FarFieldEntry computeFarFieldEntry(double freqGhz, double theta, double phi, const Mesh* mesh, const math::vector & efield) const;
+  MORFEUS_LIB_DECL math::dcomplex computePlanewaveEntry(std::size_t edge, double freq, double alpha, double thetaInc, double phiInc, const Mesh * mesh) const;
   MORFEUS_LIB_DECL bool isCoincident(const Face * otherFace) const;
-  //MORFEUS_LIB_DECL void computeNormal(const Mesh & mesh) const;
 
 protected:
   Face(const std::string & type, std::size_t totalNodes, std::size_t totalEdges);
@@ -59,8 +65,8 @@ protected:
 
 protected:
   virtual double doComputeArea(const Mesh * mesh) const = 0;
-  virtual dcomplex doComputeMomEntry(const Face * otherFace, const Mesh * mesh, std::size_t localEdge) const = 0;
-  virtual dcomplex doComputePlanewaveEntry(std::size_t edge, double freq, double alpha, double theta, double phi, const Mesh * mesh) const = 0;
+  virtual math::dcomplex doComputeMomEntry(const Face * otherFace, const Mesh * mesh, std::size_t localEdge) const = 0;
+  virtual math::dcomplex doComputePlanewaveEntry(std::size_t edge, double freq, double alpha, double theta, double phi, const Mesh * mesh) const = 0;
 
 private:
   void init(std::size_t totalNodes, std::size_t totalEdges);
@@ -70,6 +76,7 @@ private:
   std::vector<int32_t> mNodes;
   std::vector<int32_t> mEdges;
   std::vector<int32_t> mEdgeSigns;
+  const model::media::Medium * mMedium;
 };
 
 inline int32_t Face::edgeSign(std::size_t localEdge) const
@@ -87,6 +94,11 @@ inline int32_t Face::edge(std::size_t index) const
   return mEdges[index];
 }
 
+inline const model::media::Medium * Face::medium() const
+{
+  return mMedium;
+}
+
 inline int32_t Face::node(std::size_t index) const
 {
   return mNodes[index];
@@ -100,6 +112,11 @@ inline void Face::setEdge(std::size_t index, int32_t value)
 inline void Face::setEdgeSign(std::size_t localEdge, int32_t edgeSign)
 {
   mEdgeSigns[localEdge] = edgeSign;
+}
+
+inline void Face::setMedium(const model::media::Medium *medium)
+{
+  mMedium = medium;
 }
 
 inline void Face::setNode(std::size_t index, int32_t value)

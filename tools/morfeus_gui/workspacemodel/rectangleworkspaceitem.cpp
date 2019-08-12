@@ -6,7 +6,7 @@
 #include "renamecommand.h"
 #include "workspaceview.h"
 
-#include <geometry/rectangle.h>
+#include <model/geometry/rectangle.h>
 
 #include "action.h"
 

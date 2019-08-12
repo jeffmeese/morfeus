@@ -31,7 +31,8 @@ public:
   MORFEUS_LIB_DECL void setThetaStop(double value);
 
 protected:
-  void doCalculate(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh, const solution::MeshInformation * meshInfo, const vector & efield) override;
+  void doCalculate(double freqGHz, double thetaInc, double phiInc, const mesh::Mesh * mesh,
+                   const solution::MeshInformation * meshInfo, const math::vector & efield) override;
   void doPrint(std::ostream & output, int tabPos) const override;
   void doReport(std::ostream & output) const override;
   void doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) override;

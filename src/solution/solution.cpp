@@ -3,9 +3,9 @@
 #include "solver.h"
 #include "iterativesolver.h"
 
-#include "excitations/excitation.h"
+#include "sources/source.h"
 
-#include "media/medialibrary.h"
+#include "model/media/medialibrary.h"
 
 #include "observations/observation.h"
 
@@ -17,11 +17,13 @@ Solution::Solution()
   , mSolver(new IterativeSolver)
 {
   mFreqIncr = mFreqStop = mFreqStart = 0.0;
+  mThetaIncr = mThetaStop = mThetaStart = 0.0;
+  mPhiIncr = mPhiStop = mPhiStart = 0.0;
 }
 
-void Solution::addExcitation(std::unique_ptr<excitation::Excitation> excitation)
+void Solution::addSource(std::unique_ptr<sources::Source> source)
 {
-  mExcitations.push_back(std::move(excitation));
+  mSources.push_back(std::move(source));
 }
 
 void Solution::addObservation(std::unique_ptr<observation::Observation> observation)
@@ -31,7 +33,6 @@ void Solution::addObservation(std::unique_ptr<observation::Observation> observat
 
 void Solution::doPrint(std::ostream &output, int tabPos) const
 {
-  xmlutils::printHeader(output, tabPos, "Solution");
   xmlutils::printValue(output, tabPos, "Freq Start: ", mFreqStart);
   xmlutils::printValue(output, tabPos, "Freq Stop: ", mFreqStop);
   xmlutils::printValue(output, tabPos, "Freq Incr: ", mFreqIncr);
@@ -44,16 +45,20 @@ void Solution::doPrint(std::ostream &output, int tabPos) const
 
   xmlutils::printHeader(output, tabPos+2, "Solver");
   mSolver->print(output, tabPos+4);
+  xmlutils::printHeader(output, tabPos+2, "End Solver");
 
-  xmlutils::printHeader(output, tabPos+2, "Excitations");
-  for (std::size_t i = 0; i < mExcitations.size(); i++) {
-    mExcitations.at(i)->print(output, tabPos+4);
+  xmlutils::printHeader(output, tabPos+2, "Sources");
+  for (std::size_t i = 0; i < mSources.size(); i++) {
+    mSources.at(i)->print(output, tabPos+4);
   }
+  xmlutils::printHeader(output, tabPos+2, "End Excitations");
 
   xmlutils::printHeader(output, tabPos+2, "Observations");
   for (std::size_t i = 0; i < mObservations.size(); i++) {
     mObservations.at(i)->print(output, tabPos+4);
   }
+  xmlutils::printHeader(output, tabPos+2, "End Observations");
+
   output << "\n";
 }
 
@@ -99,10 +104,10 @@ void Solution::doXmlRead(rapidxml::xml_document<> & document, rapidxml::xml_node
     rapidxml::xml_node<> * excitationNode = excitationsNode->first_node("Excitation", 0, false);
     while (excitationNode != nullptr) {
       std::string type = xmlutils::readAttribute<std::string>(excitationNode, "type");
-      std::unique_ptr<excitation::Excitation> excitation(excitation::Excitation::factory().create(type));
-      if (excitation != nullptr) {
-        excitation->readFromXml(document, excitationNode);
-        addExcitation(std::move(excitation));
+      std::unique_ptr<sources::Source> source(sources::Source::factory().create(type));
+      if (source != nullptr) {
+        source->readFromXml(document, excitationNode);
+        addSource(std::move(source));
       }
       else {
         std::ostringstream oss;
@@ -163,9 +168,9 @@ void Solution::doXmlWrite(rapidxml::xml_document<> & document, rapidxml::xml_nod
   node->append_node(solverNode);
 
   rapidxml::xml_node<> * excitationsNode = xmlutils::createNode(document, "Excitations");
-  for (std::size_t i = 0; i < mExcitations.size(); i++) {
-    const excitation::Excitation * excitation = mExcitations.at(i).get();
-    excitation->writeToXml(document, excitationsNode);
+  for (std::size_t i = 0; i < mSources.size(); i++) {
+    const sources::Source * source = mSources.at(i).get();
+    source->writeToXml(document, excitationsNode);
   }
   node->append_node(excitationsNode);
 

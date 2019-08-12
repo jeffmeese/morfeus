@@ -1,12 +1,14 @@
 #include "workspacemodel.h"
 
 #include "excitationsworkspaceitem.h"
-#include "geometryworkspaceitem.h"
-#include "meshworkspaceitem.h"
-#include "guiproject.h"
+#include "geometrygroup.h"
+#include "modelgroup.h"
 #include "observationsworkspaceitem.h"
-#include "rectangleitem.h"
-#include "rectangleworkspaceitem.h"
+#include "partitem.h"
+
+#include <model/model.h>
+#include <model/geometry/part.h>
+#include <model/ports/port.h>
 
 #include <actionmanager.h>
 #include <project.h>
@@ -17,75 +19,39 @@
 
 WorkspaceModel::WorkspaceModel()
   : mExcitationsItems(nullptr)
-  , mGeometryItem(nullptr)
-  , mMeshItem(nullptr)
+  , mModelGroup(nullptr)
   , mObservationsItem(nullptr)
+  , mProject(new morfeus::core::MorfeusProject)
 {
   createDefaultItems();
+}
+
+void WorkspaceModel::addPart(std::unique_ptr<morfeus::model::geometry::Part> part)
+{
+  morfeus::model::geometry::Part * pPart(part.get());
+  PartItem * partItem = new PartItem(part.get());
+  mModelGroup->geometryGroup()->appendRow(partItem);
+  mProject->model()->addPart(std::move(part));
+  mProject->setModified(true);
+  emit partAdded(pPart);
+}
+
+void WorkspaceModel::addPort(std::unique_ptr<morfeus::model::ports::Port> part)
+{
+
 }
 
 void WorkspaceModel::createDefaultItems()
 {
-  mGeometryItem = new GeometryWorkspaceItem;
-  mMeshItem = new MeshWorkspaceItem;
+  mModelGroup = new ModelGroup;
   mExcitationsItems = new ExcitationsWorkspaceItem;
   mObservationsItem = new ObservationsWorkspaceItem;
 
-  invisibleRootItem()->appendRow(mGeometryItem);
-  invisibleRootItem()->appendRow(mMeshItem);
+  invisibleRootItem()->appendRow(mModelGroup);
   invisibleRootItem()->appendRow(mExcitationsItems);
   invisibleRootItem()->appendRow(mObservationsItem);
 }
 
-GeometryWorkspaceItem * WorkspaceModel::geometryItem()
-{
-  return mGeometryItem;
-}
-
-void WorkspaceModel::handleAboutToRemoveItem(ProjectItem *projectItem)
-{
-  qDebug() << QObject::tr(__FUNCTION__);
-
-  for (int i = 0; i < mGeometryItem->rowCount(); i++) {
-    QStandardItem * item = mGeometryItem->child(i);
-    WorkspaceModelItem * childItem = dynamic_cast<WorkspaceModelItem*>(item);
-    if (childItem != nullptr && childItem->id() == projectItem->id()) {
-      mGeometryItem->removeRow(i);
-      emit layoutChanged();
-    }
-  }
-}
-
-void WorkspaceModel::handleAddRectangle(ProjectItem *projectItem)
-{
-  qDebug() << QObject::tr(__FUNCTION__);
-
-  //typedef WorkspaceModelItem::Factory Factory;
-
-//  try {
-//    WorkspaceModelItem * item = Factory::Instance().CreateObject(projectItem->typeId(), projectItem);
-//    mGeometryItem->appendRow(item);
-//  }
-//  catch (Loki::DefaultFactoryError<QString, WorkspaceModelItem>::Exception &) {
-//    std::ostringstream oss;
-//    oss << "Could not create port attribute with type " << projectItem->typeId().toStdString();
-//    qDebug() << QString::fromStdString(oss.str());
-//  }
-}
-
 void WorkspaceModel::loadProject()
 {
-}
-
-void WorkspaceModel::setProject(GuiProject *project)
-{
-  removeRows(0, rowCount());
-  createDefaultItems();
-
-  mProject = project;
-  if (mProject != nullptr) {
-    loadProject();
-    connect(mProject, SIGNAL(rectangleAdded(ProjectItem*)), SLOT(handleAddRectangle(ProjectItem*)));
-    connect(mProject, SIGNAL(itemAboutToBeRemoved(ProjectItem*)), SLOT(handleAboutToRemoveItem(ProjectItem*)));
-  }
 }

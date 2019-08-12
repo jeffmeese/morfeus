@@ -5,13 +5,15 @@
 namespace morfeus {
 namespace mesh {
 
+static const std::string OBJECT_ID("Rectangle");
+
 Rectangle::Rectangle()
-  : Face("RectangleFace", 4, 4)
+  : Face(OBJECT_ID, 4, 4)
 {
 }
 
 Rectangle::Rectangle(int32_t number)
-  : Face("RectangleFace", number, 4, 4)
+  : Face(OBJECT_ID, number, 4, 4)
 {
 
 }
@@ -45,15 +47,15 @@ double Rectangle::doComputeArea(const Mesh * mesh) const
   return 0.0;
 }
 
-dcomplex Rectangle::doComputeMomEntry(const Face * otherFace, const Mesh * mesh, std::size_t localEdge) const
+math::dcomplex Rectangle::doComputeMomEntry(const Face * otherFace, const Mesh * mesh, std::size_t localEdge) const
 {
-  dcomplex value;
+  math::dcomplex value;
   return value;
 }
 
-dcomplex Rectangle::doComputePlanewaveEntry(std::size_t edge, double freq, double alpha, double theta, double phi, const Mesh *mesh) const
+math::dcomplex Rectangle::doComputePlanewaveEntry(std::size_t edge, double freq, double alpha, double theta, double phi, const Mesh *mesh) const
 {
-  dcomplex value(0.0,0.0);
+  math::dcomplex value(0.0,0.0);
   return value;
 }
 

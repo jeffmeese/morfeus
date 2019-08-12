@@ -7,7 +7,7 @@
 
 #include <QStandardItem>
 
-#include "geometry/rectangle.h"
+#include <model/geometry/rectangle.h>
 
 class GuiProject;
 class Rectangle;
@@ -17,7 +17,7 @@ class AddRectangleCommand
     : public Command
 {
 public:
-  AddRectangleCommand(GuiProject * project, std::unique_ptr<morfeus::geometry::Rectangle> rectangle);
+  AddRectangleCommand(GuiProject * project, std::unique_ptr<morfeus::model::geometry::Rectangle> rectangle);
 
 public:
   static QString commandId();

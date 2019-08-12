@@ -5,7 +5,6 @@ namespace mesh {
 
 Element::Element(const std::string & type, std::size_t nodes, std::size_t edges, std::size_t faces)
   : MorfeusObject(type)
-  , mAttribute(DielectricElement)
   , mNumber(-1)
 {
   init(nodes, edges, faces);
@@ -13,7 +12,6 @@ Element::Element(const std::string & type, std::size_t nodes, std::size_t edges,
 
 Element::Element(const std::string & type, int32_t number, std::size_t nodes, std::size_t edges, std::size_t faces)
   : MorfeusObject(type)
-  , mAttribute(DielectricElement)
   , mNumber(number)
 {
   init(nodes, edges, faces);
@@ -24,7 +22,7 @@ Face * Element::getFace(std::size_t index) const
   return doGetFace(index);
 }
 
-void Element::computeFeEntry(const Mesh * mesh, std::size_t localEdge1, std::size_t localEdge2, dcomplex & i1, dcomplex & i2) const
+void Element::computeFeEntry(const Mesh * mesh, std::size_t localEdge1, std::size_t localEdge2, math::dcomplex & i1, math::dcomplex & i2) const
 {
   doComputeFeEntry(mesh, localEdge1, localEdge2, i1, i2);
 }
@@ -36,6 +34,7 @@ void Element::edgeNodes(std::size_t index, int32_t &node1, int32_t &node2) const
 
 void Element::init(std::size_t nodes, std::size_t edges, std::size_t faces)
 {
+  mMedium = nullptr;
   mEpsilonId = mMuId = -1;
   mFaces = faces;
   mEdges.resize(edges);

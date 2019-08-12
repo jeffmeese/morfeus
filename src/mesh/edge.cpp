@@ -8,8 +8,10 @@
 namespace morfeus {
 namespace mesh {
 
+static const std::string OBJECT_ID("Edge");
+
 Edge::Edge(int32_t number)
-  : MorfeusObject("Edge")
+  : MorfeusObject(OBJECT_ID)
   , mNumber(number)
   , mNode1(-1)
   , mNode2(-1)
@@ -18,7 +20,7 @@ Edge::Edge(int32_t number)
 }
 
 Edge::Edge(int32_t number, int32_t node1, int32_t node2)
-  : MorfeusObject("Edge")
+  : MorfeusObject(OBJECT_ID)
   , mNumber(number)
   , mNode1(node1)
   , mNode2(node2)

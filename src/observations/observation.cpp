@@ -10,19 +10,17 @@ Observation::Observation(const std::string & type)
 }
 
 Observation::Observation(const std::string & type, const std::string & name)
-  : MorfeusObject (type)
-  , mName(name)
+  : MorfeusObject (type, name)
 {
 }
 
 Observation::Observation(const std::string & type, const std::string & id, const std::string & name)
-  : MorfeusObject (type, id)
-  , mName(name)
+  : MorfeusObject (type, id, name)
 {
 }
 
 void Observation::calculate(double freqGHz, double thetaInc, double phiInc,
-                            const mesh::Mesh *mesh, const solution::MeshInformation *meshInfo, const vector &efield)
+                            const mesh::Mesh *mesh, const solution::MeshInformation *meshInfo, const math::vector &efield)
 {
   doCalculate(freqGHz, thetaInc, phiInc, mesh, meshInfo, efield);
 }
@@ -45,32 +43,9 @@ bool Observation::ObservationFactory::registerType(const std::string & type, boo
   return true;
 }
 
-void Observation::print(std::ostream & output, int tabPos) const
-{
-  xmlutils::printValue(output, tabPos, "Name: ", mName);
-  doPrint(output, tabPos);
-}
-
-void Observation::print(int tabPos) const
-{
-  print(std::cout);
-}
-
 void Observation::report(std::ostream &output) const
 {
   doReport(output);
-}
-
-void Observation::readFromXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node)
-{
-  setName(xmlutils::readAttribute<std::string>(node, "name"));
-  doXmlRead(document, node);
-}
-
-void Observation::writeToXml(rapidxml::xml_document<> & document, rapidxml::xml_node<> * node) const
-{
-  xmlutils::writeAttribute(document, node, "name", mName);
-  doXmlWrite(document, node);
 }
 
 }
